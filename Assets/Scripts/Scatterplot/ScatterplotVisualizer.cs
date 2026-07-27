@@ -25,6 +25,8 @@ namespace DataViz
         public ScatterplotInstancedRenderer m_GPUPoints;
         public GPUPointInteractable m_GPUInteractable;
 
+        public VisualizationGridSettings m_GridSettings;
+
         private void Start()
         {
             if (m_Manager == null)
@@ -67,6 +69,15 @@ namespace DataViz
                 );
             }
 
+            if (m_GridSettings == null)
+            {
+                m_GridSettings = GetComponent<VisualizationGridSettings>();
+            }
+            if (m_GridSettings == null)
+            {
+                Debug.LogWarning("ScatterplotVisualizer: No VisualizationGridSettings found. Using default settings.");
+            }
+
             RegeneratePlot();
         }
 
@@ -85,6 +96,8 @@ namespace DataViz
         {
             ClearPoints();
             ClearAxes();
+
+            Debug.Log($"[ScatterplotVisualizer] Plot Regeneration Called");
 
             if (m_Manager == null || m_Manager.LoadedDataset == null)
                 return;
@@ -342,6 +355,26 @@ namespace DataViz
             CreateAxisLine(Vector3.zero, new Vector3(0, m_AxisLength, 0), Color.green, "Y-Axis");
             CreateAxisLine(Vector3.zero, new Vector3(0, 0, m_AxisLength), Color.blue, "Z-Axis");
 
+           if (m_GridSettings != null && m_GridSettings.ShowGridPlanes)
+            {
+                CreateGridPlaneXY();
+                CreateGridPlaneXZ();
+                CreateGridPlaneYZ();
+            }
+           if (m_GridSettings != null && m_GridSettings.ShowTickMarks)
+            {
+                CreateTickMarks();
+            }
+           if (m_GridSettings != null && m_GridSettings.ShowValueLabels)
+            {
+                CreateTickLabels(
+                    dataset,
+                    xCol,
+                    yCol,
+                    zCol);
+            }
+
+
             // Build Wireframe cube around scatterplot boundaries
             CreateGridLine(new Vector3(m_AxisLength, 0, 0), new Vector3(m_AxisLength, m_AxisLength, 0));
             CreateGridLine(new Vector3(0, m_AxisLength, 0), new Vector3(m_AxisLength, m_AxisLength, 0));
@@ -364,6 +397,273 @@ namespace DataViz
             
             if (zCol >= 0 && zCol < dataset.ColumnCount)
                 CreateAxisLabel(dataset.Columns[zCol], new Vector3(0, -0.1f, m_AxisLength / 2f), "Z_Label");
+        }
+
+
+        private void CreateGridPlaneXY()
+        {
+            float spacing =
+                m_GridSettings.MinorGridSpacing;
+
+            float major =
+                m_GridSettings.MajorGridSpacing;
+
+            for (float x = 0; x <= m_AxisLength; x += spacing)
+            {
+                bool isMajor = Mathf.Approximately(x % major, 0f);
+                CreateGridLine(
+                    new Vector3(x, 0, 0),
+                    new Vector3(x, m_AxisLength, 0),
+                    isMajor
+                );
+            }
+
+            for (float y = 0; y <= m_AxisLength; y += spacing)
+            {
+                bool isMajor = Mathf.Approximately(y % major, 0f);
+                CreateGridLine(
+                    new Vector3(0, y, 0),
+                    new Vector3(m_AxisLength, y, 0),
+                    isMajor
+                );
+            }
+        }
+
+        private void CreateGridPlaneXZ()
+        {
+            float spacing =
+                m_GridSettings.MinorGridSpacing;
+            float major =
+                m_GridSettings.MajorGridSpacing;
+
+            for (float x = 0; x <= m_AxisLength; x += spacing)
+            {
+                bool isMajor = Mathf.Approximately(x % major, 0f);
+                CreateGridLine(
+                    new Vector3(x, 0, 0),
+                    new Vector3(x, 0, m_AxisLength),
+                    isMajor
+                );
+            }
+
+            for (float z = 0; z <= m_AxisLength; z += spacing)
+            {
+                bool isMajor = Mathf.Approximately(z % major, 0f);
+                CreateGridLine(
+                    new Vector3(0, 0, z),
+                    new Vector3(m_AxisLength, 0, z),
+                    isMajor
+                );
+            }
+        }
+
+        private void CreateGridPlaneYZ()
+        {
+            float spacing =
+                m_GridSettings.MinorGridSpacing;
+            float major =
+                m_GridSettings.MajorGridSpacing;
+            for (float y = 0; y <= m_AxisLength; y += spacing)
+            {
+                bool isMajor = Mathf.Approximately(y % major, 0f);
+                CreateGridLine(
+                    new Vector3(0, y, 0),
+                    new Vector3(0, y, m_AxisLength),
+                    isMajor
+                );
+            }
+            for (float z = 0; z <= m_AxisLength; z += spacing)
+            {
+                bool isMajor = Mathf.Approximately(z % major, 0f);
+                CreateGridLine(
+                    new Vector3(0, 0, z),
+                    new Vector3(0, m_AxisLength, z),
+                    isMajor
+                );
+            }
+        }
+
+        private void CreateTickMarks()
+        {
+            float spacing =
+                m_GridSettings.MajorGridSpacing;
+
+            float tickSize = 0.02f;
+
+            // X Axis
+            for (
+                float x = 0;
+                x <= m_AxisLength;
+                x += spacing
+            )
+            {
+                CreateGridLine(
+                    new Vector3(x, 0, 0),
+                    new Vector3(x, -tickSize, 0),
+                    true
+                );
+            }
+
+            // Y Axis
+            for (
+                float y = 0;
+                y <= m_AxisLength;
+                y += spacing
+            )
+            {
+                CreateGridLine(
+                    new Vector3(0, y, 0),
+                    new Vector3(-tickSize, y, 0),
+                    true
+                );
+            }
+
+            // Z Axis
+            for (
+                float z = 0;
+                z <= m_AxisLength;
+                z += spacing
+            )
+            {
+                CreateGridLine(
+                    new Vector3(0, 0, z),
+                    new Vector3(-tickSize, 0, z),
+                    true
+                );
+            }
+        }
+
+        private void CreateTickLabel(
+            string text,
+            Vector3 position)
+        {
+            GameObject labelObj =
+                new GameObject("TickLabel");
+
+            labelObj.transform.SetParent(
+                m_AxesContainer,
+                false
+            );
+
+            labelObj.transform.localPosition =
+                position;
+
+            labelObj.transform.localScale =
+                Vector3.one * 0.01f;
+
+            Canvas canvas =
+                labelObj.AddComponent<Canvas>();
+
+            canvas.renderMode =
+                RenderMode.WorldSpace;
+
+            GameObject textObj =
+                new GameObject("Text");
+
+            textObj.transform.SetParent(
+                labelObj.transform,
+                false
+            );
+
+            textObj.transform.localPosition =
+                Vector3.zero;
+
+            TextMeshPro tmp =
+                textObj.AddComponent<TextMeshPro>();
+
+            tmp.text = text;
+            tmp.fontSize = 3f;
+            tmp.alignment =
+                TextAlignmentOptions.Center;
+
+            m_ActiveAxes.Add(labelObj);
+        }
+
+        private void CreateTickLabels(
+            Dataset dataset,
+            int xCol,
+            int yCol,
+            int zCol)
+        {
+            float spacing =
+                m_GridSettings.MajorGridSpacing;
+
+            // X axis labels
+            if (xCol >= 0 && xCol < dataset.ColumnCount)
+            {
+                DatasetColumn col =
+                    dataset.Columns[xCol];
+
+                for (float x = 0; x <= m_AxisLength; x += spacing)
+                {
+                    float value =
+                        col.MinValue +
+                        (x / m_AxisLength) *
+                        (col.MaxValue - col.MinValue);
+
+                    Debug.Log($"[ScatterplotVisualizer] X Axis: {col.Name} | Min={col.MinValue} | Max={col.MaxValue}");
+
+                    CreateTickLabel(
+                        value.ToString("F1"),
+                        new Vector3(
+                            x,
+                            -0.05f,
+                            0
+                        )
+                    );
+                }
+            }
+
+            // Y axis labels
+            if (yCol >= 0 && yCol < dataset.ColumnCount)
+            {
+                DatasetColumn col =
+                    dataset.Columns[yCol];
+
+                for (float y = 0; y <= m_AxisLength; y += spacing)
+                {
+                    float value =
+                        col.MinValue +
+                        (y / m_AxisLength) *
+                        (col.MaxValue - col.MinValue);
+
+                    Debug.Log($"[ScatterplotVisualizer] Y Axis: {col.Name} | Min={col.MinValue} | Max={col.MaxValue}");
+
+                    CreateTickLabel(
+                        value.ToString("F1"),
+                        new Vector3(
+                            -0.05f,
+                            y,
+                            0
+                        )
+                    );
+                }
+            }
+
+            // Z axis labels
+            if (zCol >= 0 && zCol < dataset.ColumnCount)
+            {
+                DatasetColumn col =
+                    dataset.Columns[zCol];
+
+                for (float z = 0; z <= m_AxisLength; z += spacing)
+                {
+                    float value =
+                        col.MinValue +
+                        (z / m_AxisLength) *
+                        (col.MaxValue - col.MinValue);
+                    Debug.Log($"[ScatterplotVisualizer] Z Axis: {col.Name} | Min={col.MinValue} | Max={col.MaxValue}");
+
+                    CreateTickLabel(
+                        value.ToString("F1"),
+                        new Vector3(
+                            -0.05f,
+                            0,
+                            z
+                        )
+                    );
+                }
+            }
         }
 
         private void CreateAxisLine(Vector3 start, Vector3 end, Color color, string name)
@@ -394,7 +694,7 @@ namespace DataViz
             m_ActiveAxes.Add(lineObj);
         }
 
-        private void CreateGridLine(Vector3 start, Vector3 end)
+        private void CreateGridLine(Vector3 start, Vector3 end, bool major = false)
         {
             GameObject lineObj = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
             lineObj.name = "GridLine";
@@ -403,14 +703,16 @@ namespace DataViz
             Vector3 direction = end - start;
             float distance = direction.magnitude;
             lineObj.transform.localPosition = start + direction / 2f;
-            lineObj.transform.localScale = new Vector3(0.003f, distance / 2f, 0.003f); // Thinner than axes
+            float thickness = major ? 0.006f : 0.002f; // Major lines are thicker
+            lineObj.transform.localScale = new Vector3(thickness, distance / 2f, thickness); // Thinner than axes
             lineObj.transform.localRotation = Quaternion.FromToRotation(Vector3.up, direction);
 
             Renderer r = lineObj.GetComponent<Renderer>();
             if (r != null)
             {
                 Material m = Instantiate(m_AxisMaterial);
-                m.color = new Color(1, 1, 1, 0.2f); // Faint white grid
+                if (m_GridSettings != null) { m.color = major ? m_GridSettings.MajorGridColor : m_GridSettings.MinorGridColor; }
+                else { m.color = new Color(1f, 1f, 1f, 0.1f); } // Default minor grid color
                 r.sharedMaterial = m;
             }
 
@@ -425,11 +727,6 @@ namespace DataViz
             labelObj.transform.SetParent(m_AxesContainer, false);
             labelObj.transform.localPosition = position;
             labelObj.transform.localScale = Vector3.one * 0.03f; // Small but readable scale
-
-            Canvas canvas = labelObj.AddComponent<Canvas>();
-            canvas.renderMode = RenderMode.WorldSpace;
-            RectTransform rect = labelObj.GetComponent<RectTransform>();
-            rect.sizeDelta = new Vector2(3, 1);
 
             GameObject textObj = new GameObject("Text");
             textObj.transform.SetParent(labelObj.transform, false);

@@ -1247,8 +1247,9 @@ MonoBehaviour:
   m_AxisLength: 1
   m_PointMaterial: {fileID: 0}
   m_AxisMaterial: {fileID: 0}
-  m_GPUPoints: {fileID: 0}
-  m_GPUInteractable: {fileID: 0}
+  m_GPUPoints: {fileID: 2541844292624454600}
+  m_GPUInteractable: {fileID: 5025899417572166804}
+  m_GridSettings: {fileID: 9183529469898256690}
 --- !u!114 &5025899417572166804
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4582,6 +4583,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5697782237908070993}
   - component: {fileID: 2541844292624454600}
+  - component: {fileID: 9183529469898256690}
   m_Layer: 0
   m_Name: CoordinateRoot
   m_TagString: Untagged
@@ -4619,6 +4621,25 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DataViz.ScatterplotInstancedRenderer
   PointMesh: {fileID: 2540817853737639666, guid: 080ad8ef2223242198a30df487d9bcbb, type: 3}
   PointMaterial: {fileID: -3963241562183589234, guid: 271d69ba92e5ec94eaa3779f0ea4ce47, type: 3}
+--- !u!114 &9183529469898256690
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6664611552399762023}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c36247d6e90e06341a58577b4c4de496, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DataViz.VisualizationGridSettings
+  ShowGridPlanes: 1
+  MajorGridSpacing: 0.5
+  MinorGridSpacing: 0.1
+  MajorGridColor: {r: 1, g: 1, b: 1, a: 0.3}
+  MinorGridColor: {r: 1, g: 1, b: 1, a: 0.1}
+  ShowTickMarks: 1
+  ShowValueLabels: 1
 --- !u!1 &6854937277955141389
 GameObject:
   m_ObjectHideFlags: 0

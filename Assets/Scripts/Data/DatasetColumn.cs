@@ -1,21 +1,18 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 
 [Serializable]
 public class DatasetColumn
 {
     public string Name;
-
     public DataValueType Type = DataValueType.Unknown;
 
     public float MinValue = float.MaxValue;
-
     public float MaxValue = float.MinValue;
 
     public HashSet<string> UniqueValues = new();
-
     private List<string> categoryList;
-
     private Dictionary<string, int> categoryLookup;
 
     public int UniqueCount => UniqueValues.Count;
@@ -29,34 +26,16 @@ public class DatasetColumn
         Type == DataValueType.Longitude ||
         Type == DataValueType.Altitude;
 
-    public bool IsCategorical =>
-        Type == DataValueType.Categorical;
-
-    public bool IsTemporal =>
-        Type == DataValueType.DateTime ||
-        Type == DataValueType.Duration;
-
-    public bool IsSpatial =>
-        Type == DataValueType.CoordinateX ||
-        Type == DataValueType.CoordinateY ||
-        Type == DataValueType.CoordinateZ ||
-        Type == DataValueType.Latitude ||
-        Type == DataValueType.Longitude ||
-        Type == DataValueType.Altitude;
+    public bool IsCategorical => Type == DataValueType.Categorical;
 
     public DatasetColumn(string name)
     {
         Name = name;
     }
 
-    /// <summary>
-    /// Finalizes metadata after import.
-    /// Builds lookup tables for category mapping.
-    /// </summary>
     public void FinalizeMetadata()
     {
         categoryList = new List<string>(UniqueValues);
-
         categoryLookup = new Dictionary<string, int>();
 
         for (int i = 0; i < categoryList.Count; i++)
@@ -65,14 +44,12 @@ public class DatasetColumn
         }
     }
 
-    /// <summary>
-    /// Convert a raw value into a normalized 0-1 float.
-    /// </summary>
     public float GetNormalizedValue(string rawValue)
     {
         if (IsNumeric)
         {
-            if (float.TryParse(rawValue, out float value))
+            // Use flexible parsing here as well
+            if (CSVImporter.TryParseFlexibleFloat(rawValue, out float value))
             {
                 float range = MaxValue - MinValue;
 
@@ -99,7 +76,7 @@ public class DatasetColumn
 
         if (Type == DataValueType.Boolean)
         {
-            return rawValue.ToLower() == "true" || rawValue == "1"
+            return rawValue.Equals("true", StringComparison.OrdinalIgnoreCase) || rawValue == "1"
                 ? 1f
                 : 0f;
         }
