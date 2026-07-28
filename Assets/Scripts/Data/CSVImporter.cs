@@ -133,7 +133,9 @@ public static class CSVImporter
     {
         foreach (var column in dataset.Columns)
         {
-            bool numeric = true;
+            int numericCount = 0;
+            int validRows = 0;
+
             int columnIndex = dataset.GetColumnIndex(column.Name);
 
             foreach (var row in dataset.Rows)
@@ -141,14 +143,22 @@ public static class CSVImporter
                 string raw = row.GetRawValue(columnIndex);
                 if (string.IsNullOrWhiteSpace(raw)) continue;
 
-                if (!TryParseFlexibleFloat(raw, out _))
+                validRows++;
+                if (TryParseFlexibleFloat(raw, out _))
                 {
-                    numeric = false;
-                    break;
+                    numericCount++;
                 }
             }
 
-            column.Type = numeric ? DataValueType.Numeric : DataValueType.Categorical;
+            // If at least 90% of valid entries are numbers, treat as Numeric
+            if (validRows > 0 && (float)numericCount / validRows >= 0.9f)
+            {
+                column.Type = DataValueType.Numeric;
+            }
+            else
+            {
+                column.Type = DataValueType.Categorical;
+            }
         }
     }
 

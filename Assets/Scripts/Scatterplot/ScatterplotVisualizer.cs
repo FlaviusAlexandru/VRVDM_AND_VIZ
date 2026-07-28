@@ -112,13 +112,110 @@ namespace DataViz
             // 1. Build Grid and Axes Visuals
             BuildAxesAndGrid(dataset, xCol, yCol, zCol);
 
-            // 2. Spawn Data Points
-            Color[] palette = new Color[]
+            // 2. Setup GPU Instanced Point Arrays
+            List<Vector3> positions = new List<Vector3>(dataset.RowCount);
+            List<Color> colors = new List<Color>(dataset.RowCount);
+
+            // Column references
+            DatasetColumn xColumn = (xCol >= 0 && xCol < dataset.ColumnCount) ? dataset.Columns[xCol] : null;
+            DatasetColumn yColumn = (yCol >= 0 && yCol < dataset.ColumnCount) ? dataset.Columns[yCol] : null;
+            DatasetColumn zColumn = (zCol >= 0 && zCol < dataset.ColumnCount) ? dataset.Columns[zCol] : null;
+            DatasetColumn colorColumn = (colorCol >= 0 && colorCol < dataset.ColumnCount) ? dataset.Columns[colorCol] : null;
+
+            if (colorColumn != null)
+            {
+                Debug.Log($"[Color Debug] Col Name: '{colorColumn.Name}' | Index: {colorCol} | Min: {colorColumn.MinValue} | Max: {colorColumn.MaxValue} | IsNumeric: {colorColumn.IsNumeric}");
+            }
+            else
+            {
+                Debug.LogWarning($"[Color Debug] colorColumn is NULL! colorCol index was: {colorCol}");
+            }
+
+            // Gather categorical values if color column is categorical
+            List<string> uniqueColorCategories = new List<string>();
+            if (colorColumn != null && colorColumn.IsCategorical)
+            {
+                uniqueColorCategories = new List<string>(colorColumn.UniqueValues);
+                Debug.Log($"[ScatterplotVisualizer] Found categorical column '{colorColumn.Name}' with {uniqueColorCategories.Count} unique values");
+            }
+
+            Color[] categoricalPalette = new Color[]
             {
                 Color.red, Color.blue, Color.green, Color.yellow, Color.cyan, Color.magenta,
                 new Color(1f, 0.5f, 0f), new Color(0.5f, 0f, 0.5f), new Color(0f, 0.5f, 0.5f),
                 new Color(0.7f, 0.2f, 0.2f), new Color(0.2f, 0.7f, 0.2f), new Color(0.2f, 0.2f, 0.7f)
             };
+
+            Vector3 basePosition = m_PointsContainer.position;
+
+            for (int i = 0; i < dataset.RowCount; i++)
+            {
+                DatasetRow row = dataset.Rows[i];
+
+                // 1. Calculate spatial positions
+                float xNorm = xColumn != null ? xColumn.GetNormalizedValue(row.GetRawValue(xCol)) : 0f;
+                float yNorm = yColumn != null ? yColumn.GetNormalizedValue(row.GetRawValue(yCol)) : 0f;
+                float zNorm = zColumn != null ? zColumn.GetNormalizedValue(row.GetRawValue(zCol)) : 0f;
+
+                Vector3 worldPos = basePosition + (new Vector3(xNorm, yNorm, zNorm) * m_AxisLength);
+                positions.Add(worldPos);
+
+                // 2. Calculate point color directly using row values
+                Color pointColor = Color.cyan;
+
+                if (colorColumn != null && colorCol >= 0 && colorCol < dataset.ColumnCount)
+                {
+                    string rawVal = row.GetRawValue(colorCol);
+
+                    if (colorColumn.IsNumeric)
+                    {
+                        // Safely compute normalized gradient directly using global column bounds
+                        float norm = 0.5f;
+                        if (float.TryParse(rawVal, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out float parsedVal))
+                        {
+                            float range = colorColumn.MaxValue - colorColumn.MinValue;
+                            if (range > 0.00001f)
+                            {
+                                norm = (parsedVal - colorColumn.MinValue) / range;
+                            }
+                        }
+
+                        norm = Mathf.Clamp01(norm);
+                        pointColor = Color.Lerp(Color.blue, Color.red, norm);
+                    }
+                    else if (colorColumn.IsCategorical)
+                    {
+                        int catIdx = uniqueColorCategories.IndexOf(rawVal);
+                        if (catIdx >= 0)
+                        {
+                            pointColor = categoricalPalette[catIdx % categoricalPalette.Length];
+                        }
+                    }
+                }
+
+                
+
+                colors.Add(pointColor);
+            }
+
+
+
+            m_GPUPoints.Build(
+                positions,
+                colors,
+                pointSize
+            );
+
+            // Also update the interactable with point data
+
+            if (m_GPUInteractable != null)
+            {
+                m_GPUInteractable.SetPointData(
+                    positions,
+                    colors,
+                    pointSize
+                );
+            }
 
             //TEMPORARILY COMMENTED OUT WHILE I TRY OUT GPU INSTANCING
             /*
@@ -228,123 +325,6 @@ namespace DataViz
                 m_ActivePoints.Add(pointObj);
             }
             */
-
-            // GPU Instanced Rendering
-            List<Vector3> positions = new();
-            List<Color> colors = new();
-
-            // Gather categorical values if color col is categorical
-            List<string> uniqueColorCategories = new();
-            if (colorCol >= 0 && colorCol < dataset.ColumnCount)
-            {
-                var column = dataset.Columns[colorCol];
-                if (column.IsCategorical)
-                {
-                    uniqueColorCategories = new List<string>(column.UniqueValues);
-                    Debug.Log($"[ScatterplotVisualizer] Found categorical column with {uniqueColorCategories.Count} unique values");
-                }
-                else
-                {
-                    Debug.Log($"[ScatterplotVisualizer] Color column is numeric, not categorical");
-                }
-            }
-
-            // Define categorical color palette
-            Color[] categoricalPalette = new Color[]
-            {
-                Color.red, Color.blue, Color.green, Color.yellow, Color.cyan, Color.magenta,
-                new Color(1f, 0.5f, 0f), new Color(0.5f, 0f, 0.5f), new Color(0f, 0.5f, 0.5f),
-                new Color(0.7f, 0.2f, 0.2f), new Color(0.2f, 0.7f, 0.2f), new Color(0.2f, 0.2f, 0.7f)
-            };
-
-            // Calculate the base position (same as the points container)
-            Vector3 basePosition = m_PointsContainer.position;
-
-            for (int i = 0; i < dataset.RowCount; i++)
-            {
-                DatasetRow row = dataset.Rows[i];
-
-                float xNorm =
-                    row.GetNormalizedValue(xCol);
-
-                float yNorm =
-                    row.GetNormalizedValue(yCol);
-
-                float zNorm =
-                    row.GetNormalizedValue(zCol);
-
-                // Calculate world position: base + normalized offset scaled by axis length
-                Vector3 worldPos = basePosition + (new Vector3(xNorm, yNorm, zNorm) * m_AxisLength);
-                positions.Add(worldPos);
-
-                Color pointColor = Color.cyan;
-
-                if (colorCol >= 0 && colorCol < dataset.ColumnCount)
-                {
-                    var meta =
-                        dataset.Columns[colorCol];
-
-                    if (meta.IsNumeric)
-                    {
-                        float norm =
-                            row.GetNormalizedValue(colorCol);
-
-                        pointColor =
-                            Color.Lerp(
-                                Color.blue,
-                                Color.red,
-                                norm
-                            );
-                    }
-                    else if (meta.IsCategorical)
-                    {
-                        string rawVal =
-                            row.GetRawValue(colorCol);
-
-                        int catIdx =
-                            uniqueColorCategories.IndexOf(rawVal);
-
-                        if (catIdx >= 0)
-                        {
-                            pointColor =
-                                categoricalPalette[
-                                    catIdx %
-                                    categoricalPalette.Length
-                                ];
-                        }
-                        else
-                        {
-                            Debug.LogWarning($"[ScatterplotVisualizer] Unknown category '{rawVal}' at index {i}");
-                        }
-                    }
-                    else
-                    {
-                        // No color column selected
-                        pointColor = Color.cyan;
-                    }
-                }
-                colors.Add(pointColor);
-            }
-
-        
-
-            m_GPUPoints.Build(
-                positions,
-                colors,
-                pointSize
-            );
-
-            // Also update the interactable with point data
-
-            if (m_GPUInteractable != null)
-            {
-                m_GPUInteractable.SetPointData(
-                    positions,
-                    colors,
-                    pointSize
-                );
-            }
-
 
         }
 
@@ -726,16 +706,17 @@ namespace DataViz
             GameObject labelObj = new GameObject(name);
             labelObj.transform.SetParent(m_AxesContainer, false);
             labelObj.transform.localPosition = position;
-            labelObj.transform.localScale = Vector3.one * 0.03f; // Small but readable scale
+            labelObj.transform.localScale = Vector3.one * 0.03f;
 
             GameObject textObj = new GameObject("Text");
             textObj.transform.SetParent(labelObj.transform, false);
-            TextMeshProUGUI tmpText = textObj.AddComponent<TextMeshProUGUI>();
-            tmpText.fontSize = 1;
+
+            // --- USE TextMeshPro (3D) INSTEAD OF TextMeshProUGUI ---
+            TextMeshPro tmpText = textObj.AddComponent<TextMeshPro>();
+            tmpText.fontSize = 3;
             tmpText.alignment = TextAlignmentOptions.Center;
             tmpText.color = Color.white;
 
-            // Display column name plus range if numeric
             if (column.IsNumeric)
             {
                 tmpText.text = $"{column.Name}\n[{column.MinValue:F1} to {column.MaxValue:F1}]";
@@ -745,15 +726,8 @@ namespace DataViz
                 tmpText.text = $"{column.Name}\n[{column.UniqueCount} cats]";
             }
 
-            RectTransform textRect = textObj.GetComponent<RectTransform>();
-            textRect.anchorMin = Vector2.zero;
-            textRect.anchorMax = Vector2.one;
-            textRect.sizeDelta = Vector2.zero;
-            textRect.anchoredPosition = Vector2.zero;
-
             m_ActiveAxes.Add(labelObj);
         }
-
         private void ClearPoints()
         {
             foreach (var p in m_ActivePoints)

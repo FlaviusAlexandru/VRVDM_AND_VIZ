@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using UnityEngine;
 
 [Serializable]
 public class DatasetColumn
@@ -48,7 +49,6 @@ public class DatasetColumn
     {
         if (IsNumeric)
         {
-            // Use flexible parsing here as well
             if (CSVImporter.TryParseFlexibleFloat(rawValue, out float value))
             {
                 float range = MaxValue - MinValue;
@@ -56,8 +56,12 @@ public class DatasetColumn
                 if (Math.Abs(range) < 0.00001f)
                     return 0f;
 
-                return (value - MinValue) / range;
+                // Clamp between 0 and 1 to prevent floating point overshoot
+                return Mathf.Clamp01((value - MinValue) / range);
             }
+
+            // Safe fallback for numeric columns with empty/null entries:
+            return 0f;
         }
 
         if (IsCategorical)
