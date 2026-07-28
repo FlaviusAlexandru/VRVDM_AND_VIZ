@@ -572,7 +572,7 @@ namespace DataViz
                 textObj.AddComponent<TextMeshPro>();
 
             tmp.text = text;
-            tmp.fontSize = 3f;
+            tmp.fontSize = 10f;
             tmp.alignment =
                 TextAlignmentOptions.Center;
 
