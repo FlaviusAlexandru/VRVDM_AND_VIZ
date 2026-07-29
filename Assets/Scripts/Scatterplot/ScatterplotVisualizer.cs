@@ -22,7 +22,7 @@ namespace DataViz
         private List<GameObject> m_ActivePoints = new();
         private List<GameObject> m_ActiveAxes = new();
 
-        public ScatterplotInstancedRenderer m_GPUPoints;
+        public ScatterplotParticleRenderer m_GPUPoints;
         public GPUPointInteractable m_GPUInteractable;
 
         public VisualizationGridSettings m_GridSettings;
@@ -51,7 +51,7 @@ namespace DataViz
                 m_AxisMaterial.color = Color.white;
             }
 
-            if (m_GPUPoints == null) { m_GPUPoints = GetComponent<ScatterplotInstancedRenderer>(); }
+            if (m_GPUPoints == null) { m_GPUPoints = GetComponent<ScatterplotParticleRenderer>(); }
             if (m_GPUInteractable == null) { m_GPUInteractable = GetComponent<GPUPointInteractable>(); }
             if (m_GPUInteractable != null) { m_GPUInteractable.m_Visualizer = this; }
 
@@ -153,38 +153,27 @@ namespace DataViz
                 DatasetRow row = dataset.Rows[i];
 
                 // 1. Calculate spatial positions
-                float xNorm = xColumn != null ? xColumn.GetNormalizedValue(row.GetRawValue(xCol)) : 0f;
-                float yNorm = yColumn != null ? yColumn.GetNormalizedValue(row.GetRawValue(yCol)) : 0f;
-                float zNorm = zColumn != null ? zColumn.GetNormalizedValue(row.GetRawValue(zCol)) : 0f;
+                float xNorm = xColumn != null ? row.GetNormalizedValue(xCol) : 0f;
+                float yNorm = yColumn != null ? row.GetNormalizedValue(yCol) : 0f;
+                float zNorm = zColumn != null ? row.GetNormalizedValue(zCol) : 0f;
 
                 Vector3 worldPos = basePosition + (new Vector3(xNorm, yNorm, zNorm) * m_AxisLength);
                 positions.Add(worldPos);
 
-                // 2. Calculate point color directly using row values
+                // 2. Calculate point color directly using pre-normalized row values
                 Color pointColor = Color.cyan;
 
                 if (colorColumn != null && colorCol >= 0 && colorCol < dataset.ColumnCount)
                 {
-                    string rawVal = row.GetRawValue(colorCol);
-
                     if (colorColumn.IsNumeric)
                     {
-                        // Safely compute normalized gradient directly using global column bounds
-                        float norm = 0.5f;
-                        if (float.TryParse(rawVal, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out float parsedVal))
-                        {
-                            float range = colorColumn.MaxValue - colorColumn.MinValue;
-                            if (range > 0.00001f)
-                            {
-                                norm = (parsedVal - colorColumn.MinValue) / range;
-                            }
-                        }
-
-                        norm = Mathf.Clamp01(norm);
+                        // Reuses pre-calculated 0-1 normalized value (handled safely during import)
+                        float norm = row.GetNormalizedValue(colorCol);
                         pointColor = Color.Lerp(Color.blue, Color.red, norm);
                     }
                     else if (colorColumn.IsCategorical)
                     {
+                        string rawVal = row.GetRawValue(colorCol);
                         int catIdx = uniqueColorCategories.IndexOf(rawVal);
                         if (catIdx >= 0)
                         {
@@ -192,8 +181,6 @@ namespace DataViz
                         }
                     }
                 }
-
-                
 
                 colors.Add(pointColor);
             }
