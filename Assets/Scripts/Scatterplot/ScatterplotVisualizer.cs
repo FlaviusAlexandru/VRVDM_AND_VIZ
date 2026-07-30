@@ -107,6 +107,7 @@ namespace DataViz
             int yCol = m_Manager.YColumnIndex;
             int zCol = m_Manager.ZColumnIndex;
             int colorCol = m_Manager.ColorColumnIndex;
+            int timeCol = m_Manager.TimeColumnIndex;
             float pointSize = m_Manager.PointSize;
 
             // 1. Build Grid and Axes Visuals
@@ -116,11 +117,32 @@ namespace DataViz
             List<Vector3> positions = new List<Vector3>(dataset.RowCount);
             List<Color> colors = new List<Color>(dataset.RowCount);
 
+            // Tracks, for each entry in positions/colors, which original
+            // dataset row it came from. Needed because time-filtering means
+            // positions[i] is NO LONGER guaranteed to be dataset.Rows[i] -
+            // GPUPointInteractable relies on this mapping for tooltips.
+            List<int> visibleRowIndices = new List<int>(dataset.RowCount);
+
             // Column references
             DatasetColumn xColumn = (xCol >= 0 && xCol < dataset.ColumnCount) ? dataset.Columns[xCol] : null;
             DatasetColumn yColumn = (yCol >= 0 && yCol < dataset.ColumnCount) ? dataset.Columns[yCol] : null;
             DatasetColumn zColumn = (zCol >= 0 && zCol < dataset.ColumnCount) ? dataset.Columns[zCol] : null;
             DatasetColumn colorColumn = (colorCol >= 0 && colorCol < dataset.ColumnCount) ? dataset.Columns[colorCol] : null;
+            DatasetColumn timeColumn = (timeCol >= 0 && timeCol < dataset.ColumnCount) ? dataset.Columns[timeCol] : null;
+
+            // Time filtering: TimeScrub (0-1) maps across the column's actual
+            // min/max range. We snap to the nearest whole step rather than
+            // requiring an exact float match, since real time values will
+            // rarely land exactly on the interpolated target - and discrete
+            // datasets like moving_clusters.csv use whole-number steps anyway.
+            bool timeFilterActive = timeColumn != null && timeColumn.IsNumeric;
+            int currentTimeStep = 0;
+
+            if (timeFilterActive)
+            {
+                float targetValue = Mathf.Lerp(timeColumn.MinValue, timeColumn.MaxValue, m_Manager.TimeScrub);
+                currentTimeStep = Mathf.RoundToInt(targetValue);
+            }
 
             if (colorColumn != null)
             {
@@ -152,28 +174,51 @@ namespace DataViz
             {
                 DatasetRow row = dataset.Rows[i];
 
+                // 0. Time filter - skip this row entirely if it doesn't
+                // belong to the currently-selected time step.
+                if (timeFilterActive)
+                {
+                    string rawTime = row.GetRawValue(timeCol);
+                    if (!float.TryParse(rawTime, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out float rawTimeValue)
+                        || Mathf.RoundToInt(rawTimeValue) != currentTimeStep)
+                    {
+                        continue;
+                    }
+                }
+
                 // 1. Calculate spatial positions
-                float xNorm = xColumn != null ? row.GetNormalizedValue(xCol) : 0f;
-                float yNorm = yColumn != null ? row.GetNormalizedValue(yCol) : 0f;
-                float zNorm = zColumn != null ? row.GetNormalizedValue(zCol) : 0f;
+                float xNorm = xColumn != null ? xColumn.GetNormalizedValue(row.GetRawValue(xCol)) : 0f;
+                float yNorm = yColumn != null ? yColumn.GetNormalizedValue(row.GetRawValue(yCol)) : 0f;
+                float zNorm = zColumn != null ? zColumn.GetNormalizedValue(row.GetRawValue(zCol)) : 0f;
 
                 Vector3 worldPos = basePosition + (new Vector3(xNorm, yNorm, zNorm) * m_AxisLength);
                 positions.Add(worldPos);
 
-                // 2. Calculate point color directly using pre-normalized row values
+                // 2. Calculate point color directly using row values
                 Color pointColor = Color.cyan;
 
                 if (colorColumn != null && colorCol >= 0 && colorCol < dataset.ColumnCount)
                 {
+                    string rawVal = row.GetRawValue(colorCol);
+
                     if (colorColumn.IsNumeric)
                     {
-                        // Reuses pre-calculated 0-1 normalized value (handled safely during import)
-                        float norm = row.GetNormalizedValue(colorCol);
+                        // Safely compute normalized gradient directly using global column bounds
+                        float norm = 0.5f;
+                        if (float.TryParse(rawVal, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out float parsedVal))
+                        {
+                            float range = colorColumn.MaxValue - colorColumn.MinValue;
+                            if (range > 0.00001f)
+                            {
+                                norm = (parsedVal - colorColumn.MinValue) / range;
+                            }
+                        }
+
+                        norm = Mathf.Clamp01(norm);
                         pointColor = Color.Lerp(Color.blue, Color.red, norm);
                     }
                     else if (colorColumn.IsCategorical)
                     {
-                        string rawVal = row.GetRawValue(colorCol);
                         int catIdx = uniqueColorCategories.IndexOf(rawVal);
                         if (catIdx >= 0)
                         {
@@ -182,7 +227,10 @@ namespace DataViz
                     }
                 }
 
+
+
                 colors.Add(pointColor);
+                visibleRowIndices.Add(i);
             }
 
 
@@ -200,7 +248,8 @@ namespace DataViz
                 m_GPUInteractable.SetPointData(
                     positions,
                     colors,
-                    pointSize
+                    pointSize,
+                    visibleRowIndices
                 );
             }
 
@@ -322,17 +371,17 @@ namespace DataViz
             CreateAxisLine(Vector3.zero, new Vector3(0, m_AxisLength, 0), Color.green, "Y-Axis");
             CreateAxisLine(Vector3.zero, new Vector3(0, 0, m_AxisLength), Color.blue, "Z-Axis");
 
-           if (m_GridSettings != null && m_GridSettings.ShowGridPlanes)
+            if (m_GridSettings != null && m_GridSettings.ShowGridPlanes)
             {
                 CreateGridPlaneXY();
                 CreateGridPlaneXZ();
                 CreateGridPlaneYZ();
             }
-           if (m_GridSettings != null && m_GridSettings.ShowTickMarks)
+            if (m_GridSettings != null && m_GridSettings.ShowTickMarks)
             {
                 CreateTickMarks();
             }
-           if (m_GridSettings != null && m_GridSettings.ShowValueLabels)
+            if (m_GridSettings != null && m_GridSettings.ShowValueLabels)
             {
                 CreateTickLabels(
                     dataset,
@@ -347,10 +396,10 @@ namespace DataViz
             CreateGridLine(new Vector3(0, m_AxisLength, 0), new Vector3(m_AxisLength, m_AxisLength, 0));
             CreateGridLine(new Vector3(0, 0, m_AxisLength), new Vector3(m_AxisLength, 0, m_AxisLength));
             CreateGridLine(new Vector3(m_AxisLength, 0, 0), new Vector3(m_AxisLength, 0, m_AxisLength));
-            
+
             CreateGridLine(new Vector3(0, m_AxisLength, 0), new Vector3(0, m_AxisLength, m_AxisLength));
             CreateGridLine(new Vector3(0, 0, m_AxisLength), new Vector3(0, m_AxisLength, m_AxisLength));
-            
+
             CreateGridLine(new Vector3(m_AxisLength, m_AxisLength, 0), new Vector3(m_AxisLength, m_AxisLength, m_AxisLength));
             CreateGridLine(new Vector3(0, m_AxisLength, m_AxisLength), new Vector3(m_AxisLength, m_AxisLength, m_AxisLength));
             CreateGridLine(new Vector3(m_AxisLength, 0, m_AxisLength), new Vector3(m_AxisLength, m_AxisLength, m_AxisLength));
@@ -358,10 +407,10 @@ namespace DataViz
             // Axis labels names and ranges
             if (xCol >= 0 && xCol < dataset.ColumnCount)
                 CreateAxisLabel(dataset.Columns[xCol], new Vector3(m_AxisLength / 2f, -0.1f, 0), "X_Label");
-            
+
             if (yCol >= 0 && yCol < dataset.ColumnCount)
                 CreateAxisLabel(dataset.Columns[yCol], new Vector3(-0.1f, m_AxisLength / 2f, 0), "Y_Label");
-            
+
             if (zCol >= 0 && zCol < dataset.ColumnCount)
                 CreateAxisLabel(dataset.Columns[zCol], new Vector3(0, -0.1f, m_AxisLength / 2f), "Z_Label");
         }
@@ -638,7 +687,7 @@ namespace DataViz
             GameObject lineObj = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
             lineObj.name = name;
             lineObj.transform.SetParent(m_AxesContainer, false);
-            
+
             // Set scale and rotation to bridge start and end
             Vector3 direction = end - start;
             float distance = direction.magnitude;

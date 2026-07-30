@@ -21,6 +21,7 @@ namespace DataViz
         private Camera m_MainCamera;
         private List<Vector3> m_PointPositions = new();
         private List<Color> m_PointColors = new();
+        private List<int> m_RowIndices = null; // maps positions[i] -> dataset.Rows[originalIndex]; null means identity mapping
         private int m_HoveredPointIndex = -1;
 
         private void Awake()
@@ -35,18 +36,35 @@ namespace DataViz
                 Destroy(m_ActiveTooltip);
                 m_ActiveTooltip = null;
             }
-            
+
             // Clear references to prevent memory leaks
             m_PointPositions.Clear();
             m_PointColors.Clear();
+            m_RowIndices = null;
             m_HoveredPointIndex = -1;
         }
 
-        public void SetPointData(List<Vector3> positions, List<Color> colors, float pointSize)
+        public void SetPointData(List<Vector3> positions, List<Color> colors, float pointSize, List<int> rowIndices = null)
         {
             m_PointPositions = positions;
             m_PointColors = colors;
             m_PointSize = pointSize;
+            m_RowIndices = rowIndices;
+        }
+
+        /// <summary>
+        /// Resolves a position-list index back to its original DatasetRow index.
+        /// When no filtering is active (m_RowIndices is null), this is the identity
+        /// mapping - positions[i] really is dataset.Rows[i].
+        /// </summary>
+        private int ResolveRowIndex(int pointIndex)
+        {
+            if (m_RowIndices != null && pointIndex >= 0 && pointIndex < m_RowIndices.Count)
+            {
+                return m_RowIndices[pointIndex];
+            }
+
+            return pointIndex;
         }
 
         private void Update()
@@ -143,7 +161,8 @@ namespace DataViz
                 return;
 
             Dataset dataset = m_Visualizer.m_Manager.LoadedDataset;
-            DatasetRow row = dataset.Rows[pointIndex];
+            int rowIndex = ResolveRowIndex(pointIndex);
+            DatasetRow row = dataset.Rows[rowIndex];
 
             int xCol = m_Visualizer.m_Manager.XColumnIndex;
             int yCol = m_Visualizer.m_Manager.YColumnIndex;
@@ -168,7 +187,7 @@ namespace DataViz
             // Build tooltip text
             if (m_TooltipText != null)
             {
-                string text = $"<b>Row #{pointIndex + 1}</b>\n";
+                string text = $"<b>Row #{rowIndex + 1}</b>\n";
 
                 if (xCol >= 0 && xCol < dataset.ColumnCount)
                     text += $"<color=#FF4444>X ({dataset.Columns[xCol].Name}):</color> {row.GetRawValue(xCol)}\n";

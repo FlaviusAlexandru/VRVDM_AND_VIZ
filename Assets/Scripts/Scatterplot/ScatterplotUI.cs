@@ -20,6 +20,13 @@ namespace DataViz
         public Slider m_PointSizeSlider;
         public TextMeshProUGUI m_PointSizeValueText;
 
+        [Header("Temporal Controls")]
+        public TMP_Dropdown m_TimeColumnDropdown;
+        public Slider m_TimeScrubSlider;
+        public TextMeshProUGUI m_TimeScrubValueText;
+        public Button m_PlayPauseButton;
+        public TextMeshProUGUI m_PlayPauseButtonText;
+
         private List<string> m_AvailableDatasets = new();
         private bool m_IsUpdatingUI = false;
 
@@ -49,6 +56,15 @@ namespace DataViz
 
             if (m_PointSizeSlider != null)
                 m_PointSizeSlider.onValueChanged.AddListener(OnPointSizeUIChanged);
+
+            if (m_TimeColumnDropdown != null)
+                m_TimeColumnDropdown.onValueChanged.AddListener(OnTimeColumnUIChanged);
+
+            if (m_TimeScrubSlider != null)
+                m_TimeScrubSlider.onValueChanged.AddListener(OnTimeScrubUIChanged);
+
+            if (m_PlayPauseButton != null)
+                m_PlayPauseButton.onClick.AddListener(OnPlayPauseButtonClicked);
 
             // Sync with Manager updates
             if (m_Manager != null)
@@ -128,6 +144,14 @@ namespace DataViz
             colorOptions.AddRange(columns);
             m_ColorColumnDropdown.AddOptions(colorOptions);
 
+            if (m_TimeColumnDropdown != null)
+            {
+                m_TimeColumnDropdown.ClearOptions();
+                List<string> timeOptions = new() { "None (Static)" };
+                timeOptions.AddRange(columns);
+                m_TimeColumnDropdown.AddOptions(timeOptions);
+            }
+
             SyncUIWithManager();
 
 
@@ -162,6 +186,19 @@ namespace DataViz
             {
                 m_PointSizeValueText.text = m_Manager.PointSize.ToString("F3");
             }
+
+            // Sync Time controls
+            if (m_TimeColumnDropdown != null)
+                m_TimeColumnDropdown.value = m_Manager.TimeColumnIndex + 1; // +1 due to "None" option
+
+            if (m_TimeScrubSlider != null)
+                m_TimeScrubSlider.value = m_Manager.TimeScrub;
+
+            if (m_TimeScrubValueText != null)
+                m_TimeScrubValueText.text = m_Manager.TimeScrub.ToString("P0");
+
+            if (m_PlayPauseButtonText != null)
+                m_PlayPauseButtonText.text = m_Manager.IsPlaying ? "Pause" : "Play";
 
             m_IsUpdatingUI = false;
         }
@@ -203,6 +240,24 @@ namespace DataViz
         {
             if (m_IsUpdatingUI || m_Manager == null) return;
             m_Manager.RequestPointSizeRpc(val);
+        }
+
+        private void OnTimeColumnUIChanged(int idx)
+        {
+            if (m_IsUpdatingUI || m_Manager == null) return;
+            m_Manager.RequestTimeColumnRpc(idx - 1); // -1 maps 0 ("None") to -1 (disabled)
+        }
+
+        private void OnTimeScrubUIChanged(float val)
+        {
+            if (m_IsUpdatingUI || m_Manager == null) return;
+            m_Manager.RequestTimeScrubRpc(val);
+        }
+
+        private void OnPlayPauseButtonClicked()
+        {
+            if (m_Manager == null) return;
+            m_Manager.RequestPlaybackToggleRpc(!m_Manager.IsPlaying);
         }
 
         #endregion

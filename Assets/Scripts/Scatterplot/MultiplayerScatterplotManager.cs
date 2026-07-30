@@ -18,6 +18,13 @@ namespace DataViz
         public int ColorColumnIndex = -1;
         public float PointSize = 0.1f;
 
+        [Header("Temporal Settings")]
+        public int TimeColumnIndex = -1;
+        [Range(0f, 1f)]
+        public float TimeScrub = 0f;
+        public bool IsPlaying = false;
+        public float PlaybackSpeed = 0.25f; // scrub units (0-1) per second
+
         [Header("Loaded Dataset")]
         public Dataset LoadedDataset;
 
@@ -110,6 +117,9 @@ namespace DataViz
                 );
 
                 ColorColumnIndex = -1;
+                TimeColumnIndex = -1;
+                TimeScrub = 0f;
+                IsPlaying = false;
 
                 OnPlotSettingsChanged?.Invoke();
             }
@@ -142,6 +152,48 @@ namespace DataViz
         public void RequestPointSizeRpc(float size)
         {
             PointSize = Mathf.Clamp(size, 0, 1);
+            OnPlotSettingsChanged?.Invoke();
+        }
+
+        public void RequestTimeColumnRpc(int columnIndex)
+        {
+            TimeColumnIndex = columnIndex;
+            IsPlaying = false; // stop any running playback when the column changes
+            OnPlotSettingsChanged?.Invoke();
+        }
+
+        public void RequestTimeScrubRpc(float normalizedValue)
+        {
+            TimeScrub = Mathf.Clamp01(normalizedValue);
+            OnPlotSettingsChanged?.Invoke();
+        }
+
+        public void RequestPlaybackToggleRpc(bool isPlaying)
+        {
+            IsPlaying = isPlaying;
+
+            // If pressing play after having reached the end, loop back to the start
+            if (IsPlaying && TimeScrub >= 1f)
+            {
+                TimeScrub = 0f;
+            }
+
+            OnPlotSettingsChanged?.Invoke();
+        }
+
+        private void Update()
+        {
+            if (!IsPlaying || TimeColumnIndex < 0)
+                return;
+
+            TimeScrub += PlaybackSpeed * Time.deltaTime;
+
+            if (TimeScrub >= 1f)
+            {
+                TimeScrub = 1f;
+                IsPlaying = false; // stop at the end rather than looping silently
+            }
+
             OnPlotSettingsChanged?.Invoke();
         }
     }

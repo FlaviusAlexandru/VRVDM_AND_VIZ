@@ -9829,6 +9829,10 @@ MonoBehaviour:
   ZColumnIndex: 2
   ColorColumnIndex: -1
   PointSize: 0.02
+  TimeColumnIndex: -1
+  TimeScrub: 0
+  IsPlaying: 0
+  PlaybackSpeed: 0.25
   LoadedDataset:
     Name: 
     Columns: []
@@ -13346,6 +13350,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 551598371803360085, guid: 2dcbcf48fb8a01b4299e9a5eff97f671, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 721522099867457275, guid: 2dcbcf48fb8a01b4299e9a5eff97f671, type: 3}
+      propertyPath: m_MaxValue
+      value: 0.1
+      objectReference: {fileID: 0}
     - target: {fileID: 1873351920365765372, guid: 2dcbcf48fb8a01b4299e9a5eff97f671, type: 3}
       propertyPath: m_Name
       value: DataVisualizationTable
@@ -13359,9 +13371,21 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 2079837856}
     - target: {fileID: 2541844292624454600, guid: 2dcbcf48fb8a01b4299e9a5eff97f671, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2541844292624454600, guid: 2dcbcf48fb8a01b4299e9a5eff97f671, type: 3}
       propertyPath: PointMaterial
       value: 
       objectReference: {fileID: 2100000, guid: 7bfac30bf8796c6439b1cf9d98550840, type: 2}
+    - target: {fileID: 3395483589143277261, guid: 2dcbcf48fb8a01b4299e9a5eff97f671, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3480262140954361385, guid: 2dcbcf48fb8a01b4299e9a5eff97f671, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3734440681277210762, guid: 2dcbcf48fb8a01b4299e9a5eff97f671, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -13415,6 +13439,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6665569046209481029, guid: 2dcbcf48fb8a01b4299e9a5eff97f671, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6968268308076923711, guid: 2dcbcf48fb8a01b4299e9a5eff97f671, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
@@ -15079,7 +15107,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d6854239f3b2d648ba508bdc2961b3d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DataViz.ScatterplotParticleRenderer
-  PointMaterial: {fileID: 0}
+  PointMaterial: {fileID: 2100000, guid: 2b11ac5868e2f6747b0d4543c3fe4a11, type: 2}
 --- !u!199 &2079837857
 ParticleSystemRenderer:
   serializedVersion: 7
