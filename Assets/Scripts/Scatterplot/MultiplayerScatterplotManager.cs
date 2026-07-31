@@ -25,6 +25,9 @@ namespace DataViz
         public bool IsPlaying = false;
         public float PlaybackSpeed = 0.25f; // scrub units (0-1) per second
 
+        [Header("Interaction Settings")]
+        public bool ShowTooltips = false;
+
         [Header("Loaded Dataset")]
         public Dataset LoadedDataset;
 
@@ -55,33 +58,59 @@ namespace DataViz
 
         private void Start()
         {
-            string[] csvFiles = Directory.GetFiles(
-                Application.streamingAssetsPath,
-                "*.csv"
-            );
-
+            // Check for processed datasets first
+            string processedDataPath = Path.Combine(Application.dataPath, "StreamingAssetsRawData", "ProcessedData");
+            
+            if (Directory.Exists(processedDataPath))
+            {
+                string[] processedFiles = Directory.GetFiles(processedDataPath, "*.dataset");
+                
+                if (processedFiles.Length > 0)
+                {
+                    CurrentDatasetName = Path.GetFileName(processedFiles[0]);
+                    LoadLocalDataset(CurrentDatasetName);
+                    return;
+                }
+            }
+            
+            // Fallback to raw CSV files
+            string rawDataPath = Path.Combine(Application.dataPath, "StreamingAssetsRawData");
+            
+            if (Directory.Exists(rawDataPath))
+            {
+                string[] rawCsvFiles = Directory.GetFiles(rawDataPath, "*.csv");
+                
+                if (rawCsvFiles.Length > 0)
+                {
+                    CurrentDatasetName = Path.GetFileName(rawCsvFiles[0]).Replace(".csv", ".dataset");
+                    LoadLocalDataset(CurrentDatasetName);
+                    return;
+                }
+            }
+            
+            // Final fallback to regular streaming assets
+            string[] csvFiles = Directory.GetFiles(Application.streamingAssetsPath, "*.csv");
+            
             if (csvFiles.Length > 0)
             {
-                CurrentDatasetName = Path.GetFileName(csvFiles[0]);
+                CurrentDatasetName = Path.GetFileName(csvFiles[0]).Replace(".csv", ".dataset");
                 LoadLocalDataset(CurrentDatasetName);
             }
             else
             {
-                Debug.LogError("No CSV files found in StreamingAssets.");
+                Debug.LogError("No dataset files found in any expected directory.");
             }
         }
 
         public void LoadLocalDataset(string fileName)
         {
-            string path = Path.Combine(Application.streamingAssetsPath, fileName);
-
-            if (!File.Exists(path))
+            // Try to load as processed dataset first
+            if (!fileName.EndsWith(".dataset"))
             {
-                Debug.LogError($"Dataset file not found: {path}");
-                return;
+                fileName = fileName.Replace(".csv", ".dataset");
             }
 
-            LoadedDataset = CSVImporter.Load(path);
+            LoadedDataset = BinaryImporter.Load(fileName);
 
             if (LoadedDataset != null)
             {
@@ -151,7 +180,7 @@ namespace DataViz
 
         public void RequestPointSizeRpc(float size)
         {
-            PointSize = Mathf.Clamp(size, 0, 1);
+            PointSize = Mathf.Clamp(size, 0f, 0.1f);
             OnPlotSettingsChanged?.Invoke();
         }
 
@@ -178,6 +207,12 @@ namespace DataViz
                 TimeScrub = 0f;
             }
 
+            OnPlotSettingsChanged?.Invoke();
+        }
+
+        public void RequestTooltipsToggleRpc(bool showTooltips)
+        {
+            ShowTooltips = showTooltips;
             OnPlotSettingsChanged?.Invoke();
         }
 

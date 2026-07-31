@@ -72,6 +72,22 @@ namespace DataViz
             if (m_Visualizer == null || m_PointPositions.Count == 0)
                 return;
 
+            bool tooltipsEnabled = m_Visualizer.m_Manager == null || m_Visualizer.m_Manager.ShowTooltips;
+
+            if (!tooltipsEnabled)
+            {
+                // Make sure a tooltip that was already showing gets hidden
+                // the moment the setting is switched off, rather than
+                // lingering until the next hover change.
+                if (m_HoveredPointIndex >= 0)
+                {
+                    m_HoveredPointIndex = -1;
+                    HideTooltip();
+                }
+
+                return;
+            }
+
             // Get ray from camera
             Ray ray = GetInteractionRay();
 

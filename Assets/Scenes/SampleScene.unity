@@ -9833,6 +9833,7 @@ MonoBehaviour:
   TimeScrub: 0
   IsPlaying: 0
   PlaybackSpeed: 0.25
+  ShowTooltips: 0
   LoadedDataset:
     Name: 
     Columns: []
@@ -13358,9 +13359,17 @@ PrefabInstance:
       propertyPath: m_MaxValue
       value: 0.1
       objectReference: {fileID: 0}
+    - target: {fileID: 1694983251947195298, guid: 2dcbcf48fb8a01b4299e9a5eff97f671, type: 3}
+      propertyPath: m_Name
+      value: TooltipsToggle
+      objectReference: {fileID: 0}
     - target: {fileID: 1873351920365765372, guid: 2dcbcf48fb8a01b4299e9a5eff97f671, type: 3}
       propertyPath: m_Name
       value: DataVisualizationTable
+      objectReference: {fileID: 0}
+    - target: {fileID: 2071477754691458980, guid: 2dcbcf48fb8a01b4299e9a5eff97f671, type: 3}
+      propertyPath: m_IsOn
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2448664065147734841, guid: 2dcbcf48fb8a01b4299e9a5eff97f671, type: 3}
       propertyPath: m_Manager
@@ -13394,6 +13403,10 @@ PrefabInstance:
       propertyPath: m_Manager
       value: 
       objectReference: {fileID: 1281639931}
+    - target: {fileID: 4267980522808493216, guid: 2dcbcf48fb8a01b4299e9a5eff97f671, type: 3}
+      propertyPath: m_TooltipsToggle
+      value: 
+      objectReference: {fileID: 1879005430}
     - target: {fileID: 4397400736846651653, guid: 2dcbcf48fb8a01b4299e9a5eff97f671, type: 3}
       propertyPath: m_Name
       value: UINook
@@ -13468,6 +13481,17 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 1708308382}
   m_SourcePrefab: {fileID: 100100000, guid: 2dcbcf48fb8a01b4299e9a5eff97f671, type: 3}
+--- !u!114 &1879005430 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2071477754691458980, guid: 2dcbcf48fb8a01b4299e9a5eff97f671, type: 3}
+  m_PrefabInstance: {fileID: 1879005429}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9085046f02f69544eb97fd06b6048fe2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Toggle
 --- !u!1 &1881474691
 GameObject:
   m_ObjectHideFlags: 0

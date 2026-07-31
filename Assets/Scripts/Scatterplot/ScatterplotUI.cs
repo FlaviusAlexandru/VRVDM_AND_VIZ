@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using TMPro;
@@ -26,6 +27,9 @@ namespace DataViz
         public TextMeshProUGUI m_TimeScrubValueText;
         public Button m_PlayPauseButton;
         public TextMeshProUGUI m_PlayPauseButtonText;
+
+        [Header("Interaction Controls")]
+        public Toggle m_TooltipsToggle;
 
         private List<string> m_AvailableDatasets = new();
         private bool m_IsUpdatingUI = false;
@@ -65,6 +69,9 @@ namespace DataViz
 
             if (m_PlayPauseButton != null)
                 m_PlayPauseButton.onClick.AddListener(OnPlayPauseButtonClicked);
+
+            if (m_TooltipsToggle != null)
+                m_TooltipsToggle.onValueChanged.AddListener(OnTooltipsToggleUIChanged);
 
             // Sync with Manager updates
             if (m_Manager != null)
@@ -200,6 +207,10 @@ namespace DataViz
             if (m_PlayPauseButtonText != null)
                 m_PlayPauseButtonText.text = m_Manager.IsPlaying ? "Pause" : "Play";
 
+            // Sync tooltip toggle
+            if (m_TooltipsToggle != null)
+                m_TooltipsToggle.isOn = m_Manager.ShowTooltips;
+
             m_IsUpdatingUI = false;
         }
 
@@ -258,6 +269,12 @@ namespace DataViz
         {
             if (m_Manager == null) return;
             m_Manager.RequestPlaybackToggleRpc(!m_Manager.IsPlaying);
+        }
+
+        private void OnTooltipsToggleUIChanged(bool isOn)
+        {
+            if (m_IsUpdatingUI || m_Manager == null) return;
+            m_Manager.RequestTooltipsToggleRpc(isOn);
         }
 
         #endregion

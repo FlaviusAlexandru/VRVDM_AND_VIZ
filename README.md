@@ -30,7 +30,9 @@ Assets/
 │   │   ├── Dataset.cs              # Core data structure
 │   │   ├── DatasetRow.cs           # Row data management
 │   │   ├── DatasetColumn.cs        # Column metadata and type inference
-│   │   ├── CSVImporter.cs          # CSV data import and parsing
+│   │   ├── CSVImporter.cs          # CSV data import and parsing (legacy)
+│   │   ├── BinaryImporter.cs       # Fast binary data import
+│   │   ├── preprocess_csv.py       # Python preprocessing script
 │   │   └── DatasetManager.cs       # Dataset singleton manager
 │   └── Scatterplot/
 │       ├── ScatterplotVisualizer.cs    # Main visualization controller
@@ -41,8 +43,11 @@ Assets/
 │       └── DataPointInteractable.cs     # Individual point interaction
 ├── Prefabs/
 │   └── DataVisualizationTable.prefab  # Main visualization prefab
-└── StreamingAssets/
-    └── *.csv                          # Dataset files
+└── Assets/
+    └── StreamingAssetsRawData/
+        ├── *.csv                      # Original CSV files
+        └── ProcessedData/            # Pre-processed JSON files
+            └── *.dataset
 ```
 
 ## Setup Instructions
@@ -53,10 +58,31 @@ Assets/
 - Wait for Unity to import packages and compile scripts
 
 ### 2. Dataset Preparation
-Place your CSV files in the `StreamingAssets/` folder. The system supports:
-- Numeric columns (for X, Y, Z axes)
-- Categorical columns (for color mapping)
-- Automatic type inference on import
+The system uses a two-step data loading process for optimal performance:
+
+**Step 1: Raw Data Placement**
+- Place your CSV files in `Assets/StreamingAssetsRawData/` folder
+- The system supports:
+  - Numeric columns (for X, Y, Z axes)
+  - Categorical columns (for color mapping)
+  - Automatic type inference
+
+**Step 2: Data Preprocessing**
+- Run the Python preprocessing script: `Assets/Scripts/Data/preprocess_csv.py`
+- This script uses pandas to efficiently process CSV files
+- Processed data is saved to `Assets/StreamingAssetsRawData/ProcessedData/` as JSON
+- Unity loads from processed data for instant loading (15-20 seconds → <1 second)
+
+**To preprocess data:**
+```bash
+python Assets/Scripts/Data/preprocess_csv.py
+```
+
+**Workflow:**
+1. Add/update CSV files in `Assets/StreamingAssetsRawData/`
+2. Run preprocessing script
+3. Unity automatically loads from processed data
+4. For new datasets, repeat steps 1-2
 
 ### 3. XR Configuration
 - Navigate to `Project Settings > XR > Plug-in Management`
