@@ -101,8 +101,41 @@ namespace DataViz
             m_AvailableDatasets.Clear();
             m_DatasetDropdown.ClearOptions();
 
+            // Check for columnar datasets first
+            string processedDataPath = Path.Combine(Application.dataPath, "StreamingAssetsRawData", "ProcessedData");
+            if (Directory.Exists(processedDataPath))
+            {
+                string[] columnarFiles = Directory.GetFiles(processedDataPath, "*.cdataset");
+                foreach (string file in columnarFiles)
+                {
+                    m_AvailableDatasets.Add(Path.GetFileName(file));
+                }
+            }
+
+            // Fallback to legacy processed datasets
+            if (Directory.Exists(processedDataPath) && m_AvailableDatasets.Count == 0)
+            {
+                string[] processedFiles = Directory.GetFiles(processedDataPath, "*.dataset");
+                foreach (string file in processedFiles)
+                {
+                    m_AvailableDatasets.Add(Path.GetFileName(file));
+                }
+            }
+
+            // Fallback to raw CSV files
+            string rawDataPath = Path.Combine(Application.dataPath, "StreamingAssetsRawData");
+            if (Directory.Exists(rawDataPath) && m_AvailableDatasets.Count == 0)
+            {
+                string[] csvFiles = Directory.GetFiles(rawDataPath, "*.csv");
+                foreach (string file in csvFiles)
+                {
+                    m_AvailableDatasets.Add(Path.GetFileName(file));
+                }
+            }
+
+            // Final fallback to streaming assets
             string saPath = Application.streamingAssetsPath;
-            if (Directory.Exists(saPath))
+            if (Directory.Exists(saPath) && m_AvailableDatasets.Count == 0)
             {
                 string[] files = Directory.GetFiles(saPath, "*.csv");
                 foreach (string file in files)
@@ -111,7 +144,7 @@ namespace DataViz
                 }
             }
 
-            // Fallback default in case streaming assets is empty
+            // Fallback default in case no files found
             if (m_AvailableDatasets.Count == 0)
             {
                 m_AvailableDatasets.Add("iris.csv");
@@ -220,6 +253,13 @@ namespace DataViz
         {
             if (m_IsUpdatingUI || m_Manager == null) return;
             string selectedFile = m_AvailableDatasets[idx];
+            
+            // Handle both .cdataset and .csv extensions
+            if (selectedFile.EndsWith(".csv"))
+            {
+                selectedFile = selectedFile.Replace(".csv", ".cdataset");
+            }
+            
             m_Manager.RequestLoadDatasetRpc(selectedFile);
         }
 

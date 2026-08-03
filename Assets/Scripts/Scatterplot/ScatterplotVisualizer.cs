@@ -102,7 +102,12 @@ namespace DataViz
             if (m_Manager == null || m_Manager.LoadedDataset == null)
                 return;
 
-            Dataset dataset = m_Manager.LoadedDataset;
+            DatasetColumnar dataset = m_Manager.LoadedDataset as DatasetColumnar;
+            if (dataset == null)
+            {
+                Debug.LogError("ScatterplotVisualizer requires DatasetColumnar. Current dataset is not columnar.");
+                return;
+            }
             int xCol = m_Manager.XColumnIndex;
             int yCol = m_Manager.YColumnIndex;
             int zCol = m_Manager.ZColumnIndex;
@@ -172,46 +177,40 @@ namespace DataViz
 
             for (int i = 0; i < dataset.RowCount; i++)
             {
-                DatasetRow row = dataset.Rows[i];
-
                 // 0. Time filter - skip this row entirely if it doesn't
                 // belong to the currently-selected time step.
                 if (timeFilterActive)
                 {
-                    string rawTime = row.GetRawValue(timeCol);
-                    if (!float.TryParse(rawTime, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out float rawTimeValue)
-                        || Mathf.RoundToInt(rawTimeValue) != currentTimeStep)
+                    float rawTimeValue = dataset.GetNumericValue(i, timeCol);
+                    if (Mathf.RoundToInt(rawTimeValue) != currentTimeStep)
                     {
                         continue;
                     }
                 }
 
-                // 1. Calculate spatial positions
-                float xNorm = xColumn != null ? xColumn.GetNormalizedValue(row.GetRawValue(xCol)) : 0f;
-                float yNorm = yColumn != null ? yColumn.GetNormalizedValue(row.GetRawValue(yCol)) : 0f;
-                float zNorm = zColumn != null ? zColumn.GetNormalizedValue(row.GetRawValue(zCol)) : 0f;
+                // 1. Calculate spatial positions using columnar data
+                float xNorm = xColumn != null ? dataset.GetNormalizedValue(i, xCol) : 0f;
+                float yNorm = yColumn != null ? dataset.GetNormalizedValue(i, yCol) : 0f;
+                float zNorm = zColumn != null ? dataset.GetNormalizedValue(i, zCol) : 0f;
 
                 Vector3 worldPos = basePosition + (new Vector3(xNorm, yNorm, zNorm) * m_AxisLength);
                 positions.Add(worldPos);
 
-                // 2. Calculate point color directly using row values
+                // 2. Calculate point color directly using columnar data
                 Color pointColor = Color.cyan;
 
                 if (colorColumn != null && colorCol >= 0 && colorCol < dataset.ColumnCount)
                 {
-                    string rawVal = row.GetRawValue(colorCol);
-
                     if (colorColumn.IsNumeric)
                     {
                         // Safely compute normalized gradient directly using global column bounds
+                        float rawVal = dataset.GetNumericValue(i, colorCol);
+                        float range = colorColumn.MaxValue - colorColumn.MinValue;
                         float norm = 0.5f;
-                        if (float.TryParse(rawVal, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out float parsedVal))
+                        
+                        if (range > 0.00001f)
                         {
-                            float range = colorColumn.MaxValue - colorColumn.MinValue;
-                            if (range > 0.00001f)
-                            {
-                                norm = (parsedVal - colorColumn.MinValue) / range;
-                            }
+                            norm = (rawVal - colorColumn.MinValue) / range;
                         }
 
                         norm = Mathf.Clamp01(norm);
@@ -219,6 +218,7 @@ namespace DataViz
                     }
                     else if (colorColumn.IsCategorical)
                     {
+                        string rawVal = dataset.GetCategoryValue(i, colorCol);
                         int catIdx = uniqueColorCategories.IndexOf(rawVal);
                         if (catIdx >= 0)
                         {
@@ -226,8 +226,6 @@ namespace DataViz
                         }
                     }
                 }
-
-
 
                 colors.Add(pointColor);
                 visibleRowIndices.Add(i);
@@ -364,7 +362,7 @@ namespace DataViz
 
         }
 
-        private void BuildAxesAndGrid(Dataset dataset, int xCol, int yCol, int zCol)
+        private void BuildAxesAndGrid(DatasetColumnar dataset, int xCol, int yCol, int zCol)
         {
             // Build X, Y, Z Axis cylinders
             CreateAxisLine(Vector3.zero, new Vector3(m_AxisLength, 0, 0), Color.red, "X-Axis");
@@ -596,7 +594,7 @@ namespace DataViz
         }
 
         private void CreateTickLabels(
-            Dataset dataset,
+            DatasetColumnar dataset,
             int xCol,
             int yCol,
             int zCol)

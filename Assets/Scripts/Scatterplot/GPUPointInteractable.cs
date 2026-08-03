@@ -176,9 +176,15 @@ namespace DataViz
                 m_Visualizer.m_Manager.LoadedDataset == null)
                 return;
 
-            Dataset dataset = m_Visualizer.m_Manager.LoadedDataset;
+            DatasetColumnar dataset = m_Visualizer.m_Manager.LoadedDataset as DatasetColumnar;
+            if (dataset == null)
+            {
+                Debug.LogError("GPUPointInteractable requires DatasetColumnar");
+                return;
+            }
+
             int rowIndex = ResolveRowIndex(pointIndex);
-            DatasetRow row = dataset.Rows[rowIndex];
+            DatasetRowView row = dataset.GetRow(rowIndex);
 
             int xCol = m_Visualizer.m_Manager.XColumnIndex;
             int yCol = m_Visualizer.m_Manager.YColumnIndex;
