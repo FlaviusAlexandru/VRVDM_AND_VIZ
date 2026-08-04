@@ -30,8 +30,8 @@ class ColumnarDatasetProcessor:
             project_root = script_dir.parent.parent.parent  # Go up to project root
         
         self.project_root = Path(project_root)
-        self.raw_data_dir = self.project_root / "Assets" / "StreamingAssetsRawData"
-        self.processed_data_dir = self.project_root / "Assets" / "StreamingAssetsRawData" / "ProcessedData"
+        self.raw_data_dir = self.project_root / "Assets" / "StreamingAssets" / "DataCSV"
+        self.processed_data_dir = self.project_root / "Assets" / "StreamingAssets" / "DataCSV" / "ProcessedData"
         
         # Create directories if they don't exist
         self.raw_data_dir.mkdir(parents=True, exist_ok=True)

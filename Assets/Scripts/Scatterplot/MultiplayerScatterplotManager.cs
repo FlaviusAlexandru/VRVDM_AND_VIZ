@@ -60,7 +60,7 @@ namespace DataViz
         private void Start()
         {
             // Check for columnar processed datasets first
-            string processedDataPath = Path.Combine(Application.dataPath, "StreamingAssetsRawData", "ProcessedData");
+            string processedDataPath = Path.Combine(Application.streamingAssetsPath, "DataCSV", "ProcessedData");
 
             if (Directory.Exists(processedDataPath))
             {
@@ -74,40 +74,28 @@ namespace DataViz
                 }
             }
 
-            // Fallback to legacy processed datasets
-            if (Directory.Exists(processedDataPath))
+            // Fallback to CSV files in DataCSV
+            string csvDataPath = Path.Combine(Application.streamingAssetsPath, "DataCSV");
+
+            if (Directory.Exists(csvDataPath))
             {
-                string[] processedFiles = Directory.GetFiles(processedDataPath, "*.dataset");
+                string[] csvFiles = Directory.GetFiles(csvDataPath, "*.csv");
 
-                if (processedFiles.Length > 0)
+                if (csvFiles.Length > 0)
                 {
-                    CurrentDatasetName = Path.GetFileName(processedFiles[0]);
-                    LoadLocalDataset(CurrentDatasetName);
-                    return;
-                }
-            }
-
-            // Fallback to raw CSV files
-            string rawDataPath = Path.Combine(Application.dataPath, "StreamingAssetsRawData");
-
-            if (Directory.Exists(rawDataPath))
-            {
-                string[] rawCsvFiles = Directory.GetFiles(rawDataPath, "*.csv");
-
-                if (rawCsvFiles.Length > 0)
-                {
-                    CurrentDatasetName = Path.GetFileName(rawCsvFiles[0]).Replace(".csv", ".cdataset");
+                    string csvFileName = Path.GetFileName(csvFiles[0]);
+                    CurrentDatasetName = csvFileName.Replace(".csv", ".cdataset");
                     LoadLocalDataset(CurrentDatasetName);
                     return;
                 }
             }
 
             // Final fallback to regular streaming assets
-            string[] csvFiles = Directory.GetFiles(Application.streamingAssetsPath, "*.csv");
+            string[] streamingCsvFiles = Directory.GetFiles(Application.streamingAssetsPath, "*.csv");
 
-            if (csvFiles.Length > 0)
+            if (streamingCsvFiles.Length > 0)
             {
-                CurrentDatasetName = Path.GetFileName(csvFiles[0]).Replace(".csv", ".cdataset");
+                CurrentDatasetName = Path.GetFileName(streamingCsvFiles[0]).Replace(".csv", ".cdataset");
                 LoadLocalDataset(CurrentDatasetName);
             }
             else
@@ -146,12 +134,13 @@ namespace DataViz
                     $"This dataset will be parsed via the legacy row-based CSVImporter, " +
                     $"which is significantly slower and was NOT the intended fast path.\n" +
                     $"Check that a matching .cdataset file exists in " +
-                    $"Assets/StreamingAssetsRawData/ProcessedData/ (run preprocess_csv_columnar.py if not)."
+                    $"Assets/StreamingAssets/DataCSV/ProcessedData/ (run preprocess_csv_columnar.py if not)."
                 );
 
                 // Fallback to CSV importer
                 string csvFileName = fileName.Replace(".cdataset", ".csv");
-                Dataset legacyDataset = CSVImporter.Load(csvFileName);
+                string csvPath = Path.Combine(Application.streamingAssetsPath, "DataCSV", csvFileName);
+                Dataset legacyDataset = CSVImporter.Load(csvPath);
 
                 if (legacyDataset != null)
                 {

@@ -47,12 +47,11 @@ Assets/
 │       └── DataPointInteractable.cs     # Individual point interaction
 ├── Prefabs/
 │   └── DataVisualizationTable.prefab  # Main visualization prefab
-└── Assets/
-    └── StreamingAssetsRawData/
-        ├── *.csv                      # Original CSV files
-        └── ProcessedData/            # Pre-processed binary files
-            ├── *.cdataset           # Columnar binary format (recommended)
-            └── *.dataset            # Legacy JSON format
+└── StreamingAssets/
+    └── DataCSV/
+        ├── *.csv              # Original CSV files
+        └── ProcessedData/    # Pre-processed binary files
+            └── *.cdataset   # Columnar binary format
 ```
 
 ## Setup Instructions
@@ -71,9 +70,10 @@ The system uses a columnar data architecture for optimal performance with large 
 - **Cache Locality**: Column-major layout optimized for data visualization workloads
 - **On-Demand Computation**: Normalized values computed on-demand (one subtraction + divide)
 - **Binary Format**: Direct binary serialization without JSON overhead
+- **Build Compatibility**: Data stored in StreamingAssets for proper build support
 
 **Step 1: Raw Data Placement**
-- Place your CSV files in `Assets/StreamingAssetsRawData/` folder
+- Place your CSV files in `Assets/StreamingAssets/DataCSV/` folder
 - The system supports:
   - Numeric columns (for X, Y, Z axes)
   - Categorical columns (for color mapping)
@@ -82,7 +82,7 @@ The system uses a columnar data architecture for optimal performance with large 
 **Step 2: Data Preprocessing**
 - Run the columnar Python preprocessing script: `Assets/Scripts/Data/preprocess_csv_columnar.py`
 - This script uses pandas to efficiently process CSV files
-- Processed data is saved to `Assets/StreamingAssetsRawData/ProcessedData/` as binary `.cdataset` files
+- Processed data is saved to `Assets/StreamingAssets/DataCSV/ProcessedData/` as binary `.cdataset` files
 - Unity loads from processed data for instant loading (15-20 seconds → <0.5 seconds)
 
 **To preprocess data:**
@@ -91,7 +91,7 @@ python Assets/Scripts/Data/preprocess_csv_columnar.py
 ```
 
 **Workflow:**
-1. Add/update CSV files in `Assets/StreamingAssetsRawData/`
+1. Add/update CSV files in `Assets/StreamingAssets/DataCSV/`
 2. Run columnar preprocessing script
 3. Unity automatically loads from processed binary data
 4. For new datasets, repeat steps 1-2

@@ -39,7 +39,7 @@ public static class ColumnarBinaryImporter
 
     public static DatasetColumnar Load(string fileName)
     {
-        string path = Path.Combine(Application.dataPath, "StreamingAssetsRawData", "ProcessedData", fileName);
+        string path = Path.Combine(Application.streamingAssetsPath, "DataCSV", "ProcessedData", fileName);
 
         if (!File.Exists(path))
         {
