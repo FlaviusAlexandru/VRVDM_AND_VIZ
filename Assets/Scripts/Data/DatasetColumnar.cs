@@ -46,10 +46,12 @@ public class DatasetColumnar
     private string[][] m_CategoryTables;
 
     /// <summary>
-    /// Thin row views for backward compatibility.
-    /// These don't store data - they just reference the parent column arrays.
+    /// Row views are created on demand in GetRow() - not stored here.
+    /// A pre-allocated array of one object per row would re-introduce the
+    /// exact "million small heap allocations" problem this columnar layout
+    /// exists to avoid, for no benefit: only ever one row view is actually
+    /// needed at a time in practice (the currently-hovered tooltip point).
     /// </summary>
-    private DatasetRowView[] m_RowViews;
 
     public int RowCount { get; private set; }
     public int ColumnCount => Columns.Count;
@@ -58,17 +60,10 @@ public class DatasetColumnar
     {
         Name = name;
         RowCount = rowCount;
-        
+
         m_NumericColumns = new float[columnCount][];
         m_CategoricalColumns = new int[columnCount][];
         m_CategoryTables = new string[columnCount][];
-        m_RowViews = new DatasetRowView[rowCount];
-        
-        // Initialize row views (they'll reference this dataset)
-        for (int i = 0; i < rowCount; i++)
-        {
-            m_RowViews[i] = new DatasetRowView(this, i);
-        }
     }
 
     /// <summary>
@@ -78,10 +73,10 @@ public class DatasetColumnar
     {
         if (columnIndex < 0 || columnIndex >= ColumnCount)
             throw new ArgumentOutOfRangeException(nameof(columnIndex));
-        
+
         if (values.Length != RowCount)
             throw new ArgumentException($"Expected {RowCount} values, got {values.Length}");
-        
+
         m_NumericColumns[columnIndex] = values;
     }
 
@@ -92,10 +87,10 @@ public class DatasetColumnar
     {
         if (columnIndex < 0 || columnIndex >= ColumnCount)
             throw new ArgumentOutOfRangeException(nameof(columnIndex));
-        
+
         if (categoryIndices.Length != RowCount)
             throw new ArgumentException($"Expected {RowCount} indices, got {categoryIndices.Length}");
-        
+
         m_CategoricalColumns[columnIndex] = categoryIndices;
         m_CategoryTables[columnIndex] = categoryTable;
     }
@@ -107,14 +102,14 @@ public class DatasetColumnar
     {
         if (columnIndex < 0 || columnIndex >= ColumnCount)
             return 0f;
-        
+
         if (rowIndex < 0 || rowIndex >= RowCount)
             return 0f;
-        
+
         float[] column = m_NumericColumns[columnIndex];
         if (column == null)
             return 0f;
-        
+
         return column[rowIndex];
     }
 
@@ -125,14 +120,14 @@ public class DatasetColumnar
     {
         if (columnIndex < 0 || columnIndex >= ColumnCount)
             return 0;
-        
+
         if (rowIndex < 0 || rowIndex >= RowCount)
             return 0;
-        
+
         int[] column = m_CategoricalColumns[columnIndex];
         if (column == null)
             return 0;
-        
+
         return column[rowIndex];
     }
 
@@ -143,10 +138,10 @@ public class DatasetColumnar
     {
         int categoryIndex = GetCategoryIndex(rowIndex, columnIndex);
         string[] table = m_CategoryTables[columnIndex];
-        
+
         if (table == null || categoryIndex < 0 || categoryIndex >= table.Length)
             return "";
-        
+
         return table[categoryIndex];
     }
 
@@ -157,32 +152,32 @@ public class DatasetColumnar
     public float GetNormalizedValue(int rowIndex, int columnIndex)
     {
         DatasetColumn column = Columns[columnIndex];
-        
+
         if (column == null)
             return 0f;
-        
+
         if (column.IsNumeric)
         {
             float rawValue = GetNumericValue(rowIndex, columnIndex);
             float range = column.MaxValue - column.MinValue;
-            
+
             if (Mathf.Abs(range) < 0.00001f)
                 return 0f;
-            
+
             return Mathf.Clamp01((rawValue - column.MinValue) / range);
         }
-        
+
         if (column.IsCategorical)
         {
             int categoryIndex = GetCategoryIndex(rowIndex, columnIndex);
             string[] table = m_CategoryTables[columnIndex];
-            
+
             if (table == null || table.Length <= 1)
                 return 0f;
-            
+
             return (float)categoryIndex / (table.Length - 1);
         }
-        
+
         return 0f;
     }
 
@@ -193,34 +188,35 @@ public class DatasetColumnar
     public string GetRawValue(int rowIndex, int columnIndex)
     {
         DatasetColumn column = Columns[columnIndex];
-        
+
         if (column == null)
             return "";
-        
+
         if (column.IsNumeric)
         {
             float value = GetNumericValue(rowIndex, columnIndex);
             return value.ToString("F4"); // 4 decimal places for display
         }
-        
+
         if (column.IsCategorical)
         {
             return GetCategoryValue(rowIndex, columnIndex);
         }
-        
+
         return "";
     }
 
     /// <summary>
-    /// Get a thin row view for backward compatibility.
-    /// This doesn't copy data - it just provides indexed access to column arrays.
+    /// Returns a thin row view for backward compatibility. Constructed
+    /// on demand (a single small allocation) rather than pre-built for
+    /// every row at load time - see the constructor comment above.
     /// </summary>
     public DatasetRowView GetRow(int rowIndex)
     {
         if (rowIndex < 0 || rowIndex >= RowCount)
             return null;
-        
-        return m_RowViews[rowIndex];
+
+        return new DatasetRowView(this, rowIndex);
     }
 
     /// <summary>
@@ -231,20 +227,20 @@ public class DatasetColumnar
     {
         if (columnIndex < 0 || columnIndex >= ColumnCount)
             return Array.Empty<float>();
-        
+
         DatasetColumn column = Columns[columnIndex];
         float[] buffer = new float[RowCount];
-        
+
         if (column.IsNumeric)
         {
             float[] sourceColumn = m_NumericColumns[columnIndex];
             if (sourceColumn == null)
                 return buffer;
-            
+
             float range = column.MaxValue - column.MinValue;
             float invRange = Mathf.Abs(range) < 0.00001f ? 0f : 1f / range;
             float min = column.MinValue;
-            
+
             for (int i = 0; i < RowCount; i++)
             {
                 buffer[i] = Mathf.Clamp01((sourceColumn[i] - min) * invRange);
@@ -254,18 +250,18 @@ public class DatasetColumnar
         {
             int[] sourceColumn = m_CategoricalColumns[columnIndex];
             string[] table = m_CategoryTables[columnIndex];
-            
+
             if (sourceColumn == null || table == null || table.Length <= 1)
                 return buffer;
-            
+
             float divisor = table.Length - 1;
-            
+
             for (int i = 0; i < RowCount; i++)
             {
                 buffer[i] = sourceColumn[i] / divisor;
             }
         }
-        
+
         return buffer;
     }
 
@@ -277,19 +273,19 @@ public class DatasetColumnar
     {
         int stride = columnIndices.Length;
         float[] buffer = new float[RowCount * stride];
-        
+
         for (int colSlot = 0; colSlot < stride; colSlot++)
         {
             int columnIndex = columnIndices[colSlot];
             float[] columnBuffer = GetNormalizedColumnBuffer(columnIndex);
-            
+
             // Copy column buffer into interleaved positions
             for (int row = 0; row < RowCount; row++)
             {
                 buffer[row * stride + colSlot] = columnBuffer[row];
             }
         }
-        
+
         return buffer;
     }
 

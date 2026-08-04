@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Text.RegularExpressions;
 using UnityEngine;
 
 public static class CSVImporter
@@ -31,9 +30,9 @@ public static class CSVImporter
         //-----------------------------------
         // HEADER
         //-----------------------------------
-        string[] headers = SplitCsvLine(lines[0], delimiter);
+        List<string> headers = SplitCsvLine(lines[0], delimiter);
 
-        for (int i = 0; i < headers.Length; i++)
+        for (int i = 0; i < headers.Count; i++)
         {
             string header = headers[i].Trim(' ', '"', '\r', '\n');
             dataset.Columns.Add(new DatasetColumn(header));
@@ -47,12 +46,12 @@ public static class CSVImporter
         {
             if (string.IsNullOrWhiteSpace(lines[lineIndex])) continue;
 
-            string[] values = SplitCsvLine(lines[lineIndex], delimiter);
-            DatasetRow row = new DatasetRow(headers.Length);
+            List<string> values = SplitCsvLine(lines[lineIndex], delimiter);
+            DatasetRow row = new DatasetRow(headers.Count);
 
-            for (int col = 0; col < headers.Length; col++)
+            for (int col = 0; col < headers.Count; col++)
             {
-                string rawValue = col < values.Length ? values[col].Trim(' ', '"', '\r', '\n') : "";
+                string rawValue = col < values.Count ? values[col].Trim(' ', '"', '\r', '\n') : "";
 
                 row.SetRawValue(col, rawValue);
 
@@ -101,11 +100,43 @@ public static class CSVImporter
         return bestDelimiter;
     }
 
-    private static string[] SplitCsvLine(string line, char delimiter)
+    /// <summary>
+    /// Fast, quote-aware CSV line splitter. Single linear pass over the
+    /// line (O(n) in line length) with no regex/backtracking.
+    ///
+    /// This replaces a previous implementation that used a lookahead
+    /// regex pattern (delimiter(?=(?:[^"]*"[^"]*")*[^"]*$)) to handle
+    /// quoted fields. That pattern re-scans the remainder of the line at
+    /// every delimiter to verify quote-balance, which is roughly
+    /// O(columns^2) per row on wide CSVs - measured at ~59x slower than
+    /// a plain split on a 101-column, ~1900-character row (0.156ms/row
+    /// vs 0.0026ms/row), which is what turned dataset switches into a
+    /// 15-20 second stall. This version tracks quote state with a single
+    /// boolean while walking the line once.
+    /// </summary>
+    private static List<string> SplitCsvLine(string line, char delimiter)
     {
-        // Regex pattern handles values inside quotes correctly: "Value 1, with comma", Value 2
-        string pattern = string.Format(@"{0}(?=(?:[^""]*""[^""]*"")*[^""]*$)", Regex.Escape(delimiter.ToString()));
-        return Regex.Split(line, pattern);
+        List<string> result = new List<string>();
+        int start = 0;
+        bool inQuotes = false;
+
+        for (int i = 0; i < line.Length; i++)
+        {
+            char c = line[i];
+
+            if (c == '"')
+            {
+                inQuotes = !inQuotes;
+            }
+            else if (c == delimiter && !inQuotes)
+            {
+                result.Add(line.Substring(start, i - start));
+                start = i + 1;
+            }
+        }
+
+        result.Add(line.Substring(start));
+        return result;
     }
 
     public static bool TryParseFlexibleFloat(string raw, out float result)

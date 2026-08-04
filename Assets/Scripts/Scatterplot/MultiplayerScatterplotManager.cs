@@ -61,11 +61,11 @@ namespace DataViz
         {
             // Check for columnar processed datasets first
             string processedDataPath = Path.Combine(Application.dataPath, "StreamingAssetsRawData", "ProcessedData");
-            
+
             if (Directory.Exists(processedDataPath))
             {
                 string[] columnarFiles = Directory.GetFiles(processedDataPath, "*.cdataset");
-                
+
                 if (columnarFiles.Length > 0)
                 {
                     CurrentDatasetName = Path.GetFileName(columnarFiles[0]);
@@ -73,12 +73,12 @@ namespace DataViz
                     return;
                 }
             }
-            
+
             // Fallback to legacy processed datasets
             if (Directory.Exists(processedDataPath))
             {
                 string[] processedFiles = Directory.GetFiles(processedDataPath, "*.dataset");
-                
+
                 if (processedFiles.Length > 0)
                 {
                     CurrentDatasetName = Path.GetFileName(processedFiles[0]);
@@ -86,14 +86,14 @@ namespace DataViz
                     return;
                 }
             }
-            
+
             // Fallback to raw CSV files
             string rawDataPath = Path.Combine(Application.dataPath, "StreamingAssetsRawData");
-            
+
             if (Directory.Exists(rawDataPath))
             {
                 string[] rawCsvFiles = Directory.GetFiles(rawDataPath, "*.csv");
-                
+
                 if (rawCsvFiles.Length > 0)
                 {
                     CurrentDatasetName = Path.GetFileName(rawCsvFiles[0]).Replace(".csv", ".cdataset");
@@ -101,10 +101,10 @@ namespace DataViz
                     return;
                 }
             }
-            
+
             // Final fallback to regular streaming assets
             string[] csvFiles = Directory.GetFiles(Application.streamingAssetsPath, "*.csv");
-            
+
             if (csvFiles.Length > 0)
             {
                 CurrentDatasetName = Path.GetFileName(csvFiles[0]).Replace(".csv", ".cdataset");
@@ -140,12 +140,19 @@ namespace DataViz
             }
             else
             {
-                Debug.LogWarning($"Failed to load columnar dataset: {fileName}, trying CSV fallback");
-                
+                Debug.LogError(
+                    $"[MultiplayerScatterplotManager] FALLING BACK TO SLOW CSV IMPORT\n" +
+                    $"Columnar binary dataset failed to load: '{fileName}'\n" +
+                    $"This dataset will be parsed via the legacy row-based CSVImporter, " +
+                    $"which is significantly slower and was NOT the intended fast path.\n" +
+                    $"Check that a matching .cdataset file exists in " +
+                    $"Assets/StreamingAssetsRawData/ProcessedData/ (run preprocess_csv_columnar.py if not)."
+                );
+
                 // Fallback to CSV importer
                 string csvFileName = fileName.Replace(".cdataset", ".csv");
                 Dataset legacyDataset = CSVImporter.Load(csvFileName);
-                
+
                 if (legacyDataset != null)
                 {
                     // Convert to columnar format (simple wrapper for now)
@@ -166,25 +173,25 @@ namespace DataViz
                 }
             }
         }
-        
+
         private DatasetColumnar ConvertToColumnar(Dataset legacyDataset)
         {
             // Simple conversion from legacy Dataset to DatasetColumnar
             // This is a temporary compatibility layer
             DatasetColumnar columnar = new DatasetColumnar(legacyDataset.Name, legacyDataset.RowCount, legacyDataset.ColumnCount);
-            
+
             // Copy column metadata
             foreach (var legacyColumn in legacyDataset.Columns)
             {
                 columnar.Columns.Add(legacyColumn);
                 columnar.ColumnMapping[legacyColumn.Name] = columnar.Columns.Count - 1;
             }
-            
+
             // Extract column data from rows
             for (int colIndex = 0; colIndex < legacyDataset.ColumnCount; colIndex++)
             {
                 DatasetColumn column = legacyDataset.Columns[colIndex];
-                
+
                 if (column.IsNumeric)
                 {
                     float[] numericData = new float[legacyDataset.RowCount];
@@ -203,7 +210,7 @@ namespace DataViz
                     {
                         categoryTable[idx++] = cat;
                     }
-                    
+
                     int[] categoryIndices = new int[legacyDataset.RowCount];
                     for (int rowIndex = 0; rowIndex < legacyDataset.RowCount; rowIndex++)
                     {
@@ -211,11 +218,11 @@ namespace DataViz
                         int catIndex = Array.IndexOf(categoryTable, rawValue);
                         categoryIndices[rowIndex] = catIndex >= 0 ? catIndex : 0;
                     }
-                    
+
                     columnar.SetCategoricalColumn(colIndex, categoryIndices, categoryTable);
                 }
             }
-            
+
             columnar.FinalizeDatasetMetadata();
             return columnar;
         }

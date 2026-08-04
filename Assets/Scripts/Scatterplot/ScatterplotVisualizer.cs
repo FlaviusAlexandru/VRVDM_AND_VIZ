@@ -158,14 +158,6 @@ namespace DataViz
                 Debug.LogWarning($"[Color Debug] colorColumn is NULL! colorCol index was: {colorCol}");
             }
 
-            // Gather categorical values if color column is categorical
-            List<string> uniqueColorCategories = new List<string>();
-            if (colorColumn != null && colorColumn.IsCategorical)
-            {
-                uniqueColorCategories = new List<string>(colorColumn.UniqueValues);
-                Debug.Log($"[ScatterplotVisualizer] Found categorical column '{colorColumn.Name}' with {uniqueColorCategories.Count} unique values");
-            }
-
             Color[] categoricalPalette = new Color[]
             {
                 Color.red, Color.blue, Color.green, Color.yellow, Color.cyan, Color.magenta,
@@ -207,7 +199,7 @@ namespace DataViz
                         float rawVal = dataset.GetNumericValue(i, colorCol);
                         float range = colorColumn.MaxValue - colorColumn.MinValue;
                         float norm = 0.5f;
-                        
+
                         if (range > 0.00001f)
                         {
                             norm = (rawVal - colorColumn.MinValue) / range;
@@ -218,12 +210,8 @@ namespace DataViz
                     }
                     else if (colorColumn.IsCategorical)
                     {
-                        string rawVal = dataset.GetCategoryValue(i, colorCol);
-                        int catIdx = uniqueColorCategories.IndexOf(rawVal);
-                        if (catIdx >= 0)
-                        {
-                            pointColor = categoricalPalette[catIdx % categoricalPalette.Length];
-                        }
+                        int catIdx = dataset.GetCategoryIndex(i, colorCol);
+                        pointColor = categoricalPalette[catIdx % categoricalPalette.Length];
                     }
                 }
 
