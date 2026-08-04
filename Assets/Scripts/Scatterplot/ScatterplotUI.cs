@@ -31,6 +31,9 @@ namespace DataViz
         [Header("Interaction Controls")]
         public Toggle m_TooltipsToggle;
 
+        [Header("Exploration Controls")]
+        public Button m_ShuffleButton;
+
         private List<string> m_AvailableDatasets = new();
         private bool m_IsUpdatingUI = false;
 
@@ -72,6 +75,9 @@ namespace DataViz
 
             if (m_TooltipsToggle != null)
                 m_TooltipsToggle.onValueChanged.AddListener(OnTooltipsToggleUIChanged);
+
+            if (m_ShuffleButton != null)
+                m_ShuffleButton.onClick.AddListener(OnShuffleButtonClicked);
 
             // Sync with Manager updates
             if (m_Manager != null)
@@ -243,13 +249,13 @@ namespace DataViz
         {
             if (m_IsUpdatingUI || m_Manager == null) return;
             string selectedFile = m_AvailableDatasets[idx];
-            
+
             // Convert CSV to .cdataset for loading
             if (selectedFile.EndsWith(".csv"))
             {
                 selectedFile = selectedFile.Replace(".csv", ".cdataset");
             }
-            
+
             m_Manager.RequestLoadDatasetRpc(selectedFile);
         }
 
@@ -305,6 +311,12 @@ namespace DataViz
         {
             if (m_IsUpdatingUI || m_Manager == null) return;
             m_Manager.RequestTooltipsToggleRpc(isOn);
+        }
+
+        private void OnShuffleButtonClicked()
+        {
+            if (m_Manager == null) return;
+            m_Manager.RequestShuffleColumnsRpc();
         }
 
         #endregion
