@@ -9837,7 +9837,6 @@ MonoBehaviour:
   LoadedDataset:
     Name: 
     Columns: []
-    Rows: []
 --- !u!1 &1290771285
 GameObject:
   m_ObjectHideFlags: 0
@@ -11149,6 +11148,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Renderer: {fileID: 807051349}
   m_MaterialIndex: 0
+--- !u!224 &1464938872 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 2498136427559390146, guid: 2dcbcf48fb8a01b4299e9a5eff97f671, type: 3}
+  m_PrefabInstance: {fileID: 1879005429}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1470990444
 GameObject:
   m_ObjectHideFlags: 0
@@ -13379,6 +13383,18 @@ PrefabInstance:
       propertyPath: m_GPUPoints
       value: 
       objectReference: {fileID: 2079837856}
+    - target: {fileID: 2498136427559390146, guid: 2dcbcf48fb8a01b4299e9a5eff97f671, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1000
+      objectReference: {fileID: 0}
+    - target: {fileID: 2498136427559390146, guid: 2dcbcf48fb8a01b4299e9a5eff97f671, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1000
+      objectReference: {fileID: 0}
+    - target: {fileID: 2498136427559390146, guid: 2dcbcf48fb8a01b4299e9a5eff97f671, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1000
+      objectReference: {fileID: 0}
     - target: {fileID: 2541844292624454600, guid: 2dcbcf48fb8a01b4299e9a5eff97f671, type: 3}
       propertyPath: m_Enabled
       value: 1
@@ -13451,6 +13467,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5025899417572166804, guid: 2dcbcf48fb8a01b4299e9a5eff97f671, type: 3}
+      propertyPath: m_DockAnchor
+      value: 
+      objectReference: {fileID: 1464938872}
+    - target: {fileID: 5025899417572166804, guid: 2dcbcf48fb8a01b4299e9a5eff97f671, type: 3}
+      propertyPath: m_PinButtonAction
+      value: 
+      objectReference: {fileID: 8245121677527848281, guid: 6fcd5a838d836f5489c2df59301069ff, type: 3}
     - target: {fileID: 6665569046209481029, guid: 2dcbcf48fb8a01b4299e9a5eff97f671, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
