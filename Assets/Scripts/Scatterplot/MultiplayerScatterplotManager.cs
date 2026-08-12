@@ -303,7 +303,9 @@ namespace DataViz
         public void RequestTooltipsToggleRpc(bool showTooltips)
         {
             ShowTooltips = showTooltips;
-            OnPlotSettingsChanged?.Invoke();
+            // Usually, we would refresh the toggle when switching datasets, but user testing found this to be annoying, so we don't refresh the toggle anymore.
+            //Code stays commented out for posterity, in case we want to re-enable this behavior in the future.
+            //OnPlotSettingsChanged?.Invoke();
         }
 
         /// <summary>
@@ -374,7 +376,8 @@ namespace DataViz
             ZColumnIndex = zIdx;
 
             // Color: prefer a categorical column if one exists.
-            List<int> categoricalCandidates = new List<int>();
+            // Commented out for now, since for now we want the user to have full control over color mapping and not have it change on shuffle.
+            /*List<int> categoricalCandidates = new List<int>();
             for (int i = 0; i < columnCount; i++)
             {
                 DatasetColumn col = LoadedDataset.GetColumn(i);
@@ -383,7 +386,7 @@ namespace DataViz
                     categoricalCandidates.Add(i);
                 }
             }
-
+            
             if (categoricalCandidates.Count > 0)
             {
                 ColorColumnIndex = categoricalCandidates[UnityEngine.Random.Range(0, categoricalCandidates.Count)];
@@ -391,11 +394,12 @@ namespace DataViz
             else
             {
                 ColorColumnIndex = WeightedRandomIndex(weights, usedIndices);
-            }
+            }*/
 
             // Time: only sometimes, and only from columns that look like
             // they represent discrete time steps by name.
-            TimeColumnIndex = -1;
+            // Commented out for now, since shuffling time columns is not a great user experience and can be confusing.
+            /*TimeColumnIndex = -1;
 
             if (UnityEngine.Random.value < 0.3f)
             {
@@ -414,7 +418,7 @@ namespace DataViz
                 {
                     TimeColumnIndex = timeCandidates[UnityEngine.Random.Range(0, timeCandidates.Count)];
                 }
-            }
+            }*/
 
             TimeScrub = 0f;
             IsPlaying = false;
