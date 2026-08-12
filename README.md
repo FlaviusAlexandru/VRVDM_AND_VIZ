@@ -35,7 +35,6 @@ Assets/
 │   │   ├── CSVImporter.cs          # CSV data import and parsing (legacy)
 │   │   ├── BinaryImporter.cs       # Legacy JSON binary data import
 │   │   ├── ColumnarBinaryImporter.cs # New binary columnar data import
-│   │   ├── preprocess_csv.py       # Legacy Python preprocessing script
 │   │   ├── preprocess_csv_columnar.py # New columnar Python preprocessing
 │   │   └── DatasetManager.cs       # Dataset singleton manager
 │   └── Scatterplot/
