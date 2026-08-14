@@ -22,7 +22,7 @@ namespace DataViz
         private List<GameObject> m_ActivePoints = new();
         private List<GameObject> m_ActiveAxes = new();
 
-        public ScatterplotParticleRenderer m_GPUPoints;
+        public ScatterplotVFXRenderer m_GPUPoints;
         public GPUPointInteractable m_GPUInteractable;
 
         public VisualizationGridSettings m_GridSettings;
@@ -51,7 +51,7 @@ namespace DataViz
                 m_AxisMaterial.color = Color.white;
             }
 
-            if (m_GPUPoints == null) { m_GPUPoints = GetComponent<ScatterplotParticleRenderer>(); }
+            if (m_GPUPoints == null) { m_GPUPoints = GetComponent<ScatterplotVFXRenderer>(); }
             if (m_GPUInteractable == null) { m_GPUInteractable = GetComponent<GPUPointInteractable>(); }
             if (m_GPUInteractable != null) { m_GPUInteractable.m_Visualizer = this; }
 

@@ -10,7 +10,7 @@ namespace DataViz
     {
         [Header("References")]
         public ScatterplotVisualizer m_Visualizer;
-        public ScatterplotInstancedRenderer m_GPUPoints;
+        public ScatterplotVFXRenderer m_GPUPoints;
         public GameObject m_TooltipPrefab;
 
         [Header("Settings")]

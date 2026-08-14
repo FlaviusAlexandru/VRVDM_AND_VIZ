@@ -32,6 +32,65 @@ namespace DataViz
         [Header("Loaded Dataset")]
         public DatasetColumnar LoadedDataset;
 
+        /// <summary>
+        /// One shuffle's worth of axis selection, saved so "back"/"forward"
+        /// can re-apply a previous combination instead of generating a new
+        /// random one.
+        /// </summary>
+        private struct ShuffleState
+        {
+            public int X;
+            public int Y;
+            public int Z;
+        }
+
+        /// <summary>
+        /// Per-dataset shuffle history + position, so navigating back/forward
+        /// through past shuffles works independently for each dataset and
+        /// survives switching between datasets within the same session.
+        /// In-memory only - intentionally not persisted to disk, per-session
+        /// is the current scope.
+        /// </summary>
+        private class ShuffleHistory
+        {
+            public List<ShuffleState> States = new();
+            public int CurrentIndex = -1; // -1 = no shuffle applied yet for this dataset
+        }
+
+        private readonly Dictionary<string, ShuffleHistory> m_ShuffleHistoryByDataset = new();
+
+        private ShuffleHistory GetOrCreateShuffleHistory()
+        {
+            if (LoadedDataset == null)
+                return null;
+
+            string key = LoadedDataset.Name;
+
+            if (!m_ShuffleHistoryByDataset.TryGetValue(key, out ShuffleHistory history))
+            {
+                history = new ShuffleHistory();
+                m_ShuffleHistoryByDataset[key] = history;
+            }
+
+            return history;
+        }
+
+        private void ApplyShuffleState(ShuffleState state)
+        {
+            XColumnIndex = state.X;
+            YColumnIndex = state.Y;
+            ZColumnIndex = state.Z;
+
+            Debug.Log(
+                $"[MultiplayerScatterplotManager] Applied shuffle state -> " +
+                $"X={LoadedDataset.GetColumn(XColumnIndex)?.Name}, " +
+                $"Y={LoadedDataset.GetColumn(YColumnIndex)?.Name}, " +
+                $"Z={LoadedDataset.GetColumn(ZColumnIndex)?.Name}"
+            );
+
+            OnPlotSettingsChanged?.Invoke();
+        }
+
         public event Action OnDatasetLoaded;
         public event Action OnPlotSettingsChanged;
 
@@ -375,6 +434,22 @@ namespace DataViz
             YColumnIndex = yIdx;
             ZColumnIndex = zIdx;
 
+            // Save into this dataset's shuffle history. If the user had
+            // navigated back and is now shuffling again, this is a new
+            // branch - discard the old "forward" states, same as browser
+            // back/forward or standard undo/redo semantics.
+            ShuffleHistory history = GetOrCreateShuffleHistory();
+            if (history != null)
+            {
+                if (history.CurrentIndex < history.States.Count - 1)
+                {
+                    history.States.RemoveRange(history.CurrentIndex + 1, history.States.Count - history.CurrentIndex - 1);
+                }
+
+                history.States.Add(new ShuffleState { X = xIdx, Y = yIdx, Z = zIdx });
+                history.CurrentIndex = history.States.Count - 1;
+            }
+
             // Color: prefer a categorical column if one exists.
             // Commented out for now, since for now we want the user to have full control over color mapping and not have it change on shuffle.
             /*List<int> categoricalCandidates = new List<int>();
@@ -433,6 +508,44 @@ namespace DataViz
             );
 
             OnPlotSettingsChanged?.Invoke();
+        }
+
+        /// <summary>
+        /// Steps back to the previous shuffle result for the current dataset,
+        /// if one exists. Does nothing (no-op, logged) if already at the
+        /// oldest saved shuffle or if this dataset has never been shuffled.
+        /// </summary>
+        public void RequestShuffleBackwardRpc()
+        {
+            ShuffleHistory history = GetOrCreateShuffleHistory();
+
+            if (history == null || history.CurrentIndex <= 0)
+            {
+                Debug.Log("[MultiplayerScatterplotManager] ShuffleBackward: nothing further back to go to.");
+                return;
+            }
+
+            history.CurrentIndex--;
+            ApplyShuffleState(history.States[history.CurrentIndex]);
+        }
+
+        /// <summary>
+        /// Steps forward to a more recent shuffle result for the current
+        /// dataset, if the user had previously navigated backward. Does
+        /// nothing if already at the newest saved shuffle.
+        /// </summary>
+        public void RequestShuffleForwardRpc()
+        {
+            ShuffleHistory history = GetOrCreateShuffleHistory();
+
+            if (history == null || history.CurrentIndex >= history.States.Count - 1)
+            {
+                Debug.Log("[MultiplayerScatterplotManager] ShuffleForward: nothing further forward to go to.");
+                return;
+            }
+
+            history.CurrentIndex++;
+            ApplyShuffleState(history.States[history.CurrentIndex]);
         }
 
         /// <summary>

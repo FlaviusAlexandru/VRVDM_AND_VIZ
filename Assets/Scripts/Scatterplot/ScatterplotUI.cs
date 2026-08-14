@@ -33,6 +33,8 @@ namespace DataViz
 
         [Header("Exploration Controls")]
         public Button m_ShuffleButton;
+        public Button m_ShuffleBackwardButton;
+        public Button m_ShuffleForwardButton;
 
         private List<string> m_AvailableDatasets = new();
         private bool m_IsUpdatingUI = false;
@@ -78,6 +80,12 @@ namespace DataViz
 
             if (m_ShuffleButton != null)
                 m_ShuffleButton.onClick.AddListener(OnShuffleButtonClicked);
+
+            if (m_ShuffleBackwardButton != null)
+                m_ShuffleBackwardButton.onClick.AddListener(OnShuffleBackwardButtonClicked);
+
+            if (m_ShuffleForwardButton != null)
+                m_ShuffleForwardButton.onClick.AddListener(OnShuffleForwardButtonClicked);
 
             // Sync with Manager updates
             if (m_Manager != null)
@@ -157,12 +165,8 @@ namespace DataViz
             // Populate the X, Y, Z, Color column dropdown options
             List<string> columns = new();
 
-            //Debug.Log($"[ScatterplotUI] Dataset loaded: {m_Manager.CurrentDatasetName}, Columns: {string.Join(", ", columns)}");
-
             foreach (var col in m_Manager.LoadedDataset.Columns)
             {
-
-                //Debug.Log(col.Name);
                 columns.Add(col.Name);
             }
 
@@ -189,8 +193,6 @@ namespace DataViz
             }
 
             SyncUIWithManager();
-
-
         }
 
         private void SyncUIWithManager()
@@ -317,6 +319,18 @@ namespace DataViz
         {
             if (m_Manager == null) return;
             m_Manager.RequestShuffleColumnsRpc();
+        }
+
+        private void OnShuffleBackwardButtonClicked()
+        {
+            if (m_Manager == null) return;
+            m_Manager.RequestShuffleBackwardRpc();
+        }
+
+        private void OnShuffleForwardButtonClicked()
+        {
+            if (m_Manager == null) return;
+            m_Manager.RequestShuffleForwardRpc();
         }
 
         #endregion
