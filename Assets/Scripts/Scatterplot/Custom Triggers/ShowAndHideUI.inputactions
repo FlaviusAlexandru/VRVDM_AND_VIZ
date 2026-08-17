@@ -1,0 +1,35 @@
+{
+    "version": 1,
+    "name": "ShowAndHideUI",
+    "maps": [
+        {
+            "name": "PinTrigger",
+            "id": "652cdb9b-c1fb-485a-a2bf-ae165704657c",
+            "actions": [
+                {
+                    "name": "New action",
+                    "type": "Button",
+                    "id": "6c55afe1-9682-4476-bb48-5efc02540c9e",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "3fb46b45-91ae-434d-8374-561650049ab2",
+                    "path": "<XRController>{LeftHand}/gripPressed",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "New action",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}

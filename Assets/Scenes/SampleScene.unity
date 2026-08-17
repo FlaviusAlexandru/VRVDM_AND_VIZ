@@ -230,6 +230,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 15718880}
   m_CullTransparentMesh: 1
+--- !u!4 &44195568 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7917674758240283209, guid: 77e7c27b2c5525e4aa8cc9f99d654486, type: 3}
+  m_PrefabInstance: {fileID: 1373153106}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &73808061
 GameObject:
   m_ObjectHideFlags: 0
@@ -12780,6 +12785,35 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RaycastTriggerInteraction: 1
+--- !u!114 &1708308384
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1708308377}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0da51c843df00e44492731c78bae03cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DataViz.WearableUIController
+  m_DockAnchor: {fileID: 44195568}
+  m_LocalPositionOffset: {x: 0, y: 0.14, z: 0.02}
+  m_LocalRotationOffsetEuler: {x: 27, y: 0, z: 0}
+  m_StartVisible: 0
+  m_ToggleVisibilityAction: {fileID: 8245121677527848281, guid: b49ad31ee92ac7b48832d5598883c34d, type: 3}
+--- !u!225 &1708308385
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1708308377}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!224 &1714251360 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 1035790433963668018, guid: 085ce58b196caa446a8545c9dd388793, type: 3}
@@ -13508,6 +13542,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 5670389296359769473, guid: 2dcbcf48fb8a01b4299e9a5eff97f671, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1708308382}
+    - targetCorrespondingSourceObject: {fileID: 5670389296359769473, guid: 2dcbcf48fb8a01b4299e9a5eff97f671, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1708308385}
+    - targetCorrespondingSourceObject: {fileID: 5670389296359769473, guid: 2dcbcf48fb8a01b4299e9a5eff97f671, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1708308384}
   m_SourcePrefab: {fileID: 100100000, guid: 2dcbcf48fb8a01b4299e9a5eff97f671, type: 3}
 --- !u!114 &1879005430 stripped
 MonoBehaviour:
@@ -15168,7 +15208,7 @@ VFXRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 949209424}
   m_Enabled: 1
-  m_CastShadows: 0
+  m_CastShadows: 1
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
   m_StaticShadowCaster: 0
