@@ -9,6 +9,7 @@ namespace DataViz
         [Header("References")]
         public MultiplayerScatterplotManager m_Manager;
         public GameObject m_AxisLabelPrefab; // TMPro in world space
+        public CoordinateSystemInteractable m_CoordinateSystemInteractable; // For grab/scaling functionality
 
         [Header("Visualization Settings")]
         public float m_AxisLength = 1.0f; // Size of the 3D grid
@@ -76,6 +77,12 @@ namespace DataViz
             if (m_GridSettings == null)
             {
                 Debug.LogWarning("ScatterplotVisualizer: No VisualizationGridSettings found. Using default settings.");
+            }
+
+            // Find coordinate system interactable if not assigned
+            if (m_CoordinateSystemInteractable == null)
+            {
+                m_CoordinateSystemInteractable = GetComponent<CoordinateSystemInteractable>();
             }
 
             RegeneratePlot();
@@ -165,7 +172,7 @@ namespace DataViz
                 new Color(0.7f, 0.2f, 0.2f), new Color(0.2f, 0.7f, 0.2f), new Color(0.2f, 0.2f, 0.7f)
             };
 
-            Vector3 basePosition = m_PointsContainer.position;
+            Vector3 basePosition = m_PointsContainer.localPosition;
 
             for (int i = 0; i < dataset.RowCount; i++)
             {

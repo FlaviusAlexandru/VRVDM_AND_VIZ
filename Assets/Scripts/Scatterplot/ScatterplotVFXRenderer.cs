@@ -39,7 +39,6 @@ namespace DataViz
         // Exposed Property IDs matching VFX Graph Exposed Properties
         private static readonly int PointDataBufferID = Shader.PropertyToID("PointDataBuffer");
         private static readonly int PointCountID = Shader.PropertyToID("PointCount");
-        private static readonly int ReinitTriggerID = Shader.PropertyToID("Reinit");
 
         private void Awake()
         {
