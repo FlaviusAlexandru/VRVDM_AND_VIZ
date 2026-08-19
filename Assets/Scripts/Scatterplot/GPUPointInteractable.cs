@@ -36,6 +36,9 @@ namespace DataViz
         [Tooltip("Optional. Bind to a controller button to pin/unpin the tooltip content. " +
                  "TogglePin() is also public, so this can be left empty and wired to a UI Button instead.")]
         public InputActionReference m_PinButtonAction;
+        [Header("Aura Highlight")]
+        public GameObject m_AuraPrefab; // Assign a glowing sphere prefab here
+        private GameObject m_ActiveAura;
 
         /// <summary>Fired whenever pin state changes - useful for a UI button label ("Pin"/"Unpin").</summary>
         public event Action OnPinStateChanged;
@@ -54,6 +57,7 @@ namespace DataViz
         private int m_HoveredPointIndex = -1;
         private bool m_IsPinned = false;
         private int m_PinnedPointIndex = -1;
+
 
         private void Awake()
         {
@@ -85,6 +89,7 @@ namespace DataViz
                 Destroy(m_ActiveTooltip);
                 m_ActiveTooltip = null;
             }
+            if (m_ActiveAura != null) Destroy(m_ActiveAura);
 
             m_PointPositions.Clear();
             m_PointColors.Clear();
@@ -204,12 +209,13 @@ namespace DataViz
 
             if (!tooltipsEnabled)
             {
-                // Make sure a tooltip that was already showing gets hidden
-                // the moment the setting is switched off, rather than
-                // lingering until the next hover change.
                 if (m_ActiveTooltip != null && m_ActiveTooltip.activeSelf)
                 {
                     HideTooltip();
+                }
+                if (m_ActiveAura != null)
+                {
+                    m_ActiveAura.SetActive(false);
                 }
 
                 m_IsPinned = false;
@@ -221,18 +227,32 @@ namespace DataViz
             Ray ray = GetInteractionRay();
             m_HoveredPointIndex = FindClosestPoint(ray);
 
-            // While pinned, hover changes are tracked (so unpinning resumes
-            // cleanly) but do NOT change what's currently displayed.
-            if (!m_IsPinned)
+            // Determine which point to show: the pinned one (if pinned) or the hovered one
+            int indexToShow = m_IsPinned ? m_PinnedPointIndex : m_HoveredPointIndex;
+
+            // We removed the 'if (!m_IsPinned)' here so the aura ALWAYS updates its 
+            // position to match the graph, even when pinned!
+            if (indexToShow >= 0)
             {
-                if (m_HoveredPointIndex >= 0)
-                {
-                    ShowDockedTooltip(m_HoveredPointIndex);
-                }
-                else
-                {
-                    HideTooltip();
-                }
+                ShowDockedTooltip(indexToShow);
+
+                // --- AURA LOGIC ---
+                EnsureAuraCreated();
+
+                // Calculate exact world position, just like the raycast fix
+                Vector3 worldPos = transform.TransformPoint(m_PointPositions[indexToShow]);
+                m_ActiveAura.transform.position = worldPos;
+
+                // Make the aura slightly larger than the point, and scale it if the user scales the graph
+                float auraScale = m_PointSize * 3.0f * transform.lossyScale.x;
+                m_ActiveAura.transform.localScale = new Vector3(auraScale, auraScale, auraScale);
+
+                m_ActiveAura.SetActive(true);
+            }
+            else
+            {
+                HideTooltip();
+                if (m_ActiveAura != null) m_ActiveAura.SetActive(false);
             }
 
             if (m_BillboardToCamera && m_ActiveTooltip != null && m_ActiveTooltip.activeSelf)
@@ -266,8 +286,9 @@ namespace DataViz
 
             for (int i = 0; i < m_PointPositions.Count; i++)
             {
-                Vector3 pointPos = m_PointPositions[i];
-                float distance = DistanceToRay(ray, pointPos);
+                // Convert local point coordinates to actual world space position
+                Vector3 worldPointPos = transform.TransformPoint(m_PointPositions[i]);
+                float distance = DistanceToRay(ray, worldPointPos);
 
                 if (distance < closestDistance)
                 {
@@ -340,6 +361,22 @@ namespace DataViz
             }
 
             m_ActiveTooltip.SetActive(true);
+        }
+
+        private void EnsureAuraCreated()
+        {
+            if (m_ActiveAura != null) return;
+
+            if (m_AuraPrefab != null)
+            {
+                m_ActiveAura = Instantiate(m_AuraPrefab);
+            }
+            else
+            {
+                // Fallback if you forget to assign a prefab: creates a basic sphere
+                m_ActiveAura = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                Destroy(m_ActiveAura.GetComponent<Collider>()); // Strip physics so it doesn't block rays!
+            }
         }
 
         private void EnsureTooltipCreated()
