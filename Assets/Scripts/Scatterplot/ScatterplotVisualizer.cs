@@ -16,6 +16,13 @@ namespace DataViz
         public Material m_PointMaterial; // Shared material to clone
         public Material m_AxisMaterial;
 
+        [Header("Filtering Settings")]
+        [Tooltip("Alpha applied to points that don't match the active filter. They stay in the " +
+                 "buffer (so tooltips/positions are unaffected) but fade toward transparent instead " +
+                 "of being removed from the plot.")]
+        [Range(0f, 1f)]
+        public float m_FilteredOutAlpha = 0.08f;
+
         // Parent container for points
         private Transform m_PointsContainer;
         private Transform m_AxesContainer;
@@ -156,6 +163,26 @@ namespace DataViz
                 currentTimeStep = Mathf.RoundToInt(targetValue);
             }
 
+            // Value filtering (FilterColumnIndex / FilterLabel): unlike the time filter above,
+            // non-matching rows are NOT skipped - they stay in the buffer at a dimmed alpha so
+            // they visually fade away instead of disappearing. This keeps row counts/indices
+            // stable for GPUPointInteractable and avoids the plot "jumping" as points vanish.
+            int filterCol = m_Manager.FilterColumnIndex;
+            bool filterActive = filterCol >= 0 && filterCol < dataset.ColumnCount &&
+                                 !string.IsNullOrEmpty(m_Manager.FilterLabel);
+            DatasetColumn filterColumn = filterActive ? dataset.Columns[filterCol] : null;
+
+            // Snapshot the categorical lookup table once per regenerate rather than per-row.
+            List<string> filterCategoryTable = (filterActive && filterColumn.IsCategorical)
+                ? new List<string>(filterColumn.UniqueValues)
+                : null;
+
+            if (filterActive && !filterColumn.IsCategorical && !filterColumn.IsNumeric)
+            {
+                Debug.LogWarning($"[ScatterplotVisualizer] Filter column '{filterColumn.Name}' is neither " +
+                                  $"categorical nor numeric - filter will not dim any points.");
+            }
+
             if (colorColumn != null)
             {
                 Debug.Log($"[Color Debug] Col Name: '{colorColumn.Name}' | Index: {colorCol} | Min: {colorColumn.MinValue} | Max: {colorColumn.MaxValue} | IsNumeric: {colorColumn.IsNumeric}");
@@ -220,6 +247,13 @@ namespace DataViz
                         int catIdx = dataset.GetCategoryIndex(i, colorCol);
                         pointColor = categoricalPalette[catIdx % categoricalPalette.Length];
                     }
+                }
+
+                // 3. Dim (rather than exclude) rows that don't match the active filter.
+                if (filterActive)
+                {
+                    bool matches = RowMatchesFilter(dataset, i, filterCol, filterColumn, filterCategoryTable, m_Manager.FilterLabel);
+                    pointColor.a = matches ? 1f : m_FilteredOutAlpha;
                 }
 
                 colors.Add(pointColor);
@@ -757,6 +791,39 @@ namespace DataViz
 
             m_ActiveAxes.Add(labelObj);
         }
+        /// <summary>
+        /// Checks whether dataset row i matches the active filter's selected value.
+        /// Numeric comparison uses the same default float.ToString() formatting that
+        /// ScatterplotUI.PopulateFilterIndexDropdown used to build the dropdown options,
+        /// so the two stay in sync without needing a shared formatting helper.
+        /// </summary>
+        private bool RowMatchesFilter(
+            DatasetColumnar dataset,
+            int rowIndex,
+            int filterCol,
+            DatasetColumn filterColumn,
+            List<string> filterCategoryTable,
+            string filterLabel)
+        {
+            if (filterColumn.IsCategorical)
+            {
+                int catIdx = dataset.GetCategoryIndex(rowIndex, filterCol);
+                if (catIdx < 0 || filterCategoryTable == null || catIdx >= filterCategoryTable.Count)
+                    return false;
+
+                return filterCategoryTable[catIdx] == filterLabel;
+            }
+
+            if (filterColumn.IsNumeric)
+            {
+                float rawVal = dataset.GetNumericValue(rowIndex, filterCol);
+                return rawVal.ToString() == filterLabel;
+            }
+
+            // Unknown column type - treat as non-filterable, don't dim.
+            return true;
+        }
+
         private void ClearPoints()
         {
             foreach (var p in m_ActivePoints)
