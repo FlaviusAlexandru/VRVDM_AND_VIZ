@@ -36,6 +36,10 @@ namespace DataViz
         public Button m_ShuffleBackwardButton;
         public Button m_ShuffleForwardButton;
 
+        [Header("Filtering Controls")]
+        public TMP_Dropdown m_FilterLabelDropdown;
+        public TMP_Dropdown m_FilterIndexDropdown;
+
         private List<string> m_AvailableDatasets = new();
         private bool m_IsUpdatingUI = false;
 
@@ -86,6 +90,12 @@ namespace DataViz
 
             if (m_ShuffleForwardButton != null)
                 m_ShuffleForwardButton.onClick.AddListener(OnShuffleForwardButtonClicked);
+           
+            if (m_FilterLabelDropdown != null)
+                m_FilterLabelDropdown.onValueChanged.AddListener(OnFilterColumnUIChanged);
+            
+            if (m_FilterIndexDropdown != null)
+                m_FilterIndexDropdown.onValueChanged.AddListener(OnFilterIndexUIChanged);
 
             // Sync with Manager updates
             if (m_Manager != null)
@@ -192,6 +202,16 @@ namespace DataViz
                 m_TimeColumnDropdown.AddOptions(timeOptions);
             }
 
+            // Populate filter column dropdown options
+            if (m_FilterLabelDropdown != null)
+            {
+                m_FilterLabelDropdown.ClearOptions();
+                List<string> filterOptions = new() { "None" };
+                filterOptions.AddRange(columns);
+                m_FilterLabelDropdown.AddOptions(filterOptions);
+                Debug.Log($"[ScatterplotUI] Filter column dropdown options updated. Total options: {filterOptions.Count}");
+            }
+
             SyncUIWithManager();
         }
 
@@ -241,6 +261,25 @@ namespace DataViz
             // Sync tooltip toggle
             if (m_TooltipsToggle != null)
                 m_TooltipsToggle.isOn = m_Manager.ShowTooltips;
+
+            // Sync filter settings
+            if (m_FilterLabelDropdown != null)
+            {
+                int filterColumnUIValue = m_Manager.FilterColumnIndex + 1; // +1 offset for "None"
+                m_FilterLabelDropdown.value = filterColumnUIValue;
+
+                // Populate index options for the current active filter column
+                PopulateFilterIndexDropdown(m_Manager.FilterColumnIndex);
+            }
+
+            if (m_FilterIndexDropdown != null && !string.IsNullOrEmpty(m_Manager.FilterLabel))
+            {
+                int matchIndex = m_FilterIndexDropdown.options.FindIndex(opt => opt.text == m_Manager.FilterLabel);
+                if (matchIndex >= 0)
+                {
+                    m_FilterIndexDropdown.value = matchIndex;
+                }
+            }
 
             m_IsUpdatingUI = false;
         }
@@ -331,6 +370,105 @@ namespace DataViz
         {
             if (m_Manager == null) return;
             m_Manager.RequestShuffleForwardRpc();
+        }
+        private void OnFilterColumnUIChanged(int idx)
+        {
+            if (m_IsUpdatingUI || m_Manager == null) return;
+
+            int actualColumnIndex = idx - 1; // -1 maps 0 ("None") to -1 (disabled)
+            m_Manager.RequestFilterIndexRpc(actualColumnIndex);
+
+            // Update the second dropdown (Filter Values/Indices) based on selected column
+            PopulateFilterIndexDropdown(actualColumnIndex);
+        }
+
+        private void PopulateFilterIndexDropdown(int columnIndex)
+        {
+            if (m_FilterIndexDropdown == null) return;
+
+            m_FilterIndexDropdown.ClearOptions();
+
+            if (columnIndex < 0 || m_Manager == null || m_Manager.LoadedDataset == null)
+            {
+                m_FilterIndexDropdown.interactable = false;
+                Debug.Log($"[ScatterplotUI] Filter index dropdown disabled: columnIndex={columnIndex}");
+                return;
+            }
+
+            DatasetColumn col = m_Manager.LoadedDataset.GetColumn(columnIndex);
+            if (col == null)
+            {
+                Debug.LogWarning($"[ScatterplotUI] Column at index {columnIndex} is null");
+                return;
+            }
+
+            Debug.Log($"[ScatterplotUI] Populating filter for column '{col.Name}' - Type: {col.Type}, IsNumeric: {col.IsNumeric}, IsCategorical: {col.IsCategorical}, UniqueValues.Count: {col.UniqueValues.Count}");
+
+            m_FilterIndexDropdown.interactable = true;
+            List<string> options = new List<string>();
+
+            // Handle numeric columns by building unique values from the data
+            if (col.IsNumeric && col.UniqueValues.Count == 0)
+            {
+                Debug.Log($"[ScatterplotUI] Numeric column '{col.Name}' with no UniqueValues - extracting from data...");
+                
+                HashSet<string> uniqueNumericValues = new HashSet<string>();
+                for (int rowIndex = 0; rowIndex < m_Manager.LoadedDataset.RowCount; rowIndex++)
+                {
+                    float value = m_Manager.LoadedDataset.GetNumericValue(rowIndex, columnIndex);
+                    uniqueNumericValues.Add(value.ToString());
+                }
+                
+                List<string> sortedValues = new List<string>(uniqueNumericValues);
+                sortedValues.Sort((a, b) =>
+                {
+                    if (float.TryParse(a, out float numA) && float.TryParse(b, out float numB))
+                    {
+                        return numA.CompareTo(numB);
+                    }
+                    return string.Compare(a, b, StringComparison.Ordinal);
+                });
+                
+                options.AddRange(sortedValues);
+                Debug.Log($"[ScatterplotUI] Extracted {options.Count} unique numeric values from column '{col.Name}'");
+            }
+            // Handle categorical columns
+            else if (col.UniqueValues != null && col.UniqueValues.Count > 0)
+            {
+                List<string> sortedValues = new List<string>(col.UniqueValues);
+                sortedValues.Sort((a, b) =>
+                {
+                    // Try to parse both as numbers
+                    if (float.TryParse(a, out float numA) && float.TryParse(b, out float numB))
+                    {
+                        return numA.CompareTo(numB);
+                    }
+                    
+                    return string.Compare(a, b, StringComparison.Ordinal);
+                });
+                
+                options.AddRange(sortedValues);
+                Debug.Log($"[ScatterplotUI] Populated filter index dropdown with {options.Count} values for column '{col.Name}'");
+            }
+            else
+            {
+                options.Add("All Values");
+                Debug.Log($"[ScatterplotUI] No unique values found for column '{col.Name}' - using 'All Values'");
+            }
+
+            m_FilterIndexDropdown.AddOptions(options);
+        }
+
+        private void OnFilterIndexUIChanged(int idx)
+        {
+            if (m_IsUpdatingUI || m_Manager == null) return;
+            
+            // Get the selected filter value from the dropdown
+            if (m_FilterIndexDropdown != null && idx >= 0 && idx < m_FilterIndexDropdown.options.Count)
+            {
+                string selectedValue = m_FilterIndexDropdown.options[idx].text;
+                m_Manager.RequestFilterLabelRpc(selectedValue);
+            }
         }
 
         #endregion

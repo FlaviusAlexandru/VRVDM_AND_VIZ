@@ -13602,6 +13602,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 5025899417572166804, guid: 2dcbcf48fb8a01b4299e9a5eff97f671, type: 3}
+      propertyPath: m_AuraPrefab
+      value: 
+      objectReference: {fileID: 6499347400998472836, guid: 0e48a4301dbae714abf3f06715c04a32, type: 3}
+    - target: {fileID: 5025899417572166804, guid: 2dcbcf48fb8a01b4299e9a5eff97f671, type: 3}
       propertyPath: m_DockAnchor
       value: 
       objectReference: {fileID: 1464938872}

@@ -28,6 +28,15 @@ namespace DataViz
 
         [Header("Interaction Settings")]
         public bool ShowTooltips = false;
+        
+        //<summary>
+        // Filtering will be used to chose a subset of the data to be displayed. Users will be able to chose a column "Filter label" and index/value "Filter Value"
+        //to enable, for example, filtering by participant ID or a specific category.
+        //This will help make the datasets less overwhelming and more manageable for users to explore.
+        //</summary>
+        [Header("Filtering Settings")]
+        public int FilterColumnIndex = -1;
+        public string FilterLabel = "";
 
         [Header("Loaded Dataset")]
         public DatasetColumnar LoadedDataset;
@@ -81,12 +90,14 @@ namespace DataViz
             YColumnIndex = state.Y;
             ZColumnIndex = state.Z;
 
+            //Debug that was needed for testing purposes, commented out for now, but can be re-enabled if needed for future debugging.
+            /*
             Debug.Log(
                 $"[MultiplayerScatterplotManager] Applied shuffle state -> " +
                 $"X={LoadedDataset.GetColumn(XColumnIndex)?.Name}, " +
                 $"Y={LoadedDataset.GetColumn(YColumnIndex)?.Name}, " +
                 $"Z={LoadedDataset.GetColumn(ZColumnIndex)?.Name}"
-            );
+            );*/
 
             OnPlotSettingsChanged?.Invoke();
         }
@@ -367,6 +378,19 @@ namespace DataViz
             //OnPlotSettingsChanged?.Invoke();
         }
 
+        public void RequestFilterIndexRpc(int columnIndex)
+        {
+            FilterColumnIndex = columnIndex;
+            OnPlotSettingsChanged?.Invoke();
+        }
+
+        public void RequestFilterLabelRpc(string filterLabel)
+        {
+            FilterLabel = filterLabel;
+            OnPlotSettingsChanged?.Invoke();
+        }
+
+
         /// <summary>
         /// Randomizes X/Y/Z/Color/Time column selection for data exploration.
         ///
@@ -609,5 +633,6 @@ namespace DataViz
 
             OnPlotSettingsChanged?.Invoke();
         }
+
     }
 }
