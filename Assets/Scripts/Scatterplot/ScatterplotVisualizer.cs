@@ -819,10 +819,10 @@ namespace DataViz
         /// Resolves dataset row i's value on a given column to the same string label
         /// used throughout the UI (categorical: the category's UniqueValues entry;
         /// numeric: float.ToString(), matching ScatterplotUI.PopulateFilterIndexDropdown's
-        /// formatting). Shared by filter matching and glyph lookup so both always agree
-        /// on what a row's "label" is for a given column.
+        /// formatting). Shared by filter matching, glyph lookup, and GPUPointInteractable's
+        /// tooltip so all three always agree on what a row's "label" is for a given column.
         /// </summary>
-        private string GetRowLabel(
+        public string GetRowLabel(
             DatasetColumnar dataset,
             int rowIndex,
             int columnIndex,

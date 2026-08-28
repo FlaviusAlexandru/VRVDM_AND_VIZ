@@ -357,6 +357,38 @@ namespace DataViz
                 if (colorCol >= 0 && colorCol < dataset.ColumnCount)
                     text += $"<color=#FFFF44>Color ({dataset.Columns[colorCol].Name}):</color> {row.GetRawValue(colorCol)}\n";
 
+                int filterCol = m_Visualizer.m_Manager.FilterColumnIndex;
+                if (filterCol >= 0 && filterCol < dataset.ColumnCount)
+                {
+                    DatasetColumn filterColumn = dataset.Columns[filterCol];
+                    List<string> filterCategoryTable = filterColumn.IsCategorical
+                        ? new List<string>(filterColumn.UniqueValues)
+                        : null;
+                    string filterLabel = m_Visualizer.m_Manager.FilterLabel;
+                    string rowFilterLabel = m_Visualizer.GetRowLabel(dataset, rowIndex, filterCol, filterColumn, filterCategoryTable);
+
+                    string matchTag = string.IsNullOrEmpty(filterLabel)
+                        ? ""
+                        : (rowFilterLabel == filterLabel
+                            ? " <color=#88FF88>(match)</color>"
+                            : " <color=#888888>(dimmed)</color>");
+
+                    text += $"<color=#FFAA44>Filter ({filterColumn.Name}):</color> {row.GetRawValue(filterCol)}{matchTag}\n";
+                }
+
+                int glyphCol = m_Visualizer.m_Manager.GlyphColumnIndex;
+                if (glyphCol >= 0 && glyphCol < dataset.ColumnCount)
+                {
+                    DatasetColumn glyphColumn = dataset.Columns[glyphCol];
+                    List<string> glyphCategoryTable = glyphColumn.IsCategorical
+                        ? new List<string>(glyphColumn.UniqueValues)
+                        : null;
+                    string rowGlyphLabel = m_Visualizer.GetRowLabel(dataset, rowIndex, glyphCol, glyphColumn, glyphCategoryTable);
+                    int glyphIndex = m_Visualizer.m_Manager.GetGlyphForLabel(rowGlyphLabel, 0);
+
+                    text += $"<color=#44FFFF>Glyph ({glyphColumn.Name}):</color> {row.GetRawValue(glyphCol)} <color=#AAAAAA>[shape #{glyphIndex}]</color>\n";
+                }
+
                 m_TooltipText.text = text.TrimEnd('\n');
             }
 
