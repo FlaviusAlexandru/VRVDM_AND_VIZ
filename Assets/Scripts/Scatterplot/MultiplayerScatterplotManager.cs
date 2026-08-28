@@ -28,7 +28,7 @@ namespace DataViz
 
         [Header("Interaction Settings")]
         public bool ShowTooltips = false;
-        
+
         //<summary>
         // Filtering will be used to chose a subset of the data to be displayed. Users will be able to chose a column "Filter label" and index/value "Filter Value"
         //to enable, for example, filtering by participant ID or a specific category.
@@ -37,6 +37,24 @@ namespace DataViz
         [Header("Filtering Settings")]
         public int FilterColumnIndex = -1;
         public string FilterLabel = "";
+
+        //<summary>
+        // Glyphs let users manually assign a specific shape/mesh to a label value on a chosen
+        // column (e.g. "Gender" -> "Female" = square), independent of whether that column is
+        // one of the plotted X/Y/Z axes - mirrors how ColorColumnIndex is already decoupled
+        // from the axes. GlyphAssignments is the manual label -> glyph mapping; unassigned
+        // labels fall back to glyph 0 (the base circle) in ScatterplotVisualizer.
+        //</summary>
+        [Header("Glyph Settings")]
+        public int GlyphColumnIndex = -1;
+        public List<GlyphAssignment> GlyphAssignments = new();
+
+        [System.Serializable]
+        public class GlyphAssignment
+        {
+            public string Label;
+            public int GlyphIndex;
+        }
 
         [Header("Loaded Dataset")]
         public DatasetColumnar LoadedDataset;
@@ -309,6 +327,8 @@ namespace DataViz
                 TimeColumnIndex = -1;
                 TimeScrub = 0f;
                 IsPlaying = false;
+                GlyphColumnIndex = -1;
+                GlyphAssignments.Clear();
 
                 OnPlotSettingsChanged?.Invoke();
             }
@@ -388,6 +408,47 @@ namespace DataViz
         {
             FilterLabel = filterLabel;
             OnPlotSettingsChanged?.Invoke();
+        }
+
+        public void RequestGlyphColumnRpc(int columnIndex)
+        {
+            GlyphColumnIndex = columnIndex;
+            OnPlotSettingsChanged?.Invoke();
+        }
+
+        /// <summary>
+        /// Manually assigns (or re-assigns) a glyph to a specific label value on the
+        /// active glyph column, e.g. RequestGlyphAssignmentRpc("Female", 1).
+        /// </summary>
+        public void RequestGlyphAssignmentRpc(string label, int glyphIndex)
+        {
+            if (string.IsNullOrEmpty(label))
+                return;
+
+            GlyphAssignment existing = GlyphAssignments.Find(a => a.Label == label);
+            if (existing != null)
+            {
+                existing.GlyphIndex = glyphIndex;
+            }
+            else
+            {
+                GlyphAssignments.Add(new GlyphAssignment { Label = label, GlyphIndex = glyphIndex });
+            }
+
+            OnPlotSettingsChanged?.Invoke();
+        }
+
+        /// <summary>
+        /// Looks up the manually-assigned glyph for a label, or defaultGlyph if the
+        /// label has no assignment yet (e.g. never touched by a user this session).
+        /// </summary>
+        public int GetGlyphForLabel(string label, int defaultGlyph = 0)
+        {
+            if (string.IsNullOrEmpty(label))
+                return defaultGlyph;
+
+            GlyphAssignment match = GlyphAssignments.Find(a => a.Label == label);
+            return match != null ? match.GlyphIndex : defaultGlyph;
         }
 
 

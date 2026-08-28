@@ -40,6 +40,14 @@ namespace DataViz
         public TMP_Dropdown m_FilterLabelDropdown;
         public TMP_Dropdown m_FilterIndexDropdown;
 
+        [Header("Glyph Controls")]
+        public TMP_Dropdown m_GlyphColumnDropdown;   // which column drives glyph shape (like m_FilterLabelDropdown)
+        public TMP_Dropdown m_GlyphLabelDropdown;    // which label of that column is being assigned (like m_FilterIndexDropdown)
+        public TMP_Dropdown m_GlyphShapeDropdown;    // which glyph shape to assign to the selected label
+
+        // Graph's glyph atlas - index here must match glyphIndex in ScatterplotVFXRenderer.
+        private static readonly string[] k_GlyphShapeNames = { "Circle", "Square", "Triangle", "Diamond", "Cross", "Star" };
+
         private List<string> m_AvailableDatasets = new();
         private bool m_IsUpdatingUI = false;
 
@@ -90,12 +98,25 @@ namespace DataViz
 
             if (m_ShuffleForwardButton != null)
                 m_ShuffleForwardButton.onClick.AddListener(OnShuffleForwardButtonClicked);
-           
+
             if (m_FilterLabelDropdown != null)
                 m_FilterLabelDropdown.onValueChanged.AddListener(OnFilterColumnUIChanged);
-            
+
             if (m_FilterIndexDropdown != null)
                 m_FilterIndexDropdown.onValueChanged.AddListener(OnFilterIndexUIChanged);
+
+            if (m_GlyphColumnDropdown != null)
+                m_GlyphColumnDropdown.onValueChanged.AddListener(OnGlyphColumnUIChanged);
+
+            if (m_GlyphLabelDropdown != null)
+                m_GlyphLabelDropdown.onValueChanged.AddListener(OnGlyphLabelUIChanged);
+
+            if (m_GlyphShapeDropdown != null)
+            {
+                m_GlyphShapeDropdown.ClearOptions();
+                m_GlyphShapeDropdown.AddOptions(new List<string>(k_GlyphShapeNames));
+                m_GlyphShapeDropdown.onValueChanged.AddListener(OnGlyphShapeUIChanged);
+            }
 
             // Sync with Manager updates
             if (m_Manager != null)
@@ -212,6 +233,15 @@ namespace DataViz
                 Debug.Log($"[ScatterplotUI] Filter column dropdown options updated. Total options: {filterOptions.Count}");
             }
 
+            // Populate glyph column dropdown options
+            if (m_GlyphColumnDropdown != null)
+            {
+                m_GlyphColumnDropdown.ClearOptions();
+                List<string> glyphColumnOptions = new() { "None" };
+                glyphColumnOptions.AddRange(columns);
+                m_GlyphColumnDropdown.AddOptions(glyphColumnOptions);
+            }
+
             SyncUIWithManager();
         }
 
@@ -280,6 +310,19 @@ namespace DataViz
                     m_FilterIndexDropdown.value = matchIndex;
                 }
             }
+
+            // Sync glyph settings
+            if (m_GlyphColumnDropdown != null)
+            {
+                int glyphColumnUIValue = m_Manager.GlyphColumnIndex + 1; // +1 offset for "None"
+                m_GlyphColumnDropdown.value = glyphColumnUIValue;
+
+                // Populate label options for the current active glyph column
+                PopulateGlyphLabelDropdown(m_Manager.GlyphColumnIndex);
+            }
+
+            // Reflect whatever's already assigned to the currently-selected label
+            RefreshGlyphShapeDropdownSelection();
 
             m_IsUpdatingUI = false;
         }
@@ -411,14 +454,14 @@ namespace DataViz
             if (col.IsNumeric && col.UniqueValues.Count == 0)
             {
                 Debug.Log($"[ScatterplotUI] Numeric column '{col.Name}' with no UniqueValues - extracting from data...");
-                
+
                 HashSet<string> uniqueNumericValues = new HashSet<string>();
                 for (int rowIndex = 0; rowIndex < m_Manager.LoadedDataset.RowCount; rowIndex++)
                 {
                     float value = m_Manager.LoadedDataset.GetNumericValue(rowIndex, columnIndex);
                     uniqueNumericValues.Add(value.ToString());
                 }
-                
+
                 List<string> sortedValues = new List<string>(uniqueNumericValues);
                 sortedValues.Sort((a, b) =>
                 {
@@ -428,7 +471,7 @@ namespace DataViz
                     }
                     return string.Compare(a, b, StringComparison.Ordinal);
                 });
-                
+
                 options.AddRange(sortedValues);
                 Debug.Log($"[ScatterplotUI] Extracted {options.Count} unique numeric values from column '{col.Name}'");
             }
@@ -443,10 +486,10 @@ namespace DataViz
                     {
                         return numA.CompareTo(numB);
                     }
-                    
+
                     return string.Compare(a, b, StringComparison.Ordinal);
                 });
-                
+
                 options.AddRange(sortedValues);
                 Debug.Log($"[ScatterplotUI] Populated filter index dropdown with {options.Count} values for column '{col.Name}'");
             }
@@ -462,13 +505,128 @@ namespace DataViz
         private void OnFilterIndexUIChanged(int idx)
         {
             if (m_IsUpdatingUI || m_Manager == null) return;
-            
+
             // Get the selected filter value from the dropdown
             if (m_FilterIndexDropdown != null && idx >= 0 && idx < m_FilterIndexDropdown.options.Count)
             {
                 string selectedValue = m_FilterIndexDropdown.options[idx].text;
                 m_Manager.RequestFilterLabelRpc(selectedValue);
             }
+        }
+
+        private void OnGlyphColumnUIChanged(int idx)
+        {
+            if (m_IsUpdatingUI || m_Manager == null) return;
+
+            int actualColumnIndex = idx - 1; // -1 maps 0 ("None") to -1 (disabled)
+            m_Manager.RequestGlyphColumnRpc(actualColumnIndex);
+
+            // Refresh the label list for the newly selected column, and the shape
+            // dropdown to whatever's already assigned to its first label.
+            PopulateGlyphLabelDropdown(actualColumnIndex);
+            RefreshGlyphShapeDropdownSelection();
+        }
+
+        /// <summary>
+        /// Lists the unique label values of the active glyph column so the user can pick
+        /// which one they're assigning a shape to. Mirrors PopulateFilterIndexDropdown -
+        /// same numeric-vs-categorical handling, same value formatting - since a glyph
+        /// assignment's label has to match what GetRowLabel() produces at build time.
+        /// </summary>
+        private void PopulateGlyphLabelDropdown(int columnIndex)
+        {
+            if (m_GlyphLabelDropdown == null) return;
+
+            m_GlyphLabelDropdown.ClearOptions();
+
+            if (columnIndex < 0 || m_Manager == null || m_Manager.LoadedDataset == null)
+            {
+                m_GlyphLabelDropdown.interactable = false;
+                return;
+            }
+
+            DatasetColumn col = m_Manager.LoadedDataset.GetColumn(columnIndex);
+            if (col == null)
+            {
+                Debug.LogWarning($"[ScatterplotUI] Column at index {columnIndex} is null");
+                return;
+            }
+
+            m_GlyphLabelDropdown.interactable = true;
+            List<string> options = new List<string>();
+
+            if (col.IsNumeric && col.UniqueValues.Count == 0)
+            {
+                HashSet<string> uniqueNumericValues = new HashSet<string>();
+                for (int rowIndex = 0; rowIndex < m_Manager.LoadedDataset.RowCount; rowIndex++)
+                {
+                    float value = m_Manager.LoadedDataset.GetNumericValue(rowIndex, columnIndex);
+                    uniqueNumericValues.Add(value.ToString());
+                }
+
+                List<string> sortedValues = new List<string>(uniqueNumericValues);
+                sortedValues.Sort((a, b) =>
+                {
+                    if (float.TryParse(a, out float numA) && float.TryParse(b, out float numB))
+                    {
+                        return numA.CompareTo(numB);
+                    }
+                    return string.Compare(a, b, StringComparison.Ordinal);
+                });
+
+                options.AddRange(sortedValues);
+            }
+            else if (col.UniqueValues != null && col.UniqueValues.Count > 0)
+            {
+                List<string> sortedValues = new List<string>(col.UniqueValues);
+                sortedValues.Sort((a, b) =>
+                {
+                    if (float.TryParse(a, out float numA) && float.TryParse(b, out float numB))
+                    {
+                        return numA.CompareTo(numB);
+                    }
+                    return string.Compare(a, b, StringComparison.Ordinal);
+                });
+
+                options.AddRange(sortedValues);
+            }
+
+            m_GlyphLabelDropdown.AddOptions(options);
+        }
+
+        private void OnGlyphLabelUIChanged(int idx)
+        {
+            // Just switches which label the shape dropdown is currently editing -
+            // reflect whatever's already assigned to it (or the default) rather
+            // than sending an assignment.
+            RefreshGlyphShapeDropdownSelection();
+        }
+
+        private void OnGlyphShapeUIChanged(int idx)
+        {
+            if (m_IsUpdatingUI || m_Manager == null) return;
+            if (m_GlyphLabelDropdown == null || m_GlyphLabelDropdown.options.Count == 0) return;
+
+            string selectedLabel = m_GlyphLabelDropdown.options[m_GlyphLabelDropdown.value].text;
+            m_Manager.RequestGlyphAssignmentRpc(selectedLabel, idx);
+        }
+
+        /// <summary>
+        /// Shows whatever glyph is currently assigned to the selected label (or the
+        /// default) in the shape dropdown, without sending an assignment RPC.
+        /// </summary>
+        private void RefreshGlyphShapeDropdownSelection()
+        {
+            if (m_GlyphShapeDropdown == null || m_GlyphLabelDropdown == null || m_Manager == null) return;
+            if (m_GlyphLabelDropdown.options.Count == 0) return;
+
+            string selectedLabel = m_GlyphLabelDropdown.options[m_GlyphLabelDropdown.value].text;
+            int assignedGlyph = m_Manager.GetGlyphForLabel(selectedLabel, 0);
+
+            bool wasUpdating = m_IsUpdatingUI;
+            m_IsUpdatingUI = true;
+            m_GlyphShapeDropdown.value = Mathf.Clamp(assignedGlyph, 0, m_GlyphShapeDropdown.options.Count - 1);
+            m_IsUpdatingUI = wasUpdating;
         }
 
         #endregion

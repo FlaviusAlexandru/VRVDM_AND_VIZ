@@ -141,6 +141,7 @@ namespace DataViz
             // positions[i] is NO LONGER guaranteed to be dataset.Rows[i] -
             // GPUPointInteractable relies on this mapping for tooltips.
             List<int> visibleRowIndices = new List<int>(dataset.RowCount);
+            List<int> glyphIndices = new List<int>(dataset.RowCount);
 
             // Column references
             DatasetColumn xColumn = (xCol >= 0 && xCol < dataset.ColumnCount) ? dataset.Columns[xCol] : null;
@@ -182,6 +183,17 @@ namespace DataViz
                 Debug.LogWarning($"[ScatterplotVisualizer] Filter column '{filterColumn.Name}' is neither " +
                                   $"categorical nor numeric - filter will not dim any points.");
             }
+
+            // Glyph column: independent of X/Y/Z (same as colorCol), so users can encode a
+            // dimension via shape even when it isn't one of the plotted axes. The actual
+            // shape per label is a manual mapping (m_Manager.GlyphAssignments), looked up
+            // per row below; labels with no assignment yet default to glyph 0.
+            int glyphCol = m_Manager.GlyphColumnIndex;
+            bool glyphActive = glyphCol >= 0 && glyphCol < dataset.ColumnCount;
+            DatasetColumn glyphColumn = glyphActive ? dataset.Columns[glyphCol] : null;
+            List<string> glyphCategoryTable = (glyphActive && glyphColumn.IsCategorical)
+                ? new List<string>(glyphColumn.UniqueValues)
+                : null;
 
             if (colorColumn != null)
             {
@@ -256,16 +268,28 @@ namespace DataViz
                     pointColor.a = matches ? 1f : m_FilteredOutAlpha;
                 }
 
+                // 4. Look up this row's manually-assigned glyph on the active glyph column.
+                int glyphIndex = 0;
+                if (glyphActive)
+                {
+                    string rowLabel = GetRowLabel(dataset, i, glyphCol, glyphColumn, glyphCategoryTable);
+                    glyphIndex = m_Manager.GetGlyphForLabel(rowLabel, 0);
+                }
+                glyphIndices.Add(glyphIndex);
+
                 colors.Add(pointColor);
                 visibleRowIndices.Add(i);
             }
 
 
 
-            m_GPUPoints.Build(
+            m_GPUPoints.BuildAdvanced(
                 positions,
                 colors,
-                pointSize
+                pointSize,
+                null, // glossiness - not yet exposed as a mapped dimension
+                null, // metallic - not yet exposed as a mapped dimension
+                glyphIndices
             );
 
             // Also update the interactable with point data
@@ -792,10 +816,38 @@ namespace DataViz
             m_ActiveAxes.Add(labelObj);
         }
         /// <summary>
+        /// Resolves dataset row i's value on a given column to the same string label
+        /// used throughout the UI (categorical: the category's UniqueValues entry;
+        /// numeric: float.ToString(), matching ScatterplotUI.PopulateFilterIndexDropdown's
+        /// formatting). Shared by filter matching and glyph lookup so both always agree
+        /// on what a row's "label" is for a given column.
+        /// </summary>
+        private string GetRowLabel(
+            DatasetColumnar dataset,
+            int rowIndex,
+            int columnIndex,
+            DatasetColumn column,
+            List<string> categoryTable)
+        {
+            if (column.IsCategorical)
+            {
+                int catIdx = dataset.GetCategoryIndex(rowIndex, columnIndex);
+                if (catIdx < 0 || categoryTable == null || catIdx >= categoryTable.Count)
+                    return null;
+
+                return categoryTable[catIdx];
+            }
+
+            if (column.IsNumeric)
+            {
+                return dataset.GetNumericValue(rowIndex, columnIndex).ToString();
+            }
+
+            return null;
+        }
+
+        /// <summary>
         /// Checks whether dataset row i matches the active filter's selected value.
-        /// Numeric comparison uses the same default float.ToString() formatting that
-        /// ScatterplotUI.PopulateFilterIndexDropdown used to build the dropdown options,
-        /// so the two stay in sync without needing a shared formatting helper.
         /// </summary>
         private bool RowMatchesFilter(
             DatasetColumnar dataset,
@@ -805,23 +857,12 @@ namespace DataViz
             List<string> filterCategoryTable,
             string filterLabel)
         {
-            if (filterColumn.IsCategorical)
-            {
-                int catIdx = dataset.GetCategoryIndex(rowIndex, filterCol);
-                if (catIdx < 0 || filterCategoryTable == null || catIdx >= filterCategoryTable.Count)
-                    return false;
-
-                return filterCategoryTable[catIdx] == filterLabel;
-            }
-
-            if (filterColumn.IsNumeric)
-            {
-                float rawVal = dataset.GetNumericValue(rowIndex, filterCol);
-                return rawVal.ToString() == filterLabel;
-            }
-
             // Unknown column type - treat as non-filterable, don't dim.
-            return true;
+            if (!filterColumn.IsCategorical && !filterColumn.IsNumeric)
+                return true;
+
+            string rowLabel = GetRowLabel(dataset, rowIndex, filterCol, filterColumn, filterCategoryTable);
+            return rowLabel != null && rowLabel == filterLabel;
         }
 
         private void ClearPoints()
