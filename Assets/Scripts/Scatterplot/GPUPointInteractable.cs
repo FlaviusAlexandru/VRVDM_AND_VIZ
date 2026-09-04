@@ -386,7 +386,11 @@ namespace DataViz
                     string rowGlyphLabel = m_Visualizer.GetRowLabel(dataset, rowIndex, glyphCol, glyphColumn, glyphCategoryTable);
                     int glyphIndex = m_Visualizer.m_Manager.GetGlyphForLabel(rowGlyphLabel, 0);
 
-                    text += $"<color=#44FFFF>Glyph ({glyphColumn.Name}):</color> {row.GetRawValue(glyphCol)} <color=#AAAAAA>[shape #{glyphIndex}]</color>\n";
+                    string glyphName = (glyphIndex >= 0 && glyphIndex < ScatterplotUI.k_GlyphShapeNames.Length)
+                        ? ScatterplotUI.k_GlyphShapeNames[glyphIndex]
+                        : $"#{glyphIndex}";
+
+                    text += $"<color=#44FFFF>Glyph ({glyphColumn.Name}):</color> {row.GetRawValue(glyphCol)} <color=#AAAAAA>[{glyphName}]</color>\n";
                 }
 
                 m_TooltipText.text = text.TrimEnd('\n');

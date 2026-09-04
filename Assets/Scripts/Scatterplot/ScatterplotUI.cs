@@ -46,7 +46,9 @@ namespace DataViz
         public TMP_Dropdown m_GlyphShapeDropdown;    // which glyph shape to assign to the selected label
 
         // Graph's glyph atlas - index here must match glyphIndex in ScatterplotVFXRenderer.
-        private static readonly string[] k_GlyphShapeNames = { "Circle", "Square", "Triangle", "Diamond", "Cross", "Star" };
+        // Public + static so GPUPointInteractable's tooltip can show the same names
+        // instead of a raw shape number - both always read from this one list.
+        public static readonly string[] k_GlyphShapeNames = { "Circle", "Square", "Triangle", "Diamond", "Cross", "Star" };
 
         private List<string> m_AvailableDatasets = new();
         private bool m_IsUpdatingUI = false;
