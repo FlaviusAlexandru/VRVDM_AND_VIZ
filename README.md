@@ -95,12 +95,6 @@ python Assets/Scripts/Data/preprocess_csv_columnar.py
 3. Unity automatically loads from processed binary data
 4. For new datasets, repeat steps 1-2
 
-**Performance Comparison:**
-- **Old Approach (Row-based)**: 1M rows × 100 columns = 3M array allocations, scattered memory
-- **New Approach (Columnar)**: 100 contiguous arrays, optimal cache locality
-- **File Size**: ~400MB binary vs ~4GB JSON for 1M×100 dataset
-- **Load Time**: <0.5s vs 15-20s for large datasets
-
 ### 3. XR Configuration
 - Navigate to `Project Settings > XR > Plug-in Management`
 - Configure OpenXR settings for your VR headset
@@ -161,13 +155,6 @@ Column1,Column2,Column3,CategoryColumn
 - **Row Views**: DatasetRowView provides backward-compatible row access without allocations
 - **Memory Layout**: Column-major arrays optimized for cache locality and GPU uploads
 
-### Performance Characteristics
-- **Load Time**: <0.5s for 1M rows (vs 15-20s row-based)
-- **Memory Usage**: ~400MB for 1M×100 dataset (vs ~4GB JSON)
-- **GC Pressure**: Minimal (no per-row allocations)
-- **Cache Efficiency**: High (contiguous column arrays)
-
-
 ## Development
 
 ### Branching Strategy
@@ -176,10 +163,10 @@ Column1,Column2,Column3,CategoryColumn
 
 ### Key Components
 - **DatasetColumnar**: Columnar data structure with Structure-of-Arrays layout
-- **ColumnarBinaryImporter**: Binary data loader for columnar format
-- **ScatterplotVisualizer**: Main visualization controller (updated for columnar data)
-- **GPUPointInteractable**: Handles raycast detection and tooltips (updated for columnar data)
-- **MultiplayerScatterplotManager**: Manages dataset state and settings (updated for columnar data)
+- **ColumnarBinaryImporter**: Binary data loader
+- **ScatterplotVisualizer**: Main visualization controller
+- **GPUPointInteractable**: Handles raycast detection and tooltips
+- **MultiplayerScatterplotManager**: Manages dataset state and settings
 - **preprocess_csv_columnar.py**: Python script for columnar binary conversion
 
 ### Adding New Features
@@ -196,12 +183,14 @@ Column1,Column2,Column3,CategoryColumn
 ## Future Enhancements
 
 - [ ] Additional visualization types (heatmaps, parallel coordinates)
-- [ ] Advanced filtering and selection tools
+- [x]* Advanced filtering and selection tools
 - [ ] Data export and sharing capabilities
 - [ ] Improved categorical color palette customization
 - [ ] Real-time data streaming support
 - [ ] Collaborative annotation features
-- [ ] Shuffle button that shuffles for example how the data source is mapped, or the data source itself etc., maybe expand to include colors etc.
+- [x]* Shuffle button that shuffles for example how the data source is mapped, or the data source itself etc., maybe expand to include colors etc.
+
+* *As of Sept. 4, 2026* 
 
 ## Contributing
 
@@ -229,12 +218,6 @@ flmi@create.aau.dk
 
 ---
 
-**Last Updated**: 2026-08-03  
+**Last Updated**: 04-09-2026  
 **Unity Version**: 6000.5.2f1  
 **Project Status**: Active Development  
-
-**Recent Changes (2026-08-03)**:
-- Implemented columnar data architecture (Structure-of-Arrays) for 1M+ row datasets
-- Added binary serialization format for efficient data loading
-- Updated all visualization components to use columnar data
-- Achieved ~10-15x performance improvement for large datasets
