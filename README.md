@@ -1,5 +1,8 @@
 # VRVDM&VIZ - VR Data Visualization
 
+<img width="1299" height="751" alt="image" src="https://github.com/user-attachments/assets/ee5fba77-ed20-4f9c-9763-f90e6bcc3f28" />
+
+
 A Unity 6-based VR data visualization system for interactive 3D scatterplot exploration in virtual reality environments.
 
 ## Features
