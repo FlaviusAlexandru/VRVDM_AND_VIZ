@@ -183,12 +183,12 @@ Column1,Column2,Column3,CategoryColumn
 ## Future Enhancements
 
 - [ ] Additional visualization types (heatmaps, parallel coordinates)
-- [x]* Advanced filtering and selection tools
+- [x] * Advanced filtering and selection tools
 - [ ] Data export and sharing capabilities
 - [ ] Improved categorical color palette customization
 - [ ] Real-time data streaming support
 - [ ] Collaborative annotation features
-- [x]* Shuffle button that shuffles for example how the data source is mapped, or the data source itself etc., maybe expand to include colors etc.
+- [x] * Shuffle button that shuffles for example how the data source is mapped, or the data source itself etc., maybe expand to include colors etc.
 
 * *As of Sept. 4, 2026* 
 
