@@ -19,7 +19,7 @@ namespace DataViz
         // this struct exists or how to break it into named sub-fields. This is
         // documented but easy to miss: https://docs.unity3d.com/Packages/com.unity.visualeffectgraph@17.6/manual/Operator-SampleBuffer.html
         //
-      
+
         [VFXType(VFXTypeAttribute.Usage.GraphicsBuffer)]
         [StructLayout(LayoutKind.Sequential)]
         public struct PointData
@@ -48,6 +48,28 @@ namespace DataViz
         private void OnDestroy()
         {
             ReleaseBuffer();
+        }
+
+        /// <summary>
+        /// Enables or fully disables this pipeline. IMPORTANT: this sets
+        /// VisualEffect.enabled = false when inactive, which stops the graph
+        /// from being simulated/rendered at all - NOT just calling Clear()
+        /// (which only zeroes the spawn count; the graph's Capacity-sized
+        /// buffer is fixed at compile time and was found to still be touched
+        /// every frame regardless of PointCount, silently costing real GPU
+        /// time even while this pipeline wasn't the active one).
+        /// </summary>
+        public void SetActive(bool active)
+        {
+            if (m_VFX != null)
+            {
+                m_VFX.enabled = active;
+            }
+
+            if (!active)
+            {
+                Clear();
+            }
         }
 
         public void Clear()

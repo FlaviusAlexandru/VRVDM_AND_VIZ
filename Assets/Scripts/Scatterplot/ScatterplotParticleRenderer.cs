@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+ï»¿using System.Collections.Generic;
 using UnityEngine;
 
 namespace DataViz
@@ -8,7 +8,7 @@ namespace DataViz
     /// built-in Particle System instead of manual GPU instancing.
     ///
     /// Same public interface (Build / Clear) as ScatterplotInstancedRenderer,
-    /// so ScatterplotVisualizer can call either one interchangeably —
+    /// so ScatterplotVisualizer can call either one interchangeably ï¿½
     /// just swap which component m_GPUPoints points at (or wire both up
     /// and toggle which one is active, for an A/B comparison).
     ///
@@ -83,6 +83,25 @@ namespace DataViz
             // to simulate/age out our "infinite lifetime" particles.
             m_ParticleSystem.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
             m_ParticleSystem.Pause(true);
+        }
+
+        /// <summary>
+        /// Enables or fully disables this pipeline. Disables the
+        /// ParticleSystemRenderer component itself (not just clearing the
+        /// particle data) so an inactive pipeline stops submitting draw
+        /// calls entirely.
+        /// </summary>
+        public void SetActive(bool active)
+        {
+            if (m_ParticleRenderer != null)
+            {
+                m_ParticleRenderer.enabled = active;
+            }
+
+            if (!active)
+            {
+                Clear();
+            }
         }
 
         public void Clear()

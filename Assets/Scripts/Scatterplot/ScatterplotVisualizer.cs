@@ -35,12 +35,17 @@ namespace DataViz
 
         public VisualizationGridSettings m_GridSettings;
 
+
+        [Header("Renderer Options for benchmarking (DO NOT TOUCH)")]
+        //public ScatterplotGameObjectRenderer m_GameObjectRenderer; // the naive baseline - doesn't exist yet, still needs writing
+        public ScatterplotInstancedRenderer m_InstancedRenderer;
+        public ScatterplotParticleRenderer m_ParticleRenderer;
+        public ScatterplotVFXRenderer m_VFXRenderer;
+
         private void Start()
         {
             if (m_Manager == null)
                 m_Manager = MultiplayerScatterplotManager.Instance;
-
-            if (m_Manager != null) { m_Manager.OnPlotSettingsChanged += RegeneratePlot; }
 
             // Create containers
             m_PointsContainer = new GameObject("Points").transform;
@@ -59,14 +64,16 @@ namespace DataViz
                 m_AxisMaterial.color = Color.white;
             }
 
-            if (m_GPUPoints == null) { m_GPUPoints = GetComponent<ScatterplotVFXRenderer>(); }
+            if (m_InstancedRenderer == null) { m_InstancedRenderer = GetComponent<ScatterplotInstancedRenderer>(); }
+            if (m_ParticleRenderer == null) { m_ParticleRenderer = GetComponent<ScatterplotParticleRenderer>(); }
+            if (m_VFXRenderer == null) { m_VFXRenderer = GetComponent<ScatterplotVFXRenderer>(); }
             if (m_GPUInteractable == null) { m_GPUInteractable = GetComponent<GPUPointInteractable>(); }
             if (m_GPUInteractable != null) { m_GPUInteractable.m_Visualizer = this; }
 
             if (m_GPUPoints == null)
             {
                 Debug.LogError(
-                    "ScatterplotVisualizer: No ScatterplotInstancedRenderer found."
+                    "[ScatterplotVisualizer] Renderer not found, ensure you have linked it in the inspector."
                 );
             }
 
@@ -98,6 +105,16 @@ namespace DataViz
         private void OnEnable()
         {
             Debug.Log($"Visualizer enabled {GetEntityId()}");
+
+            if (m_Manager == null)
+                m_Manager = MultiplayerScatterplotManager.Instance;
+
+            if (m_Manager != null) { m_Manager.OnPlotSettingsChanged += RegeneratePlot; }
+        }
+
+        private void OnDisable()
+        {
+            if (m_Manager != null) { m_Manager.OnPlotSettingsChanged -= RegeneratePlot; }
         }
 
         private void OnDestroy()
@@ -283,14 +300,29 @@ namespace DataViz
 
 
 
-            m_GPUPoints.BuildAdvanced(
-                positions,
-                colors,
-                pointSize,
-                null, // glossiness - not yet exposed as a mapped dimension
-                null, // metallic - not yet exposed as a mapped dimension
-                glyphIndices
-            );
+            switch (m_Manager.ActivePipeline)
+            {
+                case MultiplayerScatterplotManager.RenderPipelineKind.Instanced:
+                    m_InstancedRenderer.Build(positions, colors, pointSize);
+                    m_ParticleRenderer.Clear();
+                    m_VFXRenderer.Clear();
+                    break;
+
+                case MultiplayerScatterplotManager.RenderPipelineKind.Particle:
+                    m_ParticleRenderer.Build(positions, colors, pointSize);
+                    m_InstancedRenderer.Clear();
+                    m_VFXRenderer.Clear();
+                    break;
+
+                case MultiplayerScatterplotManager.RenderPipelineKind.VFX:
+                    m_VFXRenderer.BuildAdvanced(positions, colors, pointSize, null, null, glyphIndices);
+                    m_InstancedRenderer.Clear();
+                    m_ParticleRenderer.Clear();
+                    break;
+
+                    // GameObject case intentionally omitted - that renderer doesn't exist yet.
+            }
+
 
             // Also update the interactable with point data
 

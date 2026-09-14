@@ -1,0 +1,348 @@
+﻿#include "pch-c.h"
+
+
+#include "codegen/il2cpp-codegen-metadata.h"
+
+
+
+
+
+extern void EmbeddedAttribute__ctor_m9359E67B2241848F67641A5F6C59DF33C1ACED0C (void);
+extern void IsUnmanagedAttribute__ctor_m0D5258BB52AE7F1AC045F9A8F5A27EA1EC1873C0 (void);
+extern void UnitySourceGeneratedAssemblyMonoScriptTypes_v1_Get_mB52F2263FA3531856182A4BCF7366CD7EC674EF8 (void);
+extern void UnitySourceGeneratedAssemblyMonoScriptTypes_v1__ctor_mC03FB246055CDD31618A4F7F26FEC129967BEBAB (void);
+extern void GhostAnimationController_get_ApplyRootMotion_mB339B55A1BC15A2696E92E738C04DE44DAF65194 (void);
+extern void GhostAnimationController_CopyFromEntities_mE7CF9E3BAC768FA8C12B09AD91D77B7417163949 (void);
+extern void GhostAnimationController_CopyToEntities_m85C4050D8A7795222183E72503A705B99BCD643B (void);
+extern void GhostAnimationController_EvaluateGraph_m7C3579258AEE1C7AE3CBB25B6CECD40DBC55D8AC (void);
+extern void GhostAnimationController_Start_mC4BB3F22C63F4B1F61376F9D6273BEB34D27B1EF (void);
+extern void GhostAnimationController_OnDestroy_mCC1C6201EB7526EFA3511E763F367A8881875DD6 (void);
+extern void GhostAnimationController__ctor_m2759D4B64D902F087E257CABFE82C078BC80321D (void);
+extern void GhostAnimationControllerPredictionSystem_OnCreate_m78F0EE9D0FCD8C035C6E5D6C3C4CD25A1406BCC6 (void);
+extern void GhostAnimationControllerPredictionSystem_OnUpdate_m5655576E109EA33546EBBCA5188777E64BE7DFD6 (void);
+extern void GhostAnimationControllerPredictionSystem___AssignQueries_m8A337E47A7D275E1E1DB0F5B2C7D49A2288EAB76 (void);
+extern void GhostAnimationControllerPredictionSystem_OnCreateForCompiler_mFC0F1042321403AED323BDEAFE48573EF48A846E (void);
+extern void GhostAnimationControllerPredictionSystem__ctor_mCFD79360B2E576039E7E386AB072C02EEF45788D (void);
+extern void TypeHandle___AssignHandles_m85675990D7355D25F420F4106C469D085C7FC1BF (void);
+extern void GhostAnimationControllerInterpolationSystem_OnCreate_mBB20F65A8B46C6F9DBEB2A76729A5D04BBDE0CD6 (void);
+extern void GhostAnimationControllerInterpolationSystem_OnUpdate_m833731CB356C13071084AAC87376D1DB1EA628A0 (void);
+extern void GhostAnimationControllerInterpolationSystem___AssignQueries_mB2C07D475DFF935A25071C4D145330F7D2F4C233 (void);
+extern void GhostAnimationControllerInterpolationSystem_OnCreateForCompiler_m4B2806A04023AA9C26C6C1B199D53B2C10956A33 (void);
+extern void GhostAnimationControllerInterpolationSystem__ctor_m4F883935F341927D32D6337584FBB976D1DB1FA8 (void);
+extern void TypeHandle___AssignHandles_m0FBC0AC7EA7729C946DAA9BA2349FDA15B435887 (void);
+extern void GhostAnimationControllerServerSystem_OnCreate_mD143B377038F2D946C771E891ACC32EA9CC6B0D7 (void);
+extern void GhostAnimationControllerServerSystem_OnUpdate_m3069448992A6A3881AFD028614F323FD19628238 (void);
+extern void GhostAnimationControllerServerSystem___AssignQueries_m760993337913CC8063ED81E7067DCE35A76FB132 (void);
+extern void GhostAnimationControllerServerSystem_OnCreateForCompiler_m51452D141C807114124A7F1C215FDD1413AA661A (void);
+extern void GhostAnimationControllerServerSystem__ctor_m7A5F0907215555400A491F5D2F2B6CF52E340ED0 (void);
+extern void TypeHandle___AssignHandles_m1A36349B0D13E0D1BA4A0CB3CC37DC5D9A207152 (void);
+extern void GhostPlayableBehaviour__ctor_m45088547FD0B81C74E1E1B45C5FDF79ADAC68487 (void);
+extern void GhostAnimationGraphAsset_OnValidate_m272A13CA36D2D57D5FAA892D153D51142AA38578 (void);
+extern void GhostAnimationGraphAsset__ctor_m1C5F782509B255206A24203F3519F14EF062D575 (void);
+extern void PlayableDataHashCollector__ctor_mE33BAA64309B2EFF011D4AF2314DD18CA3CD0C3D (void);
+extern void GhostPresentationGameObjectPrefab__ctor_mB62D364072F76566BBD5483E1211FD884948E2C3 (void);
+extern void GhostPresentationGameObjectSystem_GetGameObjectForEntity_m36FE6E7B6922C1297C83DBD59B0A48155026D60F (void);
+extern void GhostPresentationGameObjectSystem_OnCreate_m61E5625E5B46D5964B8587F748DC5D46E48CC014 (void);
+extern void GhostPresentationGameObjectSystem_OnDestroy_mB4BBF462FD824F2393D35B707E34E5A4FE34B96D (void);
+extern void GhostPresentationGameObjectSystem_OnUpdate_m9825FF81D59B003AFD54759512047C0B3A2213AE (void);
+extern void GhostPresentationGameObjectSystem___AssignQueries_m3E1567331A59E14960FBCF29093E055D0776F79D (void);
+extern void GhostPresentationGameObjectSystem_OnCreateForCompiler_m0F42E60E7A6E57D8C9072BD36F8EA026D47D04C8 (void);
+extern void GhostPresentationGameObjectSystem__ctor_mE316CC2B84DDB6E1746790646D7C0D4CE0E45FDF (void);
+extern void TypeHandle___AssignHandles_mEEDBAAA5A23E51D52D453ED717317416490F603A (void);
+extern void GhostPresentationGameObjectTransformSystem_OnCreate_m0B7B424DFC54317AA7713E430202181F739558C7 (void);
+extern void GhostPresentationGameObjectTransformSystem_OnUpdate_m2893F219C19943E76A9955CE58B75EF0C8EE1311 (void);
+extern void GhostPresentationGameObjectTransformSystem__ctor_mB5F0DDA7B7F065B1EB0C46E7B881F7A7705F8094 (void);
+extern void TransformUpdateJob_Execute_m5C26E0242C5247FCD53283666F93C213F2D8213B (void);
+extern void GhostPresentationGameObjectEntityOwner_get_World_mB74642FD39F4CAFB8F2B4F0D968336A289624DA8 (void);
+extern void GhostPresentationGameObjectEntityOwner_set_World_m13938CE462B64CFAEEC3795FB5FEC7D5E930B929 (void);
+extern void GhostPresentationGameObjectEntityOwner_get_Entity_m48E2063552358B9C4913078AF329E45AA2DF3D6F (void);
+extern void GhostPresentationGameObjectEntityOwner_set_Entity_m5119D21463EB19092AE82E3FD5A7D739744E21E8 (void);
+extern void GhostPresentationGameObjectEntityOwner_Initialize_m5513FFE7E76F3D3A912A2EBC261555670D970544 (void);
+extern void GhostPresentationGameObjectEntityOwner__ctor_mAF6723D5655FCAA599BBC7C5A074ED0E2C9C4D47 (void);
+extern void AssemblyTypeRegistry__cctor_m7A0B812BB680DCAE9424ECCC1ED97C4B07BC6662 (void);
+extern void AssemblyTypeRegistry_Equals_m183D5BAFC784C37B23DB1AA5859AC50AB263281F (void);
+extern void AssemblyTypeRegistry_Equals_mB532C821F2E2CC5B01BB7B300EDC1C8509263032 (void);
+extern void AssemblyTypeRegistry_BoxedGetHashCode_mD4E0FCD112F745D061B955DAFC34F245449600FE (void);
+extern void AssemblyTypeRegistry_SetSharedStaticTypeIndices_m88E66C8C7E97B6E1DF2F1DFA02860A621693DA34 (void);
+extern void __JobReflectionRegistrationOutput__6088815240817460838_CreateJobReflectionData_mA7384CDF01CB0176927F1EAD43A181DBA2A16C71 (void);
+extern void __JobReflectionRegistrationOutput__6088815240817460838_EarlyInit_mA9FAB668AC872DACAA0F80C8D13AC0877B5D7E29 (void);
+static Il2CppMethodPointer s_methodPointers[76] = 
+{
+	EmbeddedAttribute__ctor_m9359E67B2241848F67641A5F6C59DF33C1ACED0C,
+	IsUnmanagedAttribute__ctor_m0D5258BB52AE7F1AC045F9A8F5A27EA1EC1873C0,
+	UnitySourceGeneratedAssemblyMonoScriptTypes_v1_Get_mB52F2263FA3531856182A4BCF7366CD7EC674EF8,
+	UnitySourceGeneratedAssemblyMonoScriptTypes_v1__ctor_mC03FB246055CDD31618A4F7F26FEC129967BEBAB,
+	GhostAnimationController_get_ApplyRootMotion_mB339B55A1BC15A2696E92E738C04DE44DAF65194,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	GhostAnimationController_CopyFromEntities_mE7CF9E3BAC768FA8C12B09AD91D77B7417163949,
+	GhostAnimationController_CopyToEntities_m85C4050D8A7795222183E72503A705B99BCD643B,
+	GhostAnimationController_EvaluateGraph_m7C3579258AEE1C7AE3CBB25B6CECD40DBC55D8AC,
+	GhostAnimationController_Start_mC4BB3F22C63F4B1F61376F9D6273BEB34D27B1EF,
+	GhostAnimationController_OnDestroy_mCC1C6201EB7526EFA3511E763F367A8881875DD6,
+	GhostAnimationController__ctor_m2759D4B64D902F087E257CABFE82C078BC80321D,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	GhostAnimationControllerPredictionSystem_OnCreate_m78F0EE9D0FCD8C035C6E5D6C3C4CD25A1406BCC6,
+	GhostAnimationControllerPredictionSystem_OnUpdate_m5655576E109EA33546EBBCA5188777E64BE7DFD6,
+	GhostAnimationControllerPredictionSystem___AssignQueries_m8A337E47A7D275E1E1DB0F5B2C7D49A2288EAB76,
+	GhostAnimationControllerPredictionSystem_OnCreateForCompiler_mFC0F1042321403AED323BDEAFE48573EF48A846E,
+	GhostAnimationControllerPredictionSystem__ctor_mCFD79360B2E576039E7E386AB072C02EEF45788D,
+	TypeHandle___AssignHandles_m85675990D7355D25F420F4106C469D085C7FC1BF,
+	GhostAnimationControllerInterpolationSystem_OnCreate_mBB20F65A8B46C6F9DBEB2A76729A5D04BBDE0CD6,
+	GhostAnimationControllerInterpolationSystem_OnUpdate_m833731CB356C13071084AAC87376D1DB1EA628A0,
+	GhostAnimationControllerInterpolationSystem___AssignQueries_mB2C07D475DFF935A25071C4D145330F7D2F4C233,
+	GhostAnimationControllerInterpolationSystem_OnCreateForCompiler_m4B2806A04023AA9C26C6C1B199D53B2C10956A33,
+	GhostAnimationControllerInterpolationSystem__ctor_m4F883935F341927D32D6337584FBB976D1DB1FA8,
+	TypeHandle___AssignHandles_m0FBC0AC7EA7729C946DAA9BA2349FDA15B435887,
+	GhostAnimationControllerServerSystem_OnCreate_mD143B377038F2D946C771E891ACC32EA9CC6B0D7,
+	GhostAnimationControllerServerSystem_OnUpdate_m3069448992A6A3881AFD028614F323FD19628238,
+	GhostAnimationControllerServerSystem___AssignQueries_m760993337913CC8063ED81E7067DCE35A76FB132,
+	GhostAnimationControllerServerSystem_OnCreateForCompiler_m51452D141C807114124A7F1C215FDD1413AA661A,
+	GhostAnimationControllerServerSystem__ctor_m7A5F0907215555400A491F5D2F2B6CF52E340ED0,
+	TypeHandle___AssignHandles_m1A36349B0D13E0D1BA4A0CB3CC37DC5D9A207152,
+	NULL,
+	GhostPlayableBehaviour__ctor_m45088547FD0B81C74E1E1B45C5FDF79ADAC68487,
+	NULL,
+	NULL,
+	NULL,
+	GhostAnimationGraphAsset_OnValidate_m272A13CA36D2D57D5FAA892D153D51142AA38578,
+	GhostAnimationGraphAsset__ctor_m1C5F782509B255206A24203F3519F14EF062D575,
+	NULL,
+	PlayableDataHashCollector__ctor_mE33BAA64309B2EFF011D4AF2314DD18CA3CD0C3D,
+	GhostPresentationGameObjectPrefab__ctor_mB62D364072F76566BBD5483E1211FD884948E2C3,
+	GhostPresentationGameObjectSystem_GetGameObjectForEntity_m36FE6E7B6922C1297C83DBD59B0A48155026D60F,
+	GhostPresentationGameObjectSystem_OnCreate_m61E5625E5B46D5964B8587F748DC5D46E48CC014,
+	GhostPresentationGameObjectSystem_OnDestroy_mB4BBF462FD824F2393D35B707E34E5A4FE34B96D,
+	GhostPresentationGameObjectSystem_OnUpdate_m9825FF81D59B003AFD54759512047C0B3A2213AE,
+	GhostPresentationGameObjectSystem___AssignQueries_m3E1567331A59E14960FBCF29093E055D0776F79D,
+	GhostPresentationGameObjectSystem_OnCreateForCompiler_m0F42E60E7A6E57D8C9072BD36F8EA026D47D04C8,
+	GhostPresentationGameObjectSystem__ctor_mE316CC2B84DDB6E1746790646D7C0D4CE0E45FDF,
+	TypeHandle___AssignHandles_mEEDBAAA5A23E51D52D453ED717317416490F603A,
+	GhostPresentationGameObjectTransformSystem_OnCreate_m0B7B424DFC54317AA7713E430202181F739558C7,
+	GhostPresentationGameObjectTransformSystem_OnUpdate_m2893F219C19943E76A9955CE58B75EF0C8EE1311,
+	GhostPresentationGameObjectTransformSystem__ctor_mB5F0DDA7B7F065B1EB0C46E7B881F7A7705F8094,
+	TransformUpdateJob_Execute_m5C26E0242C5247FCD53283666F93C213F2D8213B,
+	GhostPresentationGameObjectEntityOwner_get_World_mB74642FD39F4CAFB8F2B4F0D968336A289624DA8,
+	GhostPresentationGameObjectEntityOwner_set_World_m13938CE462B64CFAEEC3795FB5FEC7D5E930B929,
+	GhostPresentationGameObjectEntityOwner_get_Entity_m48E2063552358B9C4913078AF329E45AA2DF3D6F,
+	GhostPresentationGameObjectEntityOwner_set_Entity_m5119D21463EB19092AE82E3FD5A7D739744E21E8,
+	GhostPresentationGameObjectEntityOwner_Initialize_m5513FFE7E76F3D3A912A2EBC261555670D970544,
+	GhostPresentationGameObjectEntityOwner__ctor_mAF6723D5655FCAA599BBC7C5A074ED0E2C9C4D47,
+	AssemblyTypeRegistry__cctor_m7A0B812BB680DCAE9424ECCC1ED97C4B07BC6662,
+	AssemblyTypeRegistry_Equals_m183D5BAFC784C37B23DB1AA5859AC50AB263281F,
+	AssemblyTypeRegistry_Equals_mB532C821F2E2CC5B01BB7B300EDC1C8509263032,
+	AssemblyTypeRegistry_BoxedGetHashCode_mD4E0FCD112F745D061B955DAFC34F245449600FE,
+	AssemblyTypeRegistry_SetSharedStaticTypeIndices_m88E66C8C7E97B6E1DF2F1DFA02860A621693DA34,
+	__JobReflectionRegistrationOutput__6088815240817460838_CreateJobReflectionData_mA7384CDF01CB0176927F1EAD43A181DBA2A16C71,
+	__JobReflectionRegistrationOutput__6088815240817460838_EarlyInit_mA9FAB668AC872DACAA0F80C8D13AC0877B5D7E29,
+};
+extern void TypeHandle___AssignHandles_m85675990D7355D25F420F4106C469D085C7FC1BF_AdjustorThunk (void);
+extern void TypeHandle___AssignHandles_m0FBC0AC7EA7729C946DAA9BA2349FDA15B435887_AdjustorThunk (void);
+extern void TypeHandle___AssignHandles_m1A36349B0D13E0D1BA4A0CB3CC37DC5D9A207152_AdjustorThunk (void);
+extern void TypeHandle___AssignHandles_mEEDBAAA5A23E51D52D453ED717317416490F603A_AdjustorThunk (void);
+extern void TransformUpdateJob_Execute_m5C26E0242C5247FCD53283666F93C213F2D8213B_AdjustorThunk (void);
+static Il2CppTokenAdjustorThunkPair s_adjustorThunks[5] = 
+{
+	{ 0x0600001D, TypeHandle___AssignHandles_m85675990D7355D25F420F4106C469D085C7FC1BF_AdjustorThunk },
+	{ 0x06000023, TypeHandle___AssignHandles_m0FBC0AC7EA7729C946DAA9BA2349FDA15B435887_AdjustorThunk },
+	{ 0x06000029, TypeHandle___AssignHandles_m1A36349B0D13E0D1BA4A0CB3CC37DC5D9A207152_AdjustorThunk },
+	{ 0x0600003B, TypeHandle___AssignHandles_mEEDBAAA5A23E51D52D453ED717317416490F603A_AdjustorThunk },
+	{ 0x0600003F, TransformUpdateJob_Execute_m5C26E0242C5247FCD53283666F93C213F2D8213B_AdjustorThunk },
+};
+static const int32_t s_InvokerIndices[76] = 
+{
+	22600,
+	22600,
+	33330,
+	22600,
+	21796,
+	-1,
+	-1,
+	-1,
+	-1,
+	-1,
+	-1,
+	22600,
+	22600,
+	17353,
+	22600,
+	22600,
+	22600,
+	-1,
+	-1,
+	-1,
+	-1,
+	-1,
+	-1,
+	22600,
+	22600,
+	16682,
+	22600,
+	22600,
+	16682,
+	22600,
+	22600,
+	16682,
+	22600,
+	22600,
+	16682,
+	22600,
+	22600,
+	16682,
+	22600,
+	22600,
+	16682,
+	-1,
+	22600,
+	-1,
+	-1,
+	-1,
+	22600,
+	22600,
+	-1,
+	22600,
+	22600,
+	5483,
+	22600,
+	22600,
+	22600,
+	16682,
+	22600,
+	22600,
+	16682,
+	22600,
+	22600,
+	22600,
+	9092,
+	21744,
+	16682,
+	21901,
+	16860,
+	7793,
+	22600,
+	33248,
+	27215,
+	27215,
+	29821,
+	30693,
+	33248,
+	33248,
+};
+static const Il2CppTokenRangePair s_rgctxIndices[8] = 
+{
+	{ 0x02000009, { 27, 9 } },
+	{ 0x06000006, { 0, 7 } },
+	{ 0x06000007, { 7, 6 } },
+	{ 0x06000008, { 13, 8 } },
+	{ 0x06000009, { 21, 2 } },
+	{ 0x0600000A, { 23, 2 } },
+	{ 0x0600000B, { 25, 2 } },
+	{ 0x06000031, { 36, 1 } },
+};
+extern const uint32_t g_rgctx_EntityManager_HasComponent_TisT_tD75A9B52826FD5F59015157E51F1F1F7E6B4DC1A_m789BDC2ECF4E8C86B3ADBE01E056E41E7D85D9A7;
+extern const uint32_t g_rgctx_T_tD75A9B52826FD5F59015157E51F1F1F7E6B4DC1A;
+extern const uint32_t g_rgctx_T_tD75A9B52826FD5F59015157E51F1F1F7E6B4DC1A;
+extern const uint32_t g_rgctx_AnimationDataReference_1_tCAEEA2788A841BEBF69E9199A2C765149A1B807F;
+extern const uint32_t g_rgctx_AnimationDataReference_1__ctor_m91D80A7560B6DE3E19086BDE458E1E3BAEDF8DF5;
+extern const uint32_t g_rgctx_NativeReference_1_tF7736EB8E015B7FA222712276389FD1D6D9F943F;
+extern const uint32_t g_rgctx_NativeReference_1__ctor_m7A1BAAF1DA32BADFD025413D9B2CAC98A8651ACE;
+extern const uint32_t g_rgctx_T_t25A54843C2282074CDEA1C4D539AF8E916B9C28F;
+extern const uint32_t g_rgctx_T_t25A54843C2282074CDEA1C4D539AF8E916B9C28F;
+extern const uint32_t g_rgctx_AnimationDataReference_1_t82DE0AEB91E57F3920192950ECEC9A1178445A1F;
+extern const uint32_t g_rgctx_NativeReference_1_tF35F9CFC7EA2380C83A1A5F1AB1EC6B75394E6DB;
+extern const uint32_t g_rgctx_NativeReference_1_get_Value_m47B00C9F6B7BBEA693E4809B002AED503D6D7539;
+extern const uint32_t g_rgctx_NativeReference_1_tF35F9CFC7EA2380C83A1A5F1AB1EC6B75394E6DB;
+extern const uint32_t g_rgctx_T_tA1829D67D8119CDEA2C37F9F0627B2CF201AF883;
+extern const uint32_t g_rgctx_T_tA1829D67D8119CDEA2C37F9F0627B2CF201AF883;
+extern const uint32_t g_rgctx_AnimationDataReference_1_t1EB37E769598C9A1A76784F065924426FF16187C;
+extern const uint32_t g_rgctx_NativeReference_1_t6483629BEB9032A8F0031AEC2B6F95176E577420;
+extern const uint32_t g_rgctx_NativeReferenceUnsafeUtility_GetUnsafePtr_TisT_tA1829D67D8119CDEA2C37F9F0627B2CF201AF883_m70D0E7FE225477E02151AF332428505347D43648;
+extern const uint32_t g_rgctx_TU2A_tC0F6E44790C8B2FF8A68E31497F7C86AE3BF2F20;
+extern const uint32_t g_rgctx_UnsafeUtility_AsRef_TisT_tA1829D67D8119CDEA2C37F9F0627B2CF201AF883_m93EB9A23C78204241259FFFE515AF25BD8EF2879;
+extern const uint32_t g_rgctx_TU26_tEBA99C989F101845D03419DB16FE069780E29EB4;
+extern const uint32_t g_rgctx_EntityManager_GetComponentData_TisT_tE6C9120FD7DC2FE65F5D70AA433C974CCB5152D0_m75A42610EBD600CFCA3B99AD58F18E08F56AC286;
+extern const uint32_t g_rgctx_T_tE6C9120FD7DC2FE65F5D70AA433C974CCB5152D0;
+extern const uint32_t g_rgctx_T_tCEFA06B04EC6A85BD05858C553AF3DB2DED1E335;
+extern const uint32_t g_rgctx_EntityManager_SetComponentData_TisT_tCEFA06B04EC6A85BD05858C553AF3DB2DED1E335_m691A86A59DB0A410DCB3977857EC21FC2410EB56;
+extern const uint32_t g_rgctx_EntityManager_GetBuffer_TisT_t3C378E843B27313F1B5EC670728B2A3B1A8312FB_m581A423AAD7ACA8B71A30F97B2B05837003FBD27;
+extern const uint32_t g_rgctx_DynamicBuffer_1_tBD4971C754C0F9C2AF53DB00DD3F30CA8D62D0E4;
+extern const uint32_t g_rgctx_AnimationDataReference_1_tF7D8AE83DC7BB0107DBC18E22EF3BA7260F1935F;
+extern const uint32_t g_rgctx_NativeReference_1_t03A449AF39E0770B161A7CA8124E1C95027E3D23;
+extern const uint32_t g_rgctx_EntityManager_GetComponentData_TisT_tFEB8B6CBD47E2CF2C2328D8D149D26E087F7C2B9_m891FAD4F1B68551496D6C77B7713E39BDA92863E;
+extern const uint32_t g_rgctx_T_tFEB8B6CBD47E2CF2C2328D8D149D26E087F7C2B9;
+extern const uint32_t g_rgctx_NativeReference_1_set_Value_m1F9628500FA9ACEE02DE97318699AECE31306C05;
+extern const uint32_t g_rgctx_NativeReference_1_t03A449AF39E0770B161A7CA8124E1C95027E3D23;
+extern const uint32_t g_rgctx_NativeReference_1_get_Value_m0F00F3D959CEB45F47B109A45DB1234B5B18A270;
+extern const uint32_t g_rgctx_EntityManager_SetComponentData_TisT_tFEB8B6CBD47E2CF2C2328D8D149D26E087F7C2B9_m3B95269125827D7BE0845D0439093AD7747D026D;
+extern const uint32_t g_rgctx_NativeReference_1_Dispose_mB4840DBC10DC82364BADC0A49C01714FD33751CC;
+extern const uint32_t g_rgctx_ComponentType_ReadWrite_TisT_tB351F7A11CF6F027B171FE76CDEEF16928787123_m2F7DE1A786DF605C6C6AD366145C8A65B9605856;
+static const Il2CppRGCTXDefinition s_rgctxValues[37] = 
+{
+	{ (Il2CppRGCTXDataType)3, (const void *)&g_rgctx_EntityManager_HasComponent_TisT_tD75A9B52826FD5F59015157E51F1F1F7E6B4DC1A_m789BDC2ECF4E8C86B3ADBE01E056E41E7D85D9A7 },
+	{ (Il2CppRGCTXDataType)1, (const void *)&g_rgctx_T_tD75A9B52826FD5F59015157E51F1F1F7E6B4DC1A },
+	{ (Il2CppRGCTXDataType)2, (const void *)&g_rgctx_T_tD75A9B52826FD5F59015157E51F1F1F7E6B4DC1A },
+	{ (Il2CppRGCTXDataType)2, (const void *)&g_rgctx_AnimationDataReference_1_tCAEEA2788A841BEBF69E9199A2C765149A1B807F },
+	{ (Il2CppRGCTXDataType)3, (const void *)&g_rgctx_AnimationDataReference_1__ctor_m91D80A7560B6DE3E19086BDE458E1E3BAEDF8DF5 },
+	{ (Il2CppRGCTXDataType)2, (const void *)&g_rgctx_NativeReference_1_tF7736EB8E015B7FA222712276389FD1D6D9F943F },
+	{ (Il2CppRGCTXDataType)3, (const void *)&g_rgctx_NativeReference_1__ctor_m7A1BAAF1DA32BADFD025413D9B2CAC98A8651ACE },
+	{ (Il2CppRGCTXDataType)1, (const void *)&g_rgctx_T_t25A54843C2282074CDEA1C4D539AF8E916B9C28F },
+	{ (Il2CppRGCTXDataType)2, (const void *)&g_rgctx_T_t25A54843C2282074CDEA1C4D539AF8E916B9C28F },
+	{ (Il2CppRGCTXDataType)2, (const void *)&g_rgctx_AnimationDataReference_1_t82DE0AEB91E57F3920192950ECEC9A1178445A1F },
+	{ (Il2CppRGCTXDataType)2, (const void *)&g_rgctx_NativeReference_1_tF35F9CFC7EA2380C83A1A5F1AB1EC6B75394E6DB },
+	{ (Il2CppRGCTXDataType)3, (const void *)&g_rgctx_NativeReference_1_get_Value_m47B00C9F6B7BBEA693E4809B002AED503D6D7539 },
+	{ (Il2CppRGCTXDataType)2, (const void *)&g_rgctx_NativeReference_1_tF35F9CFC7EA2380C83A1A5F1AB1EC6B75394E6DB },
+	{ (Il2CppRGCTXDataType)1, (const void *)&g_rgctx_T_tA1829D67D8119CDEA2C37F9F0627B2CF201AF883 },
+	{ (Il2CppRGCTXDataType)2, (const void *)&g_rgctx_T_tA1829D67D8119CDEA2C37F9F0627B2CF201AF883 },
+	{ (Il2CppRGCTXDataType)2, (const void *)&g_rgctx_AnimationDataReference_1_t1EB37E769598C9A1A76784F065924426FF16187C },
+	{ (Il2CppRGCTXDataType)2, (const void *)&g_rgctx_NativeReference_1_t6483629BEB9032A8F0031AEC2B6F95176E577420 },
+	{ (Il2CppRGCTXDataType)3, (const void *)&g_rgctx_NativeReferenceUnsafeUtility_GetUnsafePtr_TisT_tA1829D67D8119CDEA2C37F9F0627B2CF201AF883_m70D0E7FE225477E02151AF332428505347D43648 },
+	{ (Il2CppRGCTXDataType)2, (const void *)&g_rgctx_TU2A_tC0F6E44790C8B2FF8A68E31497F7C86AE3BF2F20 },
+	{ (Il2CppRGCTXDataType)3, (const void *)&g_rgctx_UnsafeUtility_AsRef_TisT_tA1829D67D8119CDEA2C37F9F0627B2CF201AF883_m93EB9A23C78204241259FFFE515AF25BD8EF2879 },
+	{ (Il2CppRGCTXDataType)2, (const void *)&g_rgctx_TU26_tEBA99C989F101845D03419DB16FE069780E29EB4 },
+	{ (Il2CppRGCTXDataType)3, (const void *)&g_rgctx_EntityManager_GetComponentData_TisT_tE6C9120FD7DC2FE65F5D70AA433C974CCB5152D0_m75A42610EBD600CFCA3B99AD58F18E08F56AC286 },
+	{ (Il2CppRGCTXDataType)2, (const void *)&g_rgctx_T_tE6C9120FD7DC2FE65F5D70AA433C974CCB5152D0 },
+	{ (Il2CppRGCTXDataType)2, (const void *)&g_rgctx_T_tCEFA06B04EC6A85BD05858C553AF3DB2DED1E335 },
+	{ (Il2CppRGCTXDataType)3, (const void *)&g_rgctx_EntityManager_SetComponentData_TisT_tCEFA06B04EC6A85BD05858C553AF3DB2DED1E335_m691A86A59DB0A410DCB3977857EC21FC2410EB56 },
+	{ (Il2CppRGCTXDataType)3, (const void *)&g_rgctx_EntityManager_GetBuffer_TisT_t3C378E843B27313F1B5EC670728B2A3B1A8312FB_m581A423AAD7ACA8B71A30F97B2B05837003FBD27 },
+	{ (Il2CppRGCTXDataType)2, (const void *)&g_rgctx_DynamicBuffer_1_tBD4971C754C0F9C2AF53DB00DD3F30CA8D62D0E4 },
+	{ (Il2CppRGCTXDataType)2, (const void *)&g_rgctx_AnimationDataReference_1_tF7D8AE83DC7BB0107DBC18E22EF3BA7260F1935F },
+	{ (Il2CppRGCTXDataType)2, (const void *)&g_rgctx_NativeReference_1_t03A449AF39E0770B161A7CA8124E1C95027E3D23 },
+	{ (Il2CppRGCTXDataType)3, (const void *)&g_rgctx_EntityManager_GetComponentData_TisT_tFEB8B6CBD47E2CF2C2328D8D149D26E087F7C2B9_m891FAD4F1B68551496D6C77B7713E39BDA92863E },
+	{ (Il2CppRGCTXDataType)2, (const void *)&g_rgctx_T_tFEB8B6CBD47E2CF2C2328D8D149D26E087F7C2B9 },
+	{ (Il2CppRGCTXDataType)3, (const void *)&g_rgctx_NativeReference_1_set_Value_m1F9628500FA9ACEE02DE97318699AECE31306C05 },
+	{ (Il2CppRGCTXDataType)2, (const void *)&g_rgctx_NativeReference_1_t03A449AF39E0770B161A7CA8124E1C95027E3D23 },
+	{ (Il2CppRGCTXDataType)3, (const void *)&g_rgctx_NativeReference_1_get_Value_m0F00F3D959CEB45F47B109A45DB1234B5B18A270 },
+	{ (Il2CppRGCTXDataType)3, (const void *)&g_rgctx_EntityManager_SetComponentData_TisT_tFEB8B6CBD47E2CF2C2328D8D149D26E087F7C2B9_m3B95269125827D7BE0845D0439093AD7747D026D },
+	{ (Il2CppRGCTXDataType)3, (const void *)&g_rgctx_NativeReference_1_Dispose_mB4840DBC10DC82364BADC0A49C01714FD33751CC },
+	{ (Il2CppRGCTXDataType)3, (const void *)&g_rgctx_ComponentType_ReadWrite_TisT_tB351F7A11CF6F027B171FE76CDEEF16928787123_m2F7DE1A786DF605C6C6AD366145C8A65B9605856 },
+};
+IL2CPP_EXTERN_C const Il2CppCodeGenModule g_Unity_NetCode_Hybrid_CodeGenModule;
+const Il2CppCodeGenModule g_Unity_NetCode_Hybrid_CodeGenModule = 
+{
+	"Unity.NetCode.Hybrid.dll",
+	76,
+	s_methodPointers,
+	5,
+	s_adjustorThunks,
+	s_InvokerIndices,
+	0,
+	NULL,
+	8,
+	s_rgctxIndices,
+	37,
+	s_rgctxValues,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+};

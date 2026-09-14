@@ -59,6 +59,10 @@ namespace DataViz
         [Header("Loaded Dataset")]
         public DatasetColumnar LoadedDataset;
 
+        public enum RenderPipelineKind { GameObject, Instanced, Particle, VFX }
+        [Header("Benchmarking controls (DO NOT TOUCH)")]
+        public RenderPipelineKind ActivePipeline = RenderPipelineKind.VFX;
+
         /// <summary>
         /// One shuffle's worth of axis selection, saved so "back"/"forward"
         /// can re-apply a previous combination instead of generating a new
