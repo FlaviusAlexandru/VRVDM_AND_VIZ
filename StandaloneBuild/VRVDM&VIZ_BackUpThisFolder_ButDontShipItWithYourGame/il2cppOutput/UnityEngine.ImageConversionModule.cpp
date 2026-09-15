@@ -301,7 +301,7 @@ inline ByteU5BU5D_tA6237BF417AE52AD70CFB4EF24A7A82613DF9031* Array_Empty_TisByte
 #pragma clang diagnostic ignored "-Winvalid-offsetof"
 #pragma clang diagnostic ignored "-Wunused-variable"
 #endif
-// Method Definition Index: 138722
+// Method Definition Index: 138725
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void EmbeddedAttribute__ctor_m65390AB9D1D035334DA196EF70810168F1A492C7 (EmbeddedAttribute_tE0A92A86E7FA909CE866164434FBA66A286CD35A* __this, const RuntimeMethod* method) 
 {
 	//<source_info:<no-source>:1>
@@ -318,7 +318,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void EmbeddedAttribute__ctor_m65390AB9D1D0353
 #pragma clang diagnostic ignored "-Winvalid-offsetof"
 #pragma clang diagnostic ignored "-Wunused-variable"
 #endif
-// Method Definition Index: 138723
+// Method Definition Index: 138726
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void RefSafetyRulesAttribute__ctor_mE61C0B3A912DC2E376DC6CFDB085C93AC74B04BE (RefSafetyRulesAttribute_tD328749F27459D9A90BD47AD7E1942ED17A5F06E* __this, int32_t ___0_p, const RuntimeMethod* method) 
 {
 	//<source_info:<no-source>:1>
@@ -337,7 +337,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void RefSafetyRulesAttribute__ctor_mE61C0B3A9
 #pragma clang diagnostic ignored "-Winvalid-offsetof"
 #pragma clang diagnostic ignored "-Wunused-variable"
 #endif
-// Method Definition Index: 138724
+// Method Definition Index: 138727
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR ByteU5BU5D_tA6237BF417AE52AD70CFB4EF24A7A82613DF9031* ImageConversion_EncodeToR2DInternal_m2926AA12FED28B2A13A7194D8609A80080BEE1F1 (Texture2D_tE6505BC111DD8A424A9DBE8E05D7D09E11FFFCF4* ___0_tex, const RuntimeMethod* method) 
 {
 	static bool s_Il2CppMethodInitialized;
@@ -388,7 +388,7 @@ IL_001b:
 		return L_3;
 	}
 }
-// Method Definition Index: 138725
+// Method Definition Index: 138728
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void ImageConversion_EncodeToR2DInternal_Injected_m4436C6355139DDE9277B25FD5916EAFEA47E54CB (intptr_t ___0_tex, BlittableArrayWrapper_t1512FE0506F4BD7778410D562DBA6FE2DDEE4F59* ___1_ret, const RuntimeMethod* method) 
 {
 	//<source_info:<no-source>:1>

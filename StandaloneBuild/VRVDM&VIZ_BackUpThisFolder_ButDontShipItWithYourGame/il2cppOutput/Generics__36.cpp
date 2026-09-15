@@ -25704,7 +25704,7 @@ IL_0036:
 #pragma clang diagnostic ignored "-Winvalid-offsetof"
 #pragma clang diagnostic ignored "-Wunused-variable"
 #endif
-// Method Definition Index: 127644
+// Method Definition Index: 127647
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void ContainerPropertyBag_1__cctor_m3311452A5C27FCCD130280B26E2931E36CFC9C3F_gshared (const RuntimeMethod* method) 
 {
 	//<source_info:<no-source>:1>
@@ -25737,7 +25737,7 @@ IL_002b:
 		return;
 	}
 }
-// Method Definition Index: 127645
+// Method Definition Index: 127648
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void ContainerPropertyBag_1__ctor_mAC270A12695F756CC2134BC3527346F66D989622_gshared (ContainerPropertyBag_1_t5F21EBB92024E896CAB73B95A3F17D7E037392C8* __this, const RuntimeMethod* method) 
 {
 	//<source_info:<no-source>:1>
@@ -25746,7 +25746,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void ContainerPropertyBag_1__ctor_mAC270A1269
 		return;
 	}
 }
-// Method Definition Index: 127646
+// Method Definition Index: 127649
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void ContainerPropertyBag_1__ctor_m3634EEABF2EAB224E85A985465BEFA6182959A43_gshared (ContainerPropertyBag_1_t5F21EBB92024E896CAB73B95A3F17D7E037392C8* __this, int32_t ___0_initialCapacity, const RuntimeMethod* method) 
 {
 	//<source_info:<no-source>:1>
@@ -25766,7 +25766,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void ContainerPropertyBag_1__ctor_m3634EEABF2
 		return;
 	}
 }
-// Method Definition Index: 127648
+// Method Definition Index: 127651
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR PropertyCollection_1_tE4355C4CDF06D2AFDD1B7DF9ABDF9EF2E96564FD ContainerPropertyBag_1_GetProperties_m88A98F09300C925A5101D5E04A30F3D2E4BB5448_gshared (ContainerPropertyBag_1_t5F21EBB92024E896CAB73B95A3F17D7E037392C8* __this, const RuntimeMethod* method) 
 {
 	//<source_info:<no-source>:1>
@@ -25778,7 +25778,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR PropertyCollection_1_tE4355C4CDF06D2AFDD1B7DF
 		return L_1;
 	}
 }
-// Method Definition Index: 127649
+// Method Definition Index: 127652
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR PropertyCollection_1_tE4355C4CDF06D2AFDD1B7DF9ABDF9EF2E96564FD ContainerPropertyBag_1_GetProperties_m9ECF629F4E86C4ABABB20FCFEE97DBC7E7836962_gshared (ContainerPropertyBag_1_t5F21EBB92024E896CAB73B95A3F17D7E037392C8* __this, PropertyWrapper_1_t7296471AA2401BF810B822ADDBAE80B77C590757* ___0_container, const RuntimeMethod* method) 
 {
 	//<source_info:<no-source>:1>
@@ -25790,7 +25790,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR PropertyCollection_1_tE4355C4CDF06D2AFDD1B7DF
 		return L_1;
 	}
 }
-// Method Definition Index: 127650
+// Method Definition Index: 127653
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR bool ContainerPropertyBag_1_TryGetProperty_mED7C344DEAF13106943E75A310892A536DCDEF01_gshared (ContainerPropertyBag_1_t5F21EBB92024E896CAB73B95A3F17D7E037392C8* __this, PropertyWrapper_1_t7296471AA2401BF810B822ADDBAE80B77C590757* ___0_container, String_t* ___1_name, RuntimeObject** ___2_property, const RuntimeMethod* method) 
 {
 	//<source_info:<no-source>:1>
@@ -25812,12 +25812,12 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR bool ContainerPropertyBag_1_TryGetProperty_mE
 #pragma clang diagnostic ignored "-Winvalid-offsetof"
 #pragma clang diagnostic ignored "-Wunused-variable"
 #endif
-// Method Definition Index: 127644
-// Method Definition Index: 127645
-// Method Definition Index: 127646
+// Method Definition Index: 127647
 // Method Definition Index: 127648
 // Method Definition Index: 127649
-// Method Definition Index: 127650
+// Method Definition Index: 127651
+// Method Definition Index: 127652
+// Method Definition Index: 127653
 #ifdef __clang__
 #pragma clang diagnostic pop
 #endif
@@ -25826,12 +25826,12 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR bool ContainerPropertyBag_1_TryGetProperty_mE
 #pragma clang diagnostic ignored "-Winvalid-offsetof"
 #pragma clang diagnostic ignored "-Wunused-variable"
 #endif
-// Method Definition Index: 127644
-// Method Definition Index: 127645
-// Method Definition Index: 127646
+// Method Definition Index: 127647
 // Method Definition Index: 127648
 // Method Definition Index: 127649
-// Method Definition Index: 127650
+// Method Definition Index: 127651
+// Method Definition Index: 127652
+// Method Definition Index: 127653
 #ifdef __clang__
 #pragma clang diagnostic pop
 #endif
@@ -25840,12 +25840,12 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR bool ContainerPropertyBag_1_TryGetProperty_mE
 #pragma clang diagnostic ignored "-Winvalid-offsetof"
 #pragma clang diagnostic ignored "-Wunused-variable"
 #endif
-// Method Definition Index: 127644
-// Method Definition Index: 127645
-// Method Definition Index: 127646
+// Method Definition Index: 127647
 // Method Definition Index: 127648
 // Method Definition Index: 127649
-// Method Definition Index: 127650
+// Method Definition Index: 127651
+// Method Definition Index: 127652
+// Method Definition Index: 127653
 #ifdef __clang__
 #pragma clang diagnostic pop
 #endif
@@ -25854,12 +25854,12 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR bool ContainerPropertyBag_1_TryGetProperty_mE
 #pragma clang diagnostic ignored "-Winvalid-offsetof"
 #pragma clang diagnostic ignored "-Wunused-variable"
 #endif
-// Method Definition Index: 127644
-// Method Definition Index: 127645
-// Method Definition Index: 127646
+// Method Definition Index: 127647
 // Method Definition Index: 127648
 // Method Definition Index: 127649
-// Method Definition Index: 127650
+// Method Definition Index: 127651
+// Method Definition Index: 127652
+// Method Definition Index: 127653
 #ifdef __clang__
 #pragma clang diagnostic pop
 #endif
@@ -25868,12 +25868,12 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR bool ContainerPropertyBag_1_TryGetProperty_mE
 #pragma clang diagnostic ignored "-Winvalid-offsetof"
 #pragma clang diagnostic ignored "-Wunused-variable"
 #endif
-// Method Definition Index: 127644
-// Method Definition Index: 127645
-// Method Definition Index: 127646
+// Method Definition Index: 127647
 // Method Definition Index: 127648
 // Method Definition Index: 127649
-// Method Definition Index: 127650
+// Method Definition Index: 127651
+// Method Definition Index: 127652
+// Method Definition Index: 127653
 #ifdef __clang__
 #pragma clang diagnostic pop
 #endif
@@ -25882,12 +25882,12 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR bool ContainerPropertyBag_1_TryGetProperty_mE
 #pragma clang diagnostic ignored "-Winvalid-offsetof"
 #pragma clang diagnostic ignored "-Wunused-variable"
 #endif
-// Method Definition Index: 127644
-// Method Definition Index: 127645
-// Method Definition Index: 127646
+// Method Definition Index: 127647
 // Method Definition Index: 127648
 // Method Definition Index: 127649
-// Method Definition Index: 127650
+// Method Definition Index: 127651
+// Method Definition Index: 127652
+// Method Definition Index: 127653
 #ifdef __clang__
 #pragma clang diagnostic pop
 #endif
@@ -25896,12 +25896,12 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR bool ContainerPropertyBag_1_TryGetProperty_mE
 #pragma clang diagnostic ignored "-Winvalid-offsetof"
 #pragma clang diagnostic ignored "-Wunused-variable"
 #endif
-// Method Definition Index: 127644
-// Method Definition Index: 127645
-// Method Definition Index: 127646
+// Method Definition Index: 127647
 // Method Definition Index: 127648
 // Method Definition Index: 127649
-// Method Definition Index: 127650
+// Method Definition Index: 127651
+// Method Definition Index: 127652
+// Method Definition Index: 127653
 #ifdef __clang__
 #pragma clang diagnostic pop
 #endif
@@ -25910,12 +25910,12 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR bool ContainerPropertyBag_1_TryGetProperty_mE
 #pragma clang diagnostic ignored "-Winvalid-offsetof"
 #pragma clang diagnostic ignored "-Wunused-variable"
 #endif
-// Method Definition Index: 127644
-// Method Definition Index: 127645
-// Method Definition Index: 127646
+// Method Definition Index: 127647
 // Method Definition Index: 127648
 // Method Definition Index: 127649
-// Method Definition Index: 127650
+// Method Definition Index: 127651
+// Method Definition Index: 127652
+// Method Definition Index: 127653
 #ifdef __clang__
 #pragma clang diagnostic pop
 #endif
@@ -25924,12 +25924,12 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR bool ContainerPropertyBag_1_TryGetProperty_mE
 #pragma clang diagnostic ignored "-Winvalid-offsetof"
 #pragma clang diagnostic ignored "-Wunused-variable"
 #endif
-// Method Definition Index: 127644
-// Method Definition Index: 127645
-// Method Definition Index: 127646
+// Method Definition Index: 127647
 // Method Definition Index: 127648
 // Method Definition Index: 127649
-// Method Definition Index: 127650
+// Method Definition Index: 127651
+// Method Definition Index: 127652
+// Method Definition Index: 127653
 #ifdef __clang__
 #pragma clang diagnostic pop
 #endif
@@ -25938,12 +25938,12 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR bool ContainerPropertyBag_1_TryGetProperty_mE
 #pragma clang diagnostic ignored "-Winvalid-offsetof"
 #pragma clang diagnostic ignored "-Wunused-variable"
 #endif
-// Method Definition Index: 127644
-// Method Definition Index: 127645
-// Method Definition Index: 127646
+// Method Definition Index: 127647
 // Method Definition Index: 127648
 // Method Definition Index: 127649
-// Method Definition Index: 127650
+// Method Definition Index: 127651
+// Method Definition Index: 127652
+// Method Definition Index: 127653
 #ifdef __clang__
 #pragma clang diagnostic pop
 #endif
@@ -25952,12 +25952,12 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR bool ContainerPropertyBag_1_TryGetProperty_mE
 #pragma clang diagnostic ignored "-Winvalid-offsetof"
 #pragma clang diagnostic ignored "-Wunused-variable"
 #endif
-// Method Definition Index: 127644
-// Method Definition Index: 127645
-// Method Definition Index: 127646
+// Method Definition Index: 127647
 // Method Definition Index: 127648
 // Method Definition Index: 127649
-// Method Definition Index: 127650
+// Method Definition Index: 127651
+// Method Definition Index: 127652
+// Method Definition Index: 127653
 #ifdef __clang__
 #pragma clang diagnostic pop
 #endif
@@ -25966,12 +25966,12 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR bool ContainerPropertyBag_1_TryGetProperty_mE
 #pragma clang diagnostic ignored "-Winvalid-offsetof"
 #pragma clang diagnostic ignored "-Wunused-variable"
 #endif
-// Method Definition Index: 127644
-// Method Definition Index: 127645
-// Method Definition Index: 127646
+// Method Definition Index: 127647
 // Method Definition Index: 127648
 // Method Definition Index: 127649
-// Method Definition Index: 127650
+// Method Definition Index: 127651
+// Method Definition Index: 127652
+// Method Definition Index: 127653
 #ifdef __clang__
 #pragma clang diagnostic pop
 #endif
@@ -25980,12 +25980,12 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR bool ContainerPropertyBag_1_TryGetProperty_mE
 #pragma clang diagnostic ignored "-Winvalid-offsetof"
 #pragma clang diagnostic ignored "-Wunused-variable"
 #endif
-// Method Definition Index: 127644
-// Method Definition Index: 127645
-// Method Definition Index: 127646
+// Method Definition Index: 127647
 // Method Definition Index: 127648
 // Method Definition Index: 127649
-// Method Definition Index: 127650
+// Method Definition Index: 127651
+// Method Definition Index: 127652
+// Method Definition Index: 127653
 #ifdef __clang__
 #pragma clang diagnostic pop
 #endif
@@ -25994,12 +25994,12 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR bool ContainerPropertyBag_1_TryGetProperty_mE
 #pragma clang diagnostic ignored "-Winvalid-offsetof"
 #pragma clang diagnostic ignored "-Wunused-variable"
 #endif
-// Method Definition Index: 127644
-// Method Definition Index: 127645
-// Method Definition Index: 127646
+// Method Definition Index: 127647
 // Method Definition Index: 127648
 // Method Definition Index: 127649
-// Method Definition Index: 127650
+// Method Definition Index: 127651
+// Method Definition Index: 127652
+// Method Definition Index: 127653
 #ifdef __clang__
 #pragma clang diagnostic pop
 #endif
@@ -26008,12 +26008,12 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR bool ContainerPropertyBag_1_TryGetProperty_mE
 #pragma clang diagnostic ignored "-Winvalid-offsetof"
 #pragma clang diagnostic ignored "-Wunused-variable"
 #endif
-// Method Definition Index: 127644
-// Method Definition Index: 127645
-// Method Definition Index: 127646
+// Method Definition Index: 127647
 // Method Definition Index: 127648
 // Method Definition Index: 127649
-// Method Definition Index: 127650
+// Method Definition Index: 127651
+// Method Definition Index: 127652
+// Method Definition Index: 127653
 #ifdef __clang__
 #pragma clang diagnostic pop
 #endif

@@ -25890,7 +25890,7 @@ IL_0188:
 		return;
 	}
 }
-// Method Definition Index: 133361
+// Method Definition Index: 133364
 IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR int64_t math_ceilpow2_m8691C3C194B41660E1FB2E694F7D209BE60DDCC7_inline (int64_t ___0_x, const RuntimeMethod* method) 
 {
 	//<source_info:<no-source>:1>

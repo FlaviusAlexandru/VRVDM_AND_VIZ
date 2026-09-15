@@ -28656,7 +28656,7 @@ IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR int32_t TextureXR_get_slices_mD1D
 		return L_0;
 	}
 }
-// Method Definition Index: 133267
+// Method Definition Index: 133270
 IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR int32_t math_max_m5EE58D9462EC2A39BDE97B0C27BB14CF4A0DB651_inline (int32_t ___0_x, int32_t ___1_y, const RuntimeMethod* method) 
 {
 	//<source_info:<no-source>:1>
@@ -28679,7 +28679,7 @@ IL_0006:
 		return L_3;
 	}
 }
-// Method Definition Index: 133310
+// Method Definition Index: 133313
 IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR float math_log2_m693EB3F3533F1DEE201F479B62BCEE7E96142F23_inline (float ___0_x, const RuntimeMethod* method) 
 {
 	static bool s_Il2CppMethodInitialized;

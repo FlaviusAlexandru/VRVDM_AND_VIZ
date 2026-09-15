@@ -415,7 +415,7 @@ inline KeyValuePair_2_tEB5CFC17B6D8F2A082613AF75FCB091A2A4EB826 PrimitivesConver
 {
 	return ((  KeyValuePair_2_tEB5CFC17B6D8F2A082613AF75FCB091A2A4EB826 (*) (uint64_t*, const RuntimeMethod*))PrimitivesConverters_DoConvert_TisKeyValuePair_2_tEB5CFC17B6D8F2A082613AF75FCB091A2A4EB826_m5EAA7637FED59CD607CACDA44C50079FF3E99832_gshared)(___0_source, method);
 }
-// Method Definition Index: 127916
+// Method Definition Index: 127919
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR bool PrimitivesConverters_TryConvertPrimitiveOrString_TisSingle_t4530F2FF86FCB0DC29F35385CA1BD21BE294761C_Tis__Il2CppInt32Enum_tE5E90BB5D60D5281C33DB29D9DCBD70D5E2E1F7B_m956B908754661605A302C6011551CC401EB011EC_gshared (float* ___0_source, int32_t* ___1_destination, const RuntimeMethod* method) 
 {
 	il2cpp_rgctx_method_init(method);
@@ -736,56 +736,56 @@ IL_01a0:
 		return (bool)0;
 	}
 }
-// Method Definition Index: 127916
-// Method Definition Index: 127916
-// Method Definition Index: 127916
-// Method Definition Index: 127916
-// Method Definition Index: 127916
-// Method Definition Index: 127916
-// Method Definition Index: 127916
-// Method Definition Index: 127916
-// Method Definition Index: 127916
-// Method Definition Index: 127916
-// Method Definition Index: 127916
-// Method Definition Index: 127916
-// Method Definition Index: 127916
-// Method Definition Index: 127916
-// Method Definition Index: 127916
-// Method Definition Index: 127916
-// Method Definition Index: 127916
-// Method Definition Index: 127916
-// Method Definition Index: 127916
-// Method Definition Index: 127916
-// Method Definition Index: 127916
-// Method Definition Index: 127916
-// Method Definition Index: 127916
-// Method Definition Index: 127916
-// Method Definition Index: 127916
-// Method Definition Index: 127916
-// Method Definition Index: 127916
-// Method Definition Index: 127916
-// Method Definition Index: 127916
-// Method Definition Index: 127916
-// Method Definition Index: 127916
-// Method Definition Index: 127916
-// Method Definition Index: 127916
-// Method Definition Index: 127916
-// Method Definition Index: 127916
-// Method Definition Index: 127916
-// Method Definition Index: 127916
-// Method Definition Index: 127916
-// Method Definition Index: 127916
-// Method Definition Index: 127916
-// Method Definition Index: 127916
-// Method Definition Index: 127916
-// Method Definition Index: 127916
-// Method Definition Index: 127916
-// Method Definition Index: 127916
-// Method Definition Index: 127916
-// Method Definition Index: 127916
-// Method Definition Index: 127916
-// Method Definition Index: 127916
-// Method Definition Index: 127916
+// Method Definition Index: 127919
+// Method Definition Index: 127919
+// Method Definition Index: 127919
+// Method Definition Index: 127919
+// Method Definition Index: 127919
+// Method Definition Index: 127919
+// Method Definition Index: 127919
+// Method Definition Index: 127919
+// Method Definition Index: 127919
+// Method Definition Index: 127919
+// Method Definition Index: 127919
+// Method Definition Index: 127919
+// Method Definition Index: 127919
+// Method Definition Index: 127919
+// Method Definition Index: 127919
+// Method Definition Index: 127919
+// Method Definition Index: 127919
+// Method Definition Index: 127919
+// Method Definition Index: 127919
+// Method Definition Index: 127919
+// Method Definition Index: 127919
+// Method Definition Index: 127919
+// Method Definition Index: 127919
+// Method Definition Index: 127919
+// Method Definition Index: 127919
+// Method Definition Index: 127919
+// Method Definition Index: 127919
+// Method Definition Index: 127919
+// Method Definition Index: 127919
+// Method Definition Index: 127919
+// Method Definition Index: 127919
+// Method Definition Index: 127919
+// Method Definition Index: 127919
+// Method Definition Index: 127919
+// Method Definition Index: 127919
+// Method Definition Index: 127919
+// Method Definition Index: 127919
+// Method Definition Index: 127919
+// Method Definition Index: 127919
+// Method Definition Index: 127919
+// Method Definition Index: 127919
+// Method Definition Index: 127919
+// Method Definition Index: 127919
+// Method Definition Index: 127919
+// Method Definition Index: 127919
+// Method Definition Index: 127919
+// Method Definition Index: 127919
+// Method Definition Index: 127919
+// Method Definition Index: 127919
+// Method Definition Index: 127919
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR bool PrimitivesConverters_TryConvertPrimitiveOrString_TisUInt16_tF4C148C876015C212FD72652D0B6ED8CC247A455_TisKeyValuePair_2_tEB5CFC17B6D8F2A082613AF75FCB091A2A4EB826_m276A2CED652A44FECD10AD8A920CEC7685BCB168_gshared (uint16_t* ___0_source, KeyValuePair_2_tEB5CFC17B6D8F2A082613AF75FCB091A2A4EB826* ___1_destination, const RuntimeMethod* method) 
 {
 	il2cpp_rgctx_method_init(method);
@@ -1158,17 +1158,17 @@ IL_01a0:
 		return (bool)0;
 	}
 }
-// Method Definition Index: 127916
-// Method Definition Index: 127916
-// Method Definition Index: 127916
-// Method Definition Index: 127916
-// Method Definition Index: 127916
-// Method Definition Index: 127916
-// Method Definition Index: 127916
-// Method Definition Index: 127916
-// Method Definition Index: 127916
-// Method Definition Index: 127916
-// Method Definition Index: 127916
+// Method Definition Index: 127919
+// Method Definition Index: 127919
+// Method Definition Index: 127919
+// Method Definition Index: 127919
+// Method Definition Index: 127919
+// Method Definition Index: 127919
+// Method Definition Index: 127919
+// Method Definition Index: 127919
+// Method Definition Index: 127919
+// Method Definition Index: 127919
+// Method Definition Index: 127919
 // Method Definition Index: 66885
 IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR bool* UnsafeUtility_As_TisSingle_t4530F2FF86FCB0DC29F35385CA1BD21BE294761C_TisBoolean_t09A6377A54BE2F9E6985A8149F19234FD7DDFE22_m565EEFF3ACC438F180B409A6A5BB50AE0FD1C561_gshared_inline (float* ___0_from, const RuntimeMethod* method) 
 {

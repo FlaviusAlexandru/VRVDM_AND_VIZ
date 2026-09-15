@@ -181,7 +181,7 @@ MonoBehaviour:
   m_FramesPerWindow: 300
   m_RandomizeOrder: 1
   m_MaxSecondsPerCondition: 300
-  m_OutputFileName: standalone_benchmark_results.csv
+  m_OutputFileName: benchmark_results.csv
   m_AutoRunOnStart: 1
 --- !u!1001 &836026204
 PrefabInstance:

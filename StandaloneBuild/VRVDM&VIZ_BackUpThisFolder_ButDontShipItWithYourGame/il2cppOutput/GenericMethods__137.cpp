@@ -11260,7 +11260,7 @@ IL_000a:
 		return L_14;
 	}
 }
-// Method Definition Index: 122990
+// Method Definition Index: 122993
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR Il2CppSharedGenericObject* TimelineAsset_CreateTrack_TisIl2CppSharedGenericObject_m46B39C164F0001D16BE76AF68AC23272EDD845A7_gshared (TimelineAsset_tE400C944B07CA9D1349BAD84545E24075ADB3496* __this, const RuntimeMethod* method) 
 {
 	il2cpp_rgctx_method_init(method);
@@ -11275,7 +11275,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR Il2CppSharedGenericObject* TimelineAsset_Crea
 		return ((Il2CppSharedGenericObject*)Castclass((RuntimeObject*)L_2, il2cpp_rgctx_data(method->rgctx_data, 1)));
 	}
 }
-// Method Definition Index: 122989
+// Method Definition Index: 122992
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR Il2CppSharedGenericObject* TimelineAsset_CreateTrack_TisIl2CppSharedGenericObject_m9CFAF459BE4913600CF9F03B31BC3198F4877B69_gshared (TimelineAsset_tE400C944B07CA9D1349BAD84545E24075ADB3496* __this, String_t* ___0_trackName, const RuntimeMethod* method) 
 {
 	il2cpp_rgctx_method_init(method);
@@ -11291,7 +11291,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR Il2CppSharedGenericObject* TimelineAsset_Crea
 		return ((Il2CppSharedGenericObject*)Castclass((RuntimeObject*)L_3, il2cpp_rgctx_data(method->rgctx_data, 1)));
 	}
 }
-// Method Definition Index: 122988
+// Method Definition Index: 122991
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR Il2CppSharedGenericObject* TimelineAsset_CreateTrack_TisIl2CppSharedGenericObject_m04FFA2469A4A1A97A61A9D839304A01BFF2BB60E_gshared (TimelineAsset_tE400C944B07CA9D1349BAD84545E24075ADB3496* __this, TrackAsset_t31E19BE900C90F6616C0D337652C8614CD833B96* ___0_parent, String_t* ___1_trackName, const RuntimeMethod* method) 
 {
 	il2cpp_rgctx_method_init(method);
@@ -11708,7 +11708,7 @@ IL_0135:
 		return;
 	}
 }
-// Method Definition Index: 123064
+// Method Definition Index: 123067
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR TimelineClip_t003008F08E56A75F3A47FD9ADE7C066988A3371D* TrackAsset_CreateClip_TisIl2CppSharedGenericObject_m45172A856AB43FA6C9F32D89378434C63419C396_gshared (TrackAsset_t31E19BE900C90F6616C0D337652C8614CD833B96* __this, const RuntimeMethod* method) 
 {
 	il2cpp_rgctx_method_init(method);
@@ -11723,7 +11723,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR TimelineClip_t003008F08E56A75F3A47FD9ADE7C066
 		return L_2;
 	}
 }
-// Method Definition Index: 123067
+// Method Definition Index: 123070
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR Il2CppSharedGenericObject* TrackAsset_CreateMarker_TisIl2CppSharedGenericObject_m0CA480838E7909582D5A905622EC50C508C6BC58_gshared (TrackAsset_t31E19BE900C90F6616C0D337652C8614CD833B96* __this, double ___0_time, const RuntimeMethod* method) 
 {
 	il2cpp_rgctx_method_init(method);
@@ -28272,7 +28272,7 @@ IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR ARTrackable_t1D98417758C08E98A333
 		return L_0;
 	}
 }
-// Method Definition Index: 129393
+// Method Definition Index: 129396
 IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR Transform_tB27202C6F4E36D225EE28A13E4D662BF99785DB1* XROrigin_get_TrackablesParent_m6F7933DF03A5376C31D328F865F77D28EEC18E9C_inline (XROrigin_t5E534A6D886991AF3C1C64127E19A3A510009CFE* __this, const RuntimeMethod* method) 
 {
 	//<source_info:<no-source>:1>

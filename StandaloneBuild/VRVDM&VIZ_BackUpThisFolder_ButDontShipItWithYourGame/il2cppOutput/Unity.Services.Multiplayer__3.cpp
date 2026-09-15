@@ -29896,7 +29896,7 @@ IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR RuntimeObject* ReconnectSessionOp
 		return L_0;
 	}
 }
-// Method Definition Index: 138301
+// Method Definition Index: 138304
 IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR RuntimeObject* UnityServices_get_Instance_m5BA0D657E90B0A0837290E98A0CB13F9D39CA0CD_inline (const RuntimeMethod* method) 
 {
 	static bool s_Il2CppMethodInitialized;
@@ -30231,7 +30231,7 @@ IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR void AddingSessionOptions__ctor_m
 		return;
 	}
 }
-// Method Definition Index: 130723
+// Method Definition Index: 130726
 IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR CorePackageRegistry_t8A84619B4312955D3D73A62BDFF6042EBE1F0275* CorePackageRegistry_get_Instance_m9D9D57AF47C2D9C332C67F69AF4E0121E3352DE0_inline (const RuntimeMethod* method) 
 {
 	static bool s_Il2CppMethodInitialized;
@@ -30548,7 +30548,7 @@ IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR String_t* JoinSessionOptions_get_
 		return L_0;
 	}
 }
-// Method Definition Index: 138807
+// Method Definition Index: 138810
 IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR RuntimeObject* ServicesBehaviour_get_Services_m327DDF51CB2EDA4FFCE0C533255DB018F8C79289_inline (ServicesBehaviour_t956CAD498F7371C039908EE25F13329225BAEEAE* __this, const RuntimeMethod* method) 
 {
 	//<source_info:<no-source>:1>
@@ -30778,7 +30778,7 @@ IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR void MatchmakerServiceException_s
 		return;
 	}
 }
-// Method Definition Index: 130736
+// Method Definition Index: 130739
 IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR CoreRegistry_t7B61538793CE940CE3A391364C163F1078C9F2BA* CoreRegistry_get_Instance_m73A64BD3CB78EF5AC698D1635B5872CEB9F9AFE2_inline (const RuntimeMethod* method) 
 {
 	static bool s_Il2CppMethodInitialized;
@@ -30881,7 +30881,7 @@ IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR Task_1_tB348EA1B62802484AB33A91D4
 		return L_0;
 	}
 }
-// Method Definition Index: 138290
+// Method Definition Index: 138293
 IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR Il2CppSharedGenericObject* ServiceObserver_1_get_Service_m4D33983F86F3820A03ECEF70986EE6E54CB50502_gshared_inline (ServiceObserver_1_t49FCE3305432F27B014D692E7D0968B078F05363* __this, const RuntimeMethod* method) 
 {
 	//<source_info:<no-source>:1>

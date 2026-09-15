@@ -18319,7 +18319,7 @@ IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR void ValveIndexController_set_hap
 		return;
 	}
 }
-// Method Definition Index: 124347
+// Method Definition Index: 124350
 IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR RuntimeObject* CompositionLayerManager_get_LayerProvider_m8D167AF3A5BB7F04D029C3B08DD058AA6D20BDDD_inline (CompositionLayerManager_tD41DB8A7C989A903C3FB661848342B034664C375* __this, const RuntimeMethod* method) 
 {
 	static bool s_Il2CppMethodInitialized;

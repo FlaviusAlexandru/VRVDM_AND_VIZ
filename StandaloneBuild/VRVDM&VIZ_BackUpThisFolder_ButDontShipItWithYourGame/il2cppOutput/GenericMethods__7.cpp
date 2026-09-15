@@ -25468,7 +25468,7 @@ IL2CPP_EXTERN_C  void UnsafeParallelMultiHashMap_2_Remove_TisIl2CppFullySharedGe
 	_thisAdjusted = il2cpp_codegen_get_raw_data<UnsafeParallelMultiHashMap_2_t4E7810C26A0DC9AFBF2B30BA797D0ACF99B4573F>(__this);
 	UnsafeParallelMultiHashMap_2_Remove_TisIl2CppFullySharedGenericStruct_mE775E4665DF2FE5320D684E013BC68785FC3FE84(_thisAdjusted, ___0_key, ___1_value, method);
 }
-// Method Definition Index: 127873
+// Method Definition Index: 127876
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR VisitContext_1_t8B7529CAB723DA13F0BE40873D33B1AD6FC8FB08 VisitContext_1_FromProperty_TisIl2CppSharedGenericObject_mEC4A1A804C9F9E5A8429AD30D5066A7F478BE79D_gshared (PropertyVisitor_t70A043FFF04B0F628C2468238C3087A109336AD4* ___0_visitor, Enumerator_t1F8731B0A3B3867BCA326BFB2503114EC716066F ___1_enumerator, Property_2_t213BEA10F831F3774F2C5ACC4A1E6E5CFC3C15B5* ___2_property, const RuntimeMethod* method) 
 {
 	il2cpp_rgctx_method_init(method);
@@ -25572,45 +25572,45 @@ IL_0041:
 		return L_13;
 	}
 }
-// Method Definition Index: 127873
-// Method Definition Index: 127873
-// Method Definition Index: 127873
-// Method Definition Index: 127873
-// Method Definition Index: 127873
-// Method Definition Index: 127873
-// Method Definition Index: 127873
-// Method Definition Index: 127873
-// Method Definition Index: 127873
-// Method Definition Index: 127873
-// Method Definition Index: 127873
-// Method Definition Index: 127873
-// Method Definition Index: 127873
-// Method Definition Index: 127873
-// Method Definition Index: 127873
-// Method Definition Index: 127873
-// Method Definition Index: 127873
-// Method Definition Index: 127873
-// Method Definition Index: 127873
-// Method Definition Index: 127873
-// Method Definition Index: 127873
-// Method Definition Index: 127873
-// Method Definition Index: 127873
-// Method Definition Index: 127873
-// Method Definition Index: 127873
-// Method Definition Index: 127873
-// Method Definition Index: 127873
-// Method Definition Index: 127873
-// Method Definition Index: 127873
-// Method Definition Index: 127873
-// Method Definition Index: 127873
-// Method Definition Index: 127873
-// Method Definition Index: 127873
-// Method Definition Index: 127873
-// Method Definition Index: 127873
-// Method Definition Index: 127873
-// Method Definition Index: 127873
-// Method Definition Index: 127873
-// Method Definition Index: 133267
+// Method Definition Index: 127876
+// Method Definition Index: 127876
+// Method Definition Index: 127876
+// Method Definition Index: 127876
+// Method Definition Index: 127876
+// Method Definition Index: 127876
+// Method Definition Index: 127876
+// Method Definition Index: 127876
+// Method Definition Index: 127876
+// Method Definition Index: 127876
+// Method Definition Index: 127876
+// Method Definition Index: 127876
+// Method Definition Index: 127876
+// Method Definition Index: 127876
+// Method Definition Index: 127876
+// Method Definition Index: 127876
+// Method Definition Index: 127876
+// Method Definition Index: 127876
+// Method Definition Index: 127876
+// Method Definition Index: 127876
+// Method Definition Index: 127876
+// Method Definition Index: 127876
+// Method Definition Index: 127876
+// Method Definition Index: 127876
+// Method Definition Index: 127876
+// Method Definition Index: 127876
+// Method Definition Index: 127876
+// Method Definition Index: 127876
+// Method Definition Index: 127876
+// Method Definition Index: 127876
+// Method Definition Index: 127876
+// Method Definition Index: 127876
+// Method Definition Index: 127876
+// Method Definition Index: 127876
+// Method Definition Index: 127876
+// Method Definition Index: 127876
+// Method Definition Index: 127876
+// Method Definition Index: 127876
+// Method Definition Index: 133270
 IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR int32_t math_max_m5EE58D9462EC2A39BDE97B0C27BB14CF4A0DB651_inline (int32_t ___0_x, int32_t ___1_y, const RuntimeMethod* method) 
 {
 	//<source_info:<no-source>:1>
@@ -25633,7 +25633,7 @@ IL_0006:
 		return L_3;
 	}
 }
-// Method Definition Index: 133260
+// Method Definition Index: 133263
 IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR int32_t math_min_m0D183243301588F5000801E35B451374CD10DFC1_inline (int32_t ___0_x, int32_t ___1_y, const RuntimeMethod* method) 
 {
 	//<source_info:<no-source>:1>
@@ -25656,7 +25656,7 @@ IL_0006:
 		return L_3;
 	}
 }
-// Method Definition Index: 133361
+// Method Definition Index: 133364
 IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR int64_t math_ceilpow2_m8691C3C194B41660E1FB2E694F7D209BE60DDCC7_inline (int64_t ___0_x, const RuntimeMethod* method) 
 {
 	//<source_info:<no-source>:1>
@@ -25687,7 +25687,7 @@ IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR int64_t math_ceilpow2_m8691C3C194
 		return ((int64_t)il2cpp_codegen_add(L_14, L_15));
 	}
 }
-// Method Definition Index: 133262
+// Method Definition Index: 133265
 IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR int64_t math_min_m6674C357E84B2452F6CB1C0E4DE6156C6BDEFA2F_inline (int64_t ___0_x, int64_t ___1_y, const RuntimeMethod* method) 
 {
 	//<source_info:<no-source>:1>

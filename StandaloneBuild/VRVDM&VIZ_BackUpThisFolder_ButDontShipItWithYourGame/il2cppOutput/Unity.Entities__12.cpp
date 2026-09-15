@@ -12895,7 +12895,7 @@ IL_0013:
 		return ((int32_t)(((int32_t)(((int32_t)(L_8|((int32_t)(L_10<<8))))|((int32_t)(L_12<<((int32_t)16)))))|((int32_t)(L_14<<((int32_t)24)))));
 	}
 }
-// Method Definition Index: 138993
+// Method Definition Index: 138996
 IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR int64_t ProfilerCounterValue_1_get_Value_m9486B446BE79C97FD60E5D5943ADE061E8947115_gshared_inline (ProfilerCounterValue_1_tC8CB905FCEB78E9C9DCCF77EE064F54544E1739D* __this, const RuntimeMethod* method) 
 {
 	//<source_info:<no-source>:1>
@@ -12906,7 +12906,7 @@ IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR int64_t ProfilerCounterValue_1_ge
 		return L_0;
 	}
 }
-// Method Definition Index: 138994
+// Method Definition Index: 138997
 IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR void ProfilerCounterValue_1_set_Value_mD245CE9B9BEF1063AB0FEBAB0C6F616EAD8ABE11_gshared_inline (ProfilerCounterValue_1_tC8CB905FCEB78E9C9DCCF77EE064F54544E1739D* __this, int64_t ___0_value, const RuntimeMethod* method) 
 {
 	//<source_info:<no-source>:1>
@@ -12914,7 +12914,7 @@ IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR void ProfilerCounterValue_1_set_V
 		return;
 	}
 }
-// Method Definition Index: 138992
+// Method Definition Index: 138995
 IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR void ProfilerCounterValue_1__ctor_m9DB002489A84447DA2C2A1A3221051741F600712_gshared_inline (ProfilerCounterValue_1_tC8CB905FCEB78E9C9DCCF77EE064F54544E1739D* __this, ProfilerCategory_tA55212CD512C618AF6D2147791F20319896592AC ___0_category, String_t* ___1_name, uint8_t ___2_dataUnit, uint16_t ___3_counterOptions, const RuntimeMethod* method) 
 {
 	//<source_info:<no-source>:1>

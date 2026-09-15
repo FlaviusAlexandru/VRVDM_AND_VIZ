@@ -10826,7 +10826,7 @@ IL_0034:
 		return;
 	}
 }
-// Method Definition Index: 127944
+// Method Definition Index: 127947
 IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR bool TypeTraits_1_get_IsNullable_mB5AA79EEDC95AE6274B4C43AC6AAFCEA153F08E3_gshared_inline (const RuntimeMethod* method) 
 {
 	//<source_info:<no-source>:1>

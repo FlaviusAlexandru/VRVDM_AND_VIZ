@@ -21899,7 +21899,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR VolumeParameter_t95994C89644D2CC4C11F66657149
 #pragma clang diagnostic ignored "-Winvalid-offsetof"
 #pragma clang diagnostic ignored "-Wunused-variable"
 #endif
-// Method Definition Index: 129327
+// Method Definition Index: 129330
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR Il2CppSharedGenericObject* ObjectPool_1_Get_mCAC8566467D5559EFFB70C6EC525C16EDB50780F_gshared (ObjectPool_1_t51818FF53F2482C7EF1F0B335C5C0E2F1B36A81C* __this, const RuntimeMethod* method) 
 {
 	//<source_info:<no-source>:1>
@@ -21928,7 +21928,7 @@ IL_0019:
 		return L_4;
 	}
 }
-// Method Definition Index: 129328
+// Method Definition Index: 129331
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void ObjectPool_1_Recycle_mB3388F80C40E0F31B709A623DBB6D064E2CDDE91_gshared (ObjectPool_1_t51818FF53F2482C7EF1F0B335C5C0E2F1B36A81C* __this, Il2CppSharedGenericObject* ___0_instance, const RuntimeMethod* method) 
 {
 	//<source_info:<no-source>:1>
@@ -21942,7 +21942,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void ObjectPool_1_Recycle_mB3388F80C40E0F31B7
 		return;
 	}
 }
-// Method Definition Index: 129329
+// Method Definition Index: 129332
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void ObjectPool_1_ClearInstance_m97FAF8452E5F4300C73274893859888972AB8149_gshared (ObjectPool_1_t51818FF53F2482C7EF1F0B335C5C0E2F1B36A81C* __this, Il2CppSharedGenericObject* ___0_instance, const RuntimeMethod* method) 
 {
 	//<source_info:<no-source>:1>
@@ -21950,7 +21950,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void ObjectPool_1_ClearInstance_m97FAF8452E5F
 		return;
 	}
 }
-// Method Definition Index: 129330
+// Method Definition Index: 129333
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void ObjectPool_1__ctor_m6566AA123F00EA0C363A60547A69191A3112CBDC_gshared (ObjectPool_1_t51818FF53F2482C7EF1F0B335C5C0E2F1B36A81C* __this, const RuntimeMethod* method) 
 {
 	//<source_info:<no-source>:1>

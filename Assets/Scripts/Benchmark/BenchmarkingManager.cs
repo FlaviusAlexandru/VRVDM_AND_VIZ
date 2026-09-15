@@ -282,9 +282,22 @@ namespace DataViz
 
         private void OpenCsv()
         {
-            m_OutputPath = Path.Combine(Application.persistentDataPath, m_OutputFileName);
+            // Auto-tag by actual runtime environment (Application.isEditor is
+            // determined by Unity itself, not something you can forget to
+            // update) - this closes off exactly the "forgot to rename before
+            // this run" mistake. Whatever you type in m_OutputFileName, the
+            // file on disk always tells you truthfully whether it came from
+            // Editor Play or a real standalone build.
+            string environmentTag = Application.isEditor ? "editor" : "standalone";
+            string baseName = Path.GetFileNameWithoutExtension(m_OutputFileName);
+            string extension = Path.GetExtension(m_OutputFileName);
+            string taggedFileName = $"{baseName}_{environmentTag}{extension}";
+
+            m_OutputPath = Path.Combine(Application.persistentDataPath, taggedFileName);
             m_Writer = new StreamWriter(m_OutputPath, false);
             m_Writer.WriteLine("RowType,Pipeline,Dataset,PointCount,Window,Frame,FrameTimeMs,CpuTimeMs,GpuTimeMs,BuildTimeMs,MemBeforeBytes,MemAfterBytes,Timestamp,Stage");
+
+            Debug.Log($"[Benchmark] Environment: {(Application.isEditor ? "EDITOR" : "STANDALONE")} - writing to {m_OutputPath}");
         }
 
         private void WriteFrameRow(string pipeline, string dataset, long pointCount, int window, int frame, double frameMs, double cpuMs, double gpuMs)
@@ -292,7 +305,7 @@ namespace DataViz
             m_Writer.WriteLine($"frame,{pipeline},{dataset},{pointCount},{window},{frame}," +
                                 $"{frameMs.ToString("F4", CultureInfo.InvariantCulture)}," +
                                 $"{cpuMs.ToString("F4", CultureInfo.InvariantCulture)}," +
-                                $"{gpuMs.ToString("F4", CultureInfo.InvariantCulture)},,,,,{DateTime.UtcNow:o},");
+                                $"{gpuMs.ToString("F4", CultureInfo.InvariantCulture)},,,,{DateTime.UtcNow:o},");
         }
 
         private void WriteBuildRow(string pipeline, string dataset, long pointCount, double buildMs)

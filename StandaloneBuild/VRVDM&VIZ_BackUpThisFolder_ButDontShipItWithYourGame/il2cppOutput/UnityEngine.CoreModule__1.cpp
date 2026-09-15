@@ -1837,9 +1837,6 @@ struct CustomRenderTexture_t3E16C42144B5127830DE6A7A719DC476463DF553  : public R
 struct Light_t1E68479B7782AF2050FAA02A5DC612FD034F18F3  : public Behaviour_t01970CFBBA658497AE30F311C447DB0440BAB7FA
 {
 };
-struct LightProbeGroup_tF21BBB26BA53E8E7C6D957B5C95FA3BCCC1B8E0F  : public Behaviour_t01970CFBBA658497AE30F311C447DB0440BAB7FA
-{
-};
 struct LightProbeProxyVolume_t431001CA94D2BB5DB419E2A89E7D8116E4E1B658  : public Behaviour_t01970CFBBA658497AE30F311C447DB0440BAB7FA
 {
 };
@@ -20510,14 +20507,6 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR float Light_get_shapeRadius_Injected_mE49170D
 	float icallRetVal = _il2cpp_icall_func(___0__unity_self);
 	return icallRetVal;
 }
-#ifdef __clang__
-#pragma clang diagnostic pop
-#endif
-#ifdef __clang__
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Winvalid-offsetof"
-#pragma clang diagnostic ignored "-Wunused-variable"
-#endif
 #ifdef __clang__
 #pragma clang diagnostic pop
 #endif

@@ -19818,7 +19818,7 @@ IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR void BinaryPropertyVisitor_set_Is
 		return;
 	}
 }
-// Method Definition Index: 127762
+// Method Definition Index: 127765
 IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR PropertyCollection_1_t3F46DAEB8E89E98109FC69EAAF00F82D7208064E PropertyCollection_1_get_Empty_mECAA8DEA83C8D6E2E491C0E011DA0A95D161CD07_gshared_inline (const RuntimeMethod* method) 
 {
 	//<source_info:<no-source>:1>
@@ -19827,7 +19827,7 @@ IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR PropertyCollection_1_t3F46DAEB8E8
 		return L_0;
 	}
 }
-// Method Definition Index: 127762
+// Method Definition Index: 127765
 IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR PropertyCollection_1_t594D5E4A44A28690E5BB7F259345B95FF3315B57 PropertyCollection_1_get_Empty_m5DB4CC32E05B67C4A72C441E2C8883B5320371C2_gshared_inline (const RuntimeMethod* method) 
 {
 	//<source_info:<no-source>:1>

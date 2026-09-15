@@ -1949,7 +1949,7 @@ inline TypeIndex_t18365699387F045FB6E4ED39554CD5BE82A04F7C* SharedStatic_1_get_D
 #pragma clang diagnostic ignored "-Winvalid-offsetof"
 #pragma clang diagnostic ignored "-Wunused-variable"
 #endif
-// Method Definition Index: 138231
+// Method Definition Index: 138234
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR MonoScriptData_t0924BE180F5AF2545EFF5DE057CA83A8D2FCB88A UnitySourceGeneratedAssemblyMonoScriptTypes_v1_Get_mAA060154C4BA4215B5F1A2843DFB7072B3BE7FC4 (const RuntimeMethod* method) 
 {
 	static bool s_Il2CppMethodInitialized;
@@ -1984,7 +1984,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR MonoScriptData_t0924BE180F5AF2545EFF5DE057CA8
 		return L_6;
 	}
 }
-// Method Definition Index: 138232
+// Method Definition Index: 138235
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void UnitySourceGeneratedAssemblyMonoScriptTypes_v1__ctor_mB1175C390943DC859F1D78977EB8E198F08B5F58 (UnitySourceGeneratedAssemblyMonoScriptTypes_v1_tF7368F07EE84F877BE491584F62878A1BF625AAA* __this, const RuntimeMethod* method) 
 {
 	//<source_info:<no-source>:1>
@@ -2071,7 +2071,7 @@ IL2CPP_EXTERN_C void MonoScriptData_t0924BE180F5AF2545EFF5DE057CA83A8D2FCB88A_ma
 #pragma clang diagnostic ignored "-Winvalid-offsetof"
 #pragma clang diagnostic ignored "-Wunused-variable"
 #endif
-// Method Definition Index: 138233
+// Method Definition Index: 138236
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void CompanionComponentSupportedTypes__ctor_m8E9E625050F338AF4A4CA94F58555F033DE987D0 (CompanionComponentSupportedTypes_t4DC24E686A0B672655ADFF44B81CCF68E0BDCE62* __this, const RuntimeMethod* method) 
 {
 	//<source_info:<no-source>:1>
@@ -2080,7 +2080,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void CompanionComponentSupportedTypes__ctor_m
 		return;
 	}
 }
-// Method Definition Index: 138234
+// Method Definition Index: 138237
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void CompanionComponentSupportedTypes__cctor_mB3D298423DCF9D4C2C9E5E47973C4D590D7478AE (const RuntimeMethod* method) 
 {
 	static bool s_Il2CppMethodInitialized;
@@ -2304,7 +2304,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void CompanionComponentSupportedTypes__cctor_
 #pragma clang diagnostic ignored "-Winvalid-offsetof"
 #pragma clang diagnostic ignored "-Wunused-variable"
 #endif
-// Method Definition Index: 138235
+// Method Definition Index: 138238
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void AssemblyTypeRegistry__cctor_mE1A8EF6F2842A02B12E8C10B8F332984C93101FF (const RuntimeMethod* method) 
 {
 	static bool s_Il2CppMethodInitialized;
@@ -2720,7 +2720,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void AssemblyTypeRegistry__cctor_mE1A8EF6F284
 		return;
 	}
 }
-// Method Definition Index: 138236
+// Method Definition Index: 138239
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR bool AssemblyTypeRegistry_Equals_mA4D87BBD4C0B13B67103465F8B5D42BC19C39C2E (RuntimeObject* ___0_lhs, RuntimeObject* ___1_rhs, int32_t ___2_typeIndex, const RuntimeMethod* method) 
 {
 	static bool s_Il2CppMethodInitialized;
@@ -3082,7 +3082,7 @@ IL_033b:
 		IL2CPP_RAISE_MANAGED_EXCEPTION(L_73, ((RuntimeMethod*)il2cpp_codegen_initialize_runtime_metadata_inline((uintptr_t*)&AssemblyTypeRegistry_Equals_mA4D87BBD4C0B13B67103465F8B5D42BC19C39C2E_RuntimeMethod_var)));
 	}
 }
-// Method Definition Index: 138237
+// Method Definition Index: 138240
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR bool AssemblyTypeRegistry_Equals_m05D9B9A4EBD88CD29487CB3DB27FE0B79B89FCB7 (RuntimeObject* ___0_lhs, void* ___1_rhs, int32_t ___2_typeIndex, const RuntimeMethod* method) 
 {
 	static bool s_Il2CppMethodInitialized;
@@ -3444,7 +3444,7 @@ IL_02c3:
 		IL2CPP_RAISE_MANAGED_EXCEPTION(L_73, ((RuntimeMethod*)il2cpp_codegen_initialize_runtime_metadata_inline((uintptr_t*)&AssemblyTypeRegistry_Equals_m05D9B9A4EBD88CD29487CB3DB27FE0B79B89FCB7_RuntimeMethod_var)));
 	}
 }
-// Method Definition Index: 138238
+// Method Definition Index: 138241
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR int32_t AssemblyTypeRegistry_BoxedGetHashCode_mB5FD0B7B8FD65C96E83B776D6EFD71278EAB00B6 (RuntimeObject* ___0_val, int32_t ___1_typeIndex, const RuntimeMethod* method) 
 {
 	static bool s_Il2CppMethodInitialized;
@@ -3782,7 +3782,7 @@ IL_021b:
 		IL2CPP_RAISE_MANAGED_EXCEPTION(L_49, ((RuntimeMethod*)il2cpp_codegen_initialize_runtime_metadata_inline((uintptr_t*)&AssemblyTypeRegistry_BoxedGetHashCode_mB5FD0B7B8FD65C96E83B776D6EFD71278EAB00B6_RuntimeMethod_var)));
 	}
 }
-// Method Definition Index: 138239
+// Method Definition Index: 138242
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void AssemblyTypeRegistry_SetSharedStaticTypeIndices_m67EA1D16364C0C7D44E0DDF4A6508185DDB441C9 (int32_t* ___0_pTypeInfos, int32_t ___1_count, const RuntimeMethod* method) 
 {
 	static bool s_Il2CppMethodInitialized;

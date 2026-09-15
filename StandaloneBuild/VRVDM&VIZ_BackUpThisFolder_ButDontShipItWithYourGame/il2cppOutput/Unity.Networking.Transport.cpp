@@ -30813,7 +30813,7 @@ IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR uint32_t UnsafeBaselibNetworkArra
 		return L_0;
 	}
 }
-// Method Definition Index: 133304
+// Method Definition Index: 133307
 IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR double math_ceil_m1257C9FBF5E1E18A69AEDAA65994A42EE2C54367_inline (double ___0_x, const RuntimeMethod* method) 
 {
 	static bool s_Il2CppMethodInitialized;
@@ -31053,7 +31053,7 @@ IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR uint64_t TimerHelpers_GetTicks_mB
 		return L_0;
 	}
 }
-// Method Definition Index: 133648
+// Method Definition Index: 133651
 IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR void Random__ctor_m7D04F63E843F5339307E401ED6794A892FD5FDE2_inline (Random_t510268629082DA9D50D7179AD7F09443494BD11D* __this, uint32_t ___0_seed, const RuntimeMethod* method) 
 {
 	//<source_info:<no-source>:1>
@@ -31065,7 +31065,7 @@ IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR void Random__ctor_m7D04F63E843F53
 		return;
 	}
 }
-// Method Definition Index: 133660
+// Method Definition Index: 133663
 IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR float Random_NextFloat_m4D38103D75378764C076AA549344C3C279137354_inline (Random_t510268629082DA9D50D7179AD7F09443494BD11D* __this, float ___0_max, const RuntimeMethod* method) 
 {
 	//<source_info:<no-source>:1>
@@ -31076,7 +31076,7 @@ IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR float Random_NextFloat_m4D38103D7
 		return ((float)il2cpp_codegen_multiply(L_0, L_1));
 	}
 }
-// Method Definition Index: 133653
+// Method Definition Index: 133656
 IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR int32_t Random_NextInt_mCA7B9E2C0E357D4921FD38C517B6E4497299887B_inline (Random_t510268629082DA9D50D7179AD7F09443494BD11D* __this, int32_t ___0_max, const RuntimeMethod* method) 
 {
 	//<source_info:<no-source>:1>
@@ -31090,7 +31090,7 @@ IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR int32_t Random_NextInt_mCA7B9E2C0
 		return L_4;
 	}
 }
-// Method Definition Index: 133267
+// Method Definition Index: 133270
 IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR int32_t math_max_m5EE58D9462EC2A39BDE97B0C27BB14CF4A0DB651_inline (int32_t ___0_x, int32_t ___1_y, const RuntimeMethod* method) 
 {
 	//<source_info:<no-source>:1>
@@ -31113,7 +31113,7 @@ IL_0006:
 		return L_3;
 	}
 }
-// Method Definition Index: 133656
+// Method Definition Index: 133659
 IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR uint32_t Random_NextUInt_m2F854CC7D0E3B8F430B6E7BAE54EAFF13BF7A778_inline (Random_t510268629082DA9D50D7179AD7F09443494BD11D* __this, uint32_t ___0_max, const RuntimeMethod* method) 
 {
 	//<source_info:<no-source>:1>
@@ -31127,7 +31127,7 @@ IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR uint32_t Random_NextUInt_m2F854CC
 		return L_4;
 	}
 }
-// Method Definition Index: 133260
+// Method Definition Index: 133263
 IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR int32_t math_min_m0D183243301588F5000801E35B451374CD10DFC1_inline (int32_t ___0_x, int32_t ___1_y, const RuntimeMethod* method) 
 {
 	//<source_info:<no-source>:1>
@@ -31178,7 +31178,7 @@ IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR int32_t PacketsQueue_get_Capacity
 		return L_0;
 	}
 }
-// Method Definition Index: 133655
+// Method Definition Index: 133658
 IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR uint32_t Random_NextUInt_m2C7E3ECD8FF8762EF8E93D1427960AAEB4517076_inline (Random_t510268629082DA9D50D7179AD7F09443494BD11D* __this, const RuntimeMethod* method) 
 {
 	//<source_info:<no-source>:1>
@@ -31439,7 +31439,7 @@ IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR int32_t UnsafeUtility_SizeOf_TisP
 		return (int32_t)L_0;
 	}
 }
-// Method Definition Index: 133662
+// Method Definition Index: 133665
 IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR uint32_t Random_NextState_m42D68DAB9BF418B8890C0BC7A4009D93CA238C3C_inline (Random_t510268629082DA9D50D7179AD7F09443494BD11D* __this, const RuntimeMethod* method) 
 {
 	//<source_info:<no-source>:1>
@@ -31457,7 +31457,7 @@ IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR uint32_t Random_NextState_m42D68D
 		return L_0;
 	}
 }
-// Method Definition Index: 133658
+// Method Definition Index: 133661
 IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR float Random_NextFloat_mC7800A869E498ABCDC033CF4D9D05EB94E9A6FDA_inline (Random_t510268629082DA9D50D7179AD7F09443494BD11D* __this, const RuntimeMethod* method) 
 {
 	//<source_info:<no-source>:1>
@@ -31553,7 +31553,7 @@ IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR NetworkConnection_t0A1170D9665C62
 		return L_5;
 	}
 }
-// Method Definition Index: 133254
+// Method Definition Index: 133257
 IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR float math_asfloat_mE332F9C6D56AA099930259ECE729FC5EC8FD2ED8_inline (uint32_t ___0_x, const RuntimeMethod* method) 
 {
 	//<source_info:<no-source>:1>

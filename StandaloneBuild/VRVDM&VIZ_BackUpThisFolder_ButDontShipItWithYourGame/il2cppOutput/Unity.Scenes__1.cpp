@@ -595,7 +595,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void __JobReflectionRegistrationOutput__20616
 #pragma clang diagnostic ignored "-Winvalid-offsetof"
 #pragma clang diagnostic ignored "-Wunused-variable"
 #endif
-// Method Definition Index: 129130
+// Method Definition Index: 129133
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void __UnmanagedPostProcessorOutput__2061669765567869899_EarlyInit_mE75C69CAE9C1579EBF2324EA386AD43480D2F857 (const RuntimeMethod* method) 
 {
 	static bool s_Il2CppMethodInitialized;
@@ -668,7 +668,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void __UnmanagedPostProcessorOutput__20616697
 #pragma clang diagnostic ignored "-Winvalid-offsetof"
 #pragma clang diagnostic ignored "-Wunused-variable"
 #endif
-// Method Definition Index: 129131
+// Method Definition Index: 129134
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void __JobReflectionRegistrationOutput__2061669765567869899_CreateJobReflectionData_m0F5933C9A8BD088B2C56EA5D32864BEA3499EAAA (const RuntimeMethod* method) 
 {
 	static bool s_Il2CppMethodInitialized;
@@ -714,7 +714,7 @@ IL_0025:
 		return;
 	}
 }
-// Method Definition Index: 129132
+// Method Definition Index: 129135
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void __JobReflectionRegistrationOutput__2061669765567869899_EarlyInit_mB0F1050B0644301F15BF9838630E70382908C372 (const RuntimeMethod* method) 
 {
 	//<source_info:<no-source>:1>
@@ -731,7 +731,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void __JobReflectionRegistrationOutput__20616
 #pragma clang diagnostic ignored "-Winvalid-offsetof"
 #pragma clang diagnostic ignored "-Wunused-variable"
 #endif
-// Method Definition Index: 129133
+// Method Definition Index: 129136
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void U24BurstDirectCallInitializer_Initialize_mAC4915B3E6124009578A3A383E1D5BEFC062C77E (const RuntimeMethod* method) 
 {
 	static bool s_Il2CppMethodInitialized;

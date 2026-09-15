@@ -19658,7 +19658,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR bool JsonHelpers_TryParseJson_TisIl2CppFullyS
 		return L_13;
 	}
 }
-// Method Definition Index: 121740
+// Method Definition Index: 121743
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR bool JsonHelpers_TryParseJson_TisIl2CppFullySharedGenericAny_m3AFFE20FB664DF27566443FA72A0DB402A31D884_gshared (String_t* ___0_this, Il2CppFullySharedGenericAny* ___1_result, const RuntimeMethod* method) 
 {
 	if (!il2cpp_rgctx_is_initialized(method))
@@ -19708,7 +19708,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR bool JsonHelpers_TryParseJson_TisIl2CppFullyS
 		return L_13;
 	}
 }
-// Method Definition Index: 121423
+// Method Definition Index: 121426
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR bool JsonHelpers_TryParseJson_TisIl2CppFullySharedGenericAny_mC5134D54860F1EBAB5AF1DBC151E7F84E290FF99_gshared (String_t* ___0_this, Il2CppFullySharedGenericAny* ___1_result, const RuntimeMethod* method) 
 {
 	if (!il2cpp_rgctx_is_initialized(method))

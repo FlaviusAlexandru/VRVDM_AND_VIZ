@@ -26343,7 +26343,7 @@ IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR int32_t ChunkIndex_get_Count_m50A
 		return L_4;
 	}
 }
-// Method Definition Index: 133271
+// Method Definition Index: 133274
 IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR uint64_t math_max_m0D518872CF1FB9811F2F67CFEF45C38AAD2C512B_inline (uint64_t ___0_x, uint64_t ___1_y, const RuntimeMethod* method) 
 {
 	//<source_info:<no-source>:1>
@@ -26427,7 +26427,7 @@ IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR bool TypeIndex_get_IsRefCounted_m
 		return (bool)((!(((uint32_t)((int32_t)(L_0&((int32_t)4194304)))) <= ((uint32_t)0)))? 1 : 0);
 	}
 }
-// Method Definition Index: 133260
+// Method Definition Index: 133263
 IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR int32_t math_min_m0D183243301588F5000801E35B451374CD10DFC1_inline (int32_t ___0_x, int32_t ___1_y, const RuntimeMethod* method) 
 {
 	//<source_info:<no-source>:1>
@@ -26654,7 +26654,7 @@ IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR int32_t TypeIndex_get_Flags_mBAF2
 		return ((int32_t)(L_0&((int32_t)-8192)));
 	}
 }
-// Method Definition Index: 133267
+// Method Definition Index: 133270
 IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR int32_t math_max_m5EE58D9462EC2A39BDE97B0C27BB14CF4A0DB651_inline (int32_t ___0_x, int32_t ___1_y, const RuntimeMethod* method) 
 {
 	//<source_info:<no-source>:1>
@@ -26926,7 +26926,7 @@ IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR bool EnabledBitUtility_TryGetNext
 		return (bool)((!(((uint32_t)L_19) <= ((uint32_t)0)))? 1 : 0);
 	}
 }
-// Method Definition Index: 133341
+// Method Definition Index: 133344
 IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR int64_t math_select_m05B7B07DF7AE5EBAEB5C1CCA882198C5475CEF8C_inline (int64_t ___0_falseValue, int64_t ___1_trueValue, bool ___2_test, const RuntimeMethod* method) 
 {
 	//<source_info:<no-source>:1>
@@ -26948,7 +26948,7 @@ IL_0005:
 		return L_2;
 	}
 }
-// Method Definition Index: 133336
+// Method Definition Index: 133339
 IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR int32_t math_select_mA14FD34DC3311A9028A0ECFF246F64843ACC4F4B_inline (int32_t ___0_falseValue, int32_t ___1_trueValue, bool ___2_test, const RuntimeMethod* method) 
 {
 	//<source_info:<no-source>:1>
@@ -28441,7 +28441,7 @@ IL_0485:
 		return;
 	}
 }
-// Method Definition Index: 133356
+// Method Definition Index: 133359
 IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR int32_t math_tzcnt_mF6C8DD435C1FEA1C426B8F9EB357D6CC1B3B9555_inline (uint64_t ___0_x, const RuntimeMethod* method) 
 {
 	//<source_info:<no-source>:1>

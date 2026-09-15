@@ -346,12 +346,14 @@ extern void U3CU3Ec__DisplayClass52_0_U3CRequestGlyphAssignmentRpcU3Eb__0_mAC016
 extern void U3CU3Ec__DisplayClass53_0__ctor_m56C2BB5EAE58215EFDF1DF7F6BC30A90465BE811 (void);
 extern void U3CU3Ec__DisplayClass53_0_U3CGetGlyphForLabelU3Eb__0_m9AAB64EAB2BAB1445FB35AE8B09FB054903951EF (void);
 extern void ScatterplotInstancedRenderer_Awake_m464A7A1FA7F194A2E8ABA41FDC77E228721CE2AA (void);
+extern void ScatterplotInstancedRenderer_SetActive_m0389796ED77F999F82752F765EA3881331CFA253 (void);
 extern void ScatterplotInstancedRenderer_Clear_m2C8E7786A5933480DE22A7751A9BB79A981A3D2F (void);
 extern void ScatterplotInstancedRenderer_Build_m4B1D0B15C4AB27687ECB57268E8CDB6D29ABFEB6 (void);
 extern void ScatterplotInstancedRenderer_Update_mE27AAEA14E9E85D06B09AA0A07DC0F573138314F (void);
 extern void ScatterplotInstancedRenderer__ctor_m3758716DCF5113A29EA4FAEE3D34595ECC3C52C8 (void);
 extern void ScatterplotParticleRenderer_Awake_m78D6AFBB7B4A8A96B29FFD892E52ADD5A2AE7FDD (void);
 extern void ScatterplotParticleRenderer_ConfigureStaticParticleSystem_mC136095C2B472AA183F5BE9F6D61721D672210BE (void);
+extern void ScatterplotParticleRenderer_SetActive_mA9A7E97883B4D14D0B48D2B18512416DC7D8CE13 (void);
 extern void ScatterplotParticleRenderer_Clear_m66FDE840C081B3C3560E4030D06BC3F028949DF1 (void);
 extern void ScatterplotParticleRenderer_Build_m2C5C9C2ADB6CAE9566A55C25AE7E3E67A7F7DD2B (void);
 extern void ScatterplotParticleRenderer__ctor_mBBE11374CAAEA8372D1080869CFBBD86BC451068 (void);
@@ -392,6 +394,7 @@ extern void U3CU3Ec_U3CPopulateGlyphLabelDropdownU3Eb__47_0_m3EF50836CAB9BDF1BA8
 extern void U3CU3Ec_U3CPopulateGlyphLabelDropdownU3Eb__47_1_mFC56ADE4D1E1C3FC60000768AF2A378A7FD2EF44 (void);
 extern void ScatterplotVFXRenderer_Awake_m775A78BAD24AF45BA29720FB6F9366A1812F10E0 (void);
 extern void ScatterplotVFXRenderer_OnDestroy_m187A031642EFBF59B664FC34BE38F636A33B2449 (void);
+extern void ScatterplotVFXRenderer_SetActive_mF4F8B08FB32970746E908601AFC6F25E46B23BED (void);
 extern void ScatterplotVFXRenderer_Clear_m6F59C65A9972845D5E044D0D40ACD02314CCA294 (void);
 extern void ScatterplotVFXRenderer_Build_mC351379C7235F45CFB098006DA2897749CE37B45 (void);
 extern void ScatterplotVFXRenderer_BuildAdvanced_m053F852443FFAD14D7FFCF65B3BD3293D097D7C1 (void);
@@ -526,7 +529,7 @@ extern void AssemblyTypeRegistry_Equals_mC6FB3A844339CB7C644AD24D982A88DA1EFFE98
 extern void AssemblyTypeRegistry_Equals_m2A29416EF4DF96A3C8653EE9A5FD28D0F832888F (void);
 extern void AssemblyTypeRegistry_BoxedGetHashCode_m51ABF56CB30C28866F9A1DD99686EE8FA066AA35 (void);
 extern void AssemblyTypeRegistry_SetSharedStaticTypeIndices_m3DE4774BFFA0B87DE6BB2678A9C2737686BF6917 (void);
-static Il2CppMethodPointer s_methodPointers[520] = 
+static Il2CppMethodPointer s_methodPointers[523] = 
 {
 	BinaryImporter_Load_m53813321470F3B263DD94A4777CD1C0FAC9D1138,
 	BinaryImporter_LoadProcessedDataset_m87B89FF821E3FC1A58FD844CD196B3D7EDF62F97,
@@ -868,12 +871,14 @@ static Il2CppMethodPointer s_methodPointers[520] =
 	U3CU3Ec__DisplayClass53_0__ctor_m56C2BB5EAE58215EFDF1DF7F6BC30A90465BE811,
 	U3CU3Ec__DisplayClass53_0_U3CGetGlyphForLabelU3Eb__0_m9AAB64EAB2BAB1445FB35AE8B09FB054903951EF,
 	ScatterplotInstancedRenderer_Awake_m464A7A1FA7F194A2E8ABA41FDC77E228721CE2AA,
+	ScatterplotInstancedRenderer_SetActive_m0389796ED77F999F82752F765EA3881331CFA253,
 	ScatterplotInstancedRenderer_Clear_m2C8E7786A5933480DE22A7751A9BB79A981A3D2F,
 	ScatterplotInstancedRenderer_Build_m4B1D0B15C4AB27687ECB57268E8CDB6D29ABFEB6,
 	ScatterplotInstancedRenderer_Update_mE27AAEA14E9E85D06B09AA0A07DC0F573138314F,
 	ScatterplotInstancedRenderer__ctor_m3758716DCF5113A29EA4FAEE3D34595ECC3C52C8,
 	ScatterplotParticleRenderer_Awake_m78D6AFBB7B4A8A96B29FFD892E52ADD5A2AE7FDD,
 	ScatterplotParticleRenderer_ConfigureStaticParticleSystem_mC136095C2B472AA183F5BE9F6D61721D672210BE,
+	ScatterplotParticleRenderer_SetActive_mA9A7E97883B4D14D0B48D2B18512416DC7D8CE13,
 	ScatterplotParticleRenderer_Clear_m66FDE840C081B3C3560E4030D06BC3F028949DF1,
 	ScatterplotParticleRenderer_Build_m2C5C9C2ADB6CAE9566A55C25AE7E3E67A7F7DD2B,
 	ScatterplotParticleRenderer__ctor_mBBE11374CAAEA8372D1080869CFBBD86BC451068,
@@ -914,6 +919,7 @@ static Il2CppMethodPointer s_methodPointers[520] =
 	U3CU3Ec_U3CPopulateGlyphLabelDropdownU3Eb__47_1_mFC56ADE4D1E1C3FC60000768AF2A378A7FD2EF44,
 	ScatterplotVFXRenderer_Awake_m775A78BAD24AF45BA29720FB6F9366A1812F10E0,
 	ScatterplotVFXRenderer_OnDestroy_m187A031642EFBF59B664FC34BE38F636A33B2449,
+	ScatterplotVFXRenderer_SetActive_mF4F8B08FB32970746E908601AFC6F25E46B23BED,
 	ScatterplotVFXRenderer_Clear_m6F59C65A9972845D5E044D0D40ACD02314CCA294,
 	ScatterplotVFXRenderer_Build_mC351379C7235F45CFB098006DA2897749CE37B45,
 	ScatterplotVFXRenderer_BuildAdvanced_m053F852443FFAD14D7FFCF65B3BD3293D097D7C1,
@@ -1060,7 +1066,7 @@ static Il2CppTokenAdjustorThunkPair s_adjustorThunks[4] =
 	{ 0x060000C6, TrackedRotation_SetBaseFromVector_m0CAD68507FD5C7AA3C7CAE09720645F033F1D26E_AdjustorThunk },
 	{ 0x060000C7, TrackedRotation_SetTargetFromVector_m42F1586C38A41E0FB628220D326B1572BB8F80D7_AdjustorThunk },
 };
-static const int32_t s_InvokerIndices[520] = 
+static const int32_t s_InvokerIndices[523] = 
 {
 	31517,
 	31517,
@@ -1402,12 +1408,14 @@ static const int32_t s_InvokerIndices[520] =
 	22600,
 	11648,
 	22600,
+	16759,
 	22600,
 	4481,
 	22600,
 	22600,
 	22600,
 	22600,
+	16759,
 	22600,
 	4481,
 	22600,
@@ -1448,6 +1456,7 @@ static const int32_t s_InvokerIndices[520] =
 	6672,
 	22600,
 	22600,
+	16759,
 	22600,
 	4481,
 	769,
@@ -1604,7 +1613,7 @@ IL2CPP_EXTERN_C const Il2CppCodeGenModule g_AssemblyU2DCSharp_CodeGenModule;
 const Il2CppCodeGenModule g_AssemblyU2DCSharp_CodeGenModule = 
 {
 	"Assembly-CSharp.dll",
-	520,
+	523,
 	s_methodPointers,
 	4,
 	s_adjustorThunks,

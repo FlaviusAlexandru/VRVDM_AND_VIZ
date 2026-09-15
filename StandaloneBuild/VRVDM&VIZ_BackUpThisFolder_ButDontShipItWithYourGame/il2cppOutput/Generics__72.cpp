@@ -33692,7 +33692,7 @@ IL2CPP_EXTERN_C  void DynamicBuffer_1_CopyFrom_mED8DD832F283D9541D96604E6BCC2464
 #ifdef __clang__
 #pragma clang diagnostic pop
 #endif
-// Method Definition Index: 133267
+// Method Definition Index: 133270
 IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR int32_t math_max_m5EE58D9462EC2A39BDE97B0C27BB14CF4A0DB651_inline (int32_t ___0_x, int32_t ___1_y, const RuntimeMethod* method) 
 {
 	//<source_info:<no-source>:1>
