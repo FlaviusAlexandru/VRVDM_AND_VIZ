@@ -36,6 +36,13 @@ namespace DataViz
         public Button m_ShuffleBackwardButton;
         public Button m_ShuffleForwardButton;
 
+        [Header("Shuffle Blacklist Controls")]
+        [Tooltip("Minimal picker for now: pick a column, then toggle whether shuffle can land on it. " +
+                 "A proper list-management view (showing all blacklisted columns at once) can replace " +
+                 "this later without touching the manager-side logic.")]
+        public TMP_Dropdown m_BlacklistColumnDropdown;
+        public Toggle m_BlacklistToggle;
+
         [Header("Filtering Controls")]
         public TMP_Dropdown m_FilterLabelDropdown;
         public TMP_Dropdown m_FilterIndexDropdown;
@@ -100,6 +107,12 @@ namespace DataViz
 
             if (m_ShuffleForwardButton != null)
                 m_ShuffleForwardButton.onClick.AddListener(OnShuffleForwardButtonClicked);
+
+            if (m_BlacklistColumnDropdown != null)
+                m_BlacklistColumnDropdown.onValueChanged.AddListener(OnBlacklistColumnUIChanged);
+
+            if (m_BlacklistToggle != null)
+                m_BlacklistToggle.onValueChanged.AddListener(OnBlacklistToggleUIChanged);
 
             if (m_FilterLabelDropdown != null)
                 m_FilterLabelDropdown.onValueChanged.AddListener(OnFilterColumnUIChanged);
@@ -244,6 +257,14 @@ namespace DataViz
                 m_GlyphColumnDropdown.AddOptions(glyphColumnOptions);
             }
 
+            // Populate blacklist column dropdown - no "None" entry, since you
+            // always pick a real column to toggle blacklist status on.
+            if (m_BlacklistColumnDropdown != null)
+            {
+                m_BlacklistColumnDropdown.ClearOptions();
+                m_BlacklistColumnDropdown.AddOptions(columns);
+            }
+
             SyncUIWithManager();
         }
 
@@ -325,6 +346,11 @@ namespace DataViz
 
             // Reflect whatever's already assigned to the currently-selected label
             RefreshGlyphShapeDropdownSelection();
+
+            // Reflect the blacklist status of whichever column is currently
+            // selected in the blacklist picker - does NOT fire OnBlacklistToggleUIChanged
+            // since this whole block runs inside the m_IsUpdatingUI guard.
+            RefreshBlacklistToggleSelection();
 
             m_IsUpdatingUI = false;
         }
@@ -416,6 +442,42 @@ namespace DataViz
             if (m_Manager == null) return;
             m_Manager.RequestShuffleForwardRpc();
         }
+
+        private void OnBlacklistColumnUIChanged(int idx)
+        {
+            // Just switches which column the toggle is currently editing -
+            // reflect its existing blacklist status rather than sending a change.
+            // Mirrors OnGlyphLabelUIChanged's pattern.
+            RefreshBlacklistToggleSelection();
+        }
+
+        private void OnBlacklistToggleUIChanged(bool isOn)
+        {
+            if (m_IsUpdatingUI || m_Manager == null) return;
+            if (m_BlacklistColumnDropdown == null || m_BlacklistColumnDropdown.options.Count == 0) return;
+
+            string selectedColumn = m_BlacklistColumnDropdown.options[m_BlacklistColumnDropdown.value].text;
+            m_Manager.RequestSetColumnBlacklistedRpc(selectedColumn, isOn);
+        }
+
+        /// <summary>
+        /// Shows whether the currently-selected column in the blacklist picker
+        /// is blacklisted, without sending an RPC. Mirrors RefreshGlyphShapeDropdownSelection.
+        /// </summary>
+        private void RefreshBlacklistToggleSelection()
+        {
+            if (m_BlacklistToggle == null || m_BlacklistColumnDropdown == null || m_Manager == null) return;
+            if (m_BlacklistColumnDropdown.options.Count == 0) return;
+
+            string selectedColumn = m_BlacklistColumnDropdown.options[m_BlacklistColumnDropdown.value].text;
+            bool isBlacklisted = m_Manager.IsColumnBlacklisted(selectedColumn);
+
+            bool wasUpdating = m_IsUpdatingUI;
+            m_IsUpdatingUI = true;
+            m_BlacklistToggle.isOn = isBlacklisted;
+            m_IsUpdatingUI = wasUpdating;
+        }
+
         private void OnFilterColumnUIChanged(int idx)
         {
             if (m_IsUpdatingUI || m_Manager == null) return;
