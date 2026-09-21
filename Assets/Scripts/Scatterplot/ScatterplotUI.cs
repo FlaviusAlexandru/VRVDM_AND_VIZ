@@ -1,6 +1,6 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -30,6 +30,15 @@ namespace DataViz
 
         [Header("Interaction Controls")]
         public Toggle m_TooltipsToggle;
+
+        [Header("Axis Lock Controls")]
+        public Toggle m_XAxisLockToggle;
+        public Toggle m_YAxisLockToggle;
+        public Toggle m_ZAxisLockToggle;
+
+        [Header("Bookmark Controls")]
+        public TMP_Dropdown m_BookmarkColumnDropdown;
+        public Toggle m_BookmarkToggle;
 
         [Header("Exploration Controls")]
         public Button m_ShuffleButton;
@@ -98,6 +107,17 @@ namespace DataViz
 
             if (m_TooltipsToggle != null)
                 m_TooltipsToggle.onValueChanged.AddListener(OnTooltipsToggleUIChanged);
+
+            // Axis lock toggles
+            if (m_XAxisLockToggle != null) m_XAxisLockToggle.onValueChanged.AddListener(isOn => OnAxisLockUIChanged(0, isOn));
+            if (m_YAxisLockToggle != null) m_YAxisLockToggle.onValueChanged.AddListener(isOn => OnAxisLockUIChanged(1, isOn));
+            if (m_ZAxisLockToggle != null) m_ZAxisLockToggle.onValueChanged.AddListener(isOn => OnAxisLockUIChanged(2, isOn));
+
+            // Bookmark controls
+            if (m_BookmarkColumnDropdown != null)
+                m_BookmarkColumnDropdown.onValueChanged.AddListener(OnBookmarkColumnUIChanged);
+            if (m_BookmarkToggle != null)
+                m_BookmarkToggle.onValueChanged.AddListener(OnBookmarkToggleUIChanged);
 
             if (m_ShuffleButton != null)
                 m_ShuffleButton.onClick.AddListener(OnShuffleButtonClicked);
@@ -265,6 +285,13 @@ namespace DataViz
                 m_BlacklistColumnDropdown.AddOptions(columns);
             }
 
+            // Populate bookmark column dropdown - mirrors blacklist pattern
+            if (m_BookmarkColumnDropdown != null)
+            {
+                m_BookmarkColumnDropdown.ClearOptions();
+                m_BookmarkColumnDropdown.AddOptions(columns);
+            }
+
             SyncUIWithManager();
         }
 
@@ -314,6 +341,14 @@ namespace DataViz
             // Sync tooltip toggle
             if (m_TooltipsToggle != null)
                 m_TooltipsToggle.isOn = m_Manager.ShowTooltips;
+
+            // Sync axis lock toggles
+            if (m_XAxisLockToggle != null) m_XAxisLockToggle.isOn = m_Manager.XAxisLocked;
+            if (m_YAxisLockToggle != null) m_YAxisLockToggle.isOn = m_Manager.YAxisLocked;
+            if (m_ZAxisLockToggle != null) m_ZAxisLockToggle.isOn = m_Manager.ZAxisLocked;
+
+            // Sync bookmark toggle selection
+            RefreshBookmarkToggleSelection();
 
             // Sync filter settings
             if (m_FilterLabelDropdown != null)
@@ -460,6 +495,23 @@ namespace DataViz
             m_Manager.RequestSetColumnBlacklistedRpc(selectedColumn, isOn);
         }
 
+        private void OnAxisLockUIChanged(int axis, bool isOn)
+        {
+            if (m_IsUpdatingUI || m_Manager == null) return;
+            m_Manager.RequestSetAxisLockedRpc(axis, isOn);
+        }
+
+        private void OnBookmarkColumnUIChanged(int idx) => RefreshBookmarkToggleSelection();
+
+        private void OnBookmarkToggleUIChanged(bool isOn)
+        {
+            if (m_IsUpdatingUI || m_Manager == null) return;
+            if (m_BookmarkColumnDropdown == null || m_BookmarkColumnDropdown.options.Count == 0) return;
+
+            string selectedColumn = m_BookmarkColumnDropdown.options[m_BookmarkColumnDropdown.value].text;
+            m_Manager.RequestSetColumnBookmarkedRpc(selectedColumn, isOn);
+        }
+
         /// <summary>
         /// Shows whether the currently-selected column in the blacklist picker
         /// is blacklisted, without sending an RPC. Mirrors RefreshGlyphShapeDropdownSelection.
@@ -475,6 +527,18 @@ namespace DataViz
             bool wasUpdating = m_IsUpdatingUI;
             m_IsUpdatingUI = true;
             m_BlacklistToggle.isOn = isBlacklisted;
+            m_IsUpdatingUI = wasUpdating;
+        }
+
+        private void RefreshBookmarkToggleSelection()
+        {
+            if (m_BookmarkToggle == null || m_BookmarkColumnDropdown == null || m_Manager == null) return;
+            if (m_BookmarkColumnDropdown.options.Count == 0) return;
+
+            string selectedColumn = m_BookmarkColumnDropdown.options[m_BookmarkColumnDropdown.value].text;
+            bool wasUpdating = m_IsUpdatingUI;
+            m_IsUpdatingUI = true;
+            m_BookmarkToggle.isOn = m_Manager.IsColumnBookmarked(selectedColumn);
             m_IsUpdatingUI = wasUpdating;
         }
 
