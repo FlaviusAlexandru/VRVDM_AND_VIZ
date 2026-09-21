@@ -29,6 +29,98 @@ namespace DataViz
         [Header("Interaction Settings")]
         public bool ShowTooltips = false;
 
+        /// <summary>
+        /// Column names excluded from RequestShuffleColumnsRpc's random pool,
+        /// scoped PER DATASET (a blacklist entry only applies to the dataset
+        /// it was set on) and persisted to disk so it survives app restarts,
+        /// not just dataset switches within one session. Deliberately private -
+        /// ScatterplotUI never touched the old public field directly, only
+        /// RequestSetColumnBlacklistedRpc/IsColumnBlacklisted, so this change
+        /// is invisible to the UI layer.
+        /// </summary>
+        private Dictionary<string, HashSet<string>> m_BlacklistByDataset = new();
+
+        [Serializable]
+        private class DatasetColumnPrefs
+        {
+            public string DatasetName;
+            public List<string> BlacklistedColumns = new();
+        }
+
+        [Serializable]
+        private class ColumnPrefsFile
+        {
+            public List<DatasetColumnPrefs> Datasets = new();
+        }
+
+        private string ColumnPrefsFilePath => Path.Combine(Application.persistentDataPath, "scatterplot_column_prefs.json");
+
+        private void LoadColumnPrefs()
+        {
+            try
+            {
+                if (!File.Exists(ColumnPrefsFilePath))
+                    return;
+
+                string json = File.ReadAllText(ColumnPrefsFilePath);
+                ColumnPrefsFile data = JsonUtility.FromJson<ColumnPrefsFile>(json);
+
+                if (data?.Datasets == null)
+                    return;
+
+                foreach (DatasetColumnPrefs entry in data.Datasets)
+                {
+                    m_BlacklistByDataset[entry.DatasetName] = new HashSet<string>(entry.BlacklistedColumns);
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"[MultiplayerScatterplotManager] Failed to load column prefs from {ColumnPrefsFilePath}: {e.Message}");
+            }
+        }
+
+        private void SaveColumnPrefs()
+        {
+            try
+            {
+                ColumnPrefsFile data = new ColumnPrefsFile();
+
+                foreach (KeyValuePair<string, HashSet<string>> kvp in m_BlacklistByDataset)
+                {
+                    if (kvp.Value.Count == 0)
+                        continue; // don't bother persisting empty entries
+
+                    data.Datasets.Add(new DatasetColumnPrefs
+                    {
+                        DatasetName = kvp.Key,
+                        BlacklistedColumns = new List<string>(kvp.Value)
+                    });
+                }
+
+                File.WriteAllText(ColumnPrefsFilePath, JsonUtility.ToJson(data, true));
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"[MultiplayerScatterplotManager] Failed to save column prefs to {ColumnPrefsFilePath}: {e.Message}");
+            }
+        }
+
+        private HashSet<string> GetBlacklistForCurrentDataset()
+        {
+            if (LoadedDataset == null)
+                return new HashSet<string>(); // empty, safe no-op set - nothing to blacklist against
+
+            string key = LoadedDataset.Name;
+
+            if (!m_BlacklistByDataset.TryGetValue(key, out HashSet<string> set))
+            {
+                set = new HashSet<string>();
+                m_BlacklistByDataset[key] = set;
+            }
+
+            return set;
+        }
+
         //<summary>
         // Filtering will be used to chose a subset of the data to be displayed. Users will be able to chose a column "Filter label" and index/value "Filter Value"
         //to enable, for example, filtering by participant ID or a specific category.
@@ -134,6 +226,8 @@ namespace DataViz
                 Destroy(gameObject);
                 return;
             }
+
+            LoadColumnPrefs();
         }
 
         private void OnDestroy()
@@ -453,6 +547,40 @@ namespace DataViz
 
 
         /// <summary>
+        /// Adds or removes a column from the shuffle blacklist by name. Does
+        /// NOT affect manual selection via a dropdown - a blacklisted column
+        /// remains fully choosable by hand, it's only skipped by the random
+        /// shuffle picker.
+        /// </summary>
+        public void RequestSetColumnBlacklistedRpc(string columnName, bool blacklisted)
+        {
+            if (string.IsNullOrEmpty(columnName))
+                return;
+
+            HashSet<string> blacklist = GetBlacklistForCurrentDataset();
+
+            if (blacklisted)
+            {
+                blacklist.Add(columnName);
+            }
+            else
+            {
+                blacklist.Remove(columnName);
+            }
+
+            SaveColumnPrefs();
+            OnPlotSettingsChanged?.Invoke();
+        }
+
+        public bool IsColumnBlacklisted(string columnName)
+        {
+            if (string.IsNullOrEmpty(columnName))
+                return false;
+
+            return GetBlacklistForCurrentDataset().Contains(columnName);
+        }
+
+        /// <summary>
         /// Randomizes X/Y/Z/Color/Time column selection for data exploration.
         ///
         /// Not a uniform random pick across all columns - with high-dimensional
@@ -505,6 +633,18 @@ namespace DataViz
             }
 
             List<int> usedIndices = new List<int>();
+
+            // Seed with blacklisted columns so they're never picked by X/Y/Z
+            // shuffle - reuses the exact same exclusion mechanism WeightedRandomIndex
+            // already had for avoiding picking the same column twice. Only this
+            // dataset's own blacklist entries apply.
+            foreach (string blacklistedName in GetBlacklistForCurrentDataset())
+            {
+                if (LoadedDataset.ColumnMapping.TryGetValue(blacklistedName, out int blacklistedIdx))
+                {
+                    usedIndices.Add(blacklistedIdx);
+                }
+            }
 
             int xIdx = WeightedRandomIndex(weights, usedIndices);
             usedIndices.Add(xIdx);
