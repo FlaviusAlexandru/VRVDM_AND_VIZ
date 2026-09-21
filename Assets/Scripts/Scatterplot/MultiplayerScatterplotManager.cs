@@ -29,6 +29,31 @@ namespace DataViz
         [Header("Interaction Settings")]
         public bool ShowTooltips = false;
 
+        [Header("Axis Lock Settings")]
+        public bool XAxisLocked = false;
+        public bool YAxisLocked = false;
+        public bool ZAxisLocked = false;
+
+        public void RequestSetAxisLockedRpc(int axis, bool locked)
+        {
+            switch (axis)
+            {
+                case 0: XAxisLocked = locked; break;
+                case 1: YAxisLocked = locked; break;
+                case 2: ZAxisLocked = locked; break;
+                default: return;
+            }
+            OnPlotSettingsChanged?.Invoke();
+        }
+
+        public bool IsAxisLocked(int axis) => axis switch
+        {
+            0 => XAxisLocked,
+            1 => YAxisLocked,
+            2 => ZAxisLocked,
+            _ => false
+        };
+
         /// <summary>
         /// Column names excluded from RequestShuffleColumnsRpc's random pool,
         /// scoped PER DATASET (a blacklist entry only applies to the dataset
@@ -39,6 +64,9 @@ namespace DataViz
         /// is invisible to the UI layer.
         /// </summary>
         private Dictionary<string, HashSet<string>> m_BlacklistByDataset = new();
+
+        // Bookmarks: per-dataset set of bookmarked column names.
+        private Dictionary<string, HashSet<string>> m_BookmarksByDataset = new();
 
         [Serializable]
         private class DatasetColumnPrefs
@@ -53,7 +81,22 @@ namespace DataViz
             public List<DatasetColumnPrefs> Datasets = new();
         }
 
+        // Separate small file for bookmarks
+        [Serializable]
+        private class DatasetBookmarkPrefs
+        {
+            public string DatasetName;
+            public List<string> BookmarkedColumns = new();
+        }
+
+        [Serializable]
+        private class BookmarkPrefsFile
+        {
+            public List<DatasetBookmarkPrefs> Datasets = new();
+        }
+
         private string ColumnPrefsFilePath => Path.Combine(Application.persistentDataPath, "scatterplot_column_prefs.json");
+        private string BookmarkPrefsFilePath => Path.Combine(Application.persistentDataPath, "scatterplot_bookmark_prefs.json");
 
         private void LoadColumnPrefs()
         {
@@ -105,6 +148,56 @@ namespace DataViz
             }
         }
 
+        private void LoadBookmarkPrefs()
+        {
+            try
+            {
+                if (!File.Exists(BookmarkPrefsFilePath))
+                    return;
+
+                string json = File.ReadAllText(BookmarkPrefsFilePath);
+                BookmarkPrefsFile data = JsonUtility.FromJson<BookmarkPrefsFile>(json);
+
+                if (data?.Datasets == null)
+                    return;
+
+                foreach (DatasetBookmarkPrefs entry in data.Datasets)
+                {
+                    m_BookmarksByDataset[entry.DatasetName] = new HashSet<string>(entry.BookmarkedColumns);
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"[MultiplayerScatterplotManager] Failed to load bookmark prefs from {BookmarkPrefsFilePath}: {e.Message}");
+            }
+        }
+
+        private void SaveBookmarkPrefs()
+        {
+            try
+            {
+                BookmarkPrefsFile data = new BookmarkPrefsFile();
+
+                foreach (KeyValuePair<string, HashSet<string>> kvp in m_BookmarksByDataset)
+                {
+                    if (kvp.Value.Count == 0)
+                        continue;
+
+                    data.Datasets.Add(new DatasetBookmarkPrefs
+                    {
+                        DatasetName = kvp.Key,
+                        BookmarkedColumns = new List<string>(kvp.Value)
+                    });
+                }
+
+                File.WriteAllText(BookmarkPrefsFilePath, JsonUtility.ToJson(data, true));
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"[MultiplayerScatterplotManager] Failed to save bookmark prefs to {BookmarkPrefsFilePath}: {e.Message}");
+            }
+        }
+
         private HashSet<string> GetBlacklistForCurrentDataset()
         {
             if (LoadedDataset == null)
@@ -116,6 +209,22 @@ namespace DataViz
             {
                 set = new HashSet<string>();
                 m_BlacklistByDataset[key] = set;
+            }
+
+            return set;
+        }
+
+        private HashSet<string> GetBookmarksForCurrentDataset()
+        {
+            if (LoadedDataset == null)
+                return new HashSet<string>();
+
+            string key = LoadedDataset.Name;
+
+            if (!m_BookmarksByDataset.TryGetValue(key, out HashSet<string> set))
+            {
+                set = new HashSet<string>();
+                m_BookmarksByDataset[key] = set;
             }
 
             return set;
@@ -232,6 +341,7 @@ namespace DataViz
             }
 
             LoadColumnPrefs();
+            LoadBookmarkPrefs();
         }
 
         private void OnDestroy()
@@ -603,6 +713,38 @@ namespace DataViz
         }
 
         /// <summary>
+        /// Adds or removes a column bookmark by name (per-dataset). Bookmarks are persisted
+        /// separately to disk so they survive restarts.
+        /// </summary>
+        public void RequestSetColumnBookmarkedRpc(string columnName, bool bookmarked)
+        {
+            if (string.IsNullOrEmpty(columnName))
+                return;
+
+            HashSet<string> bookmarks = GetBookmarksForCurrentDataset();
+
+            if (bookmarked)
+            {
+                bookmarks.Add(columnName);
+            }
+            else
+            {
+                bookmarks.Remove(columnName);
+            }
+
+            SaveBookmarkPrefs();
+            OnPlotSettingsChanged?.Invoke();
+        }
+
+        public bool IsColumnBookmarked(string columnName)
+        {
+            if (string.IsNullOrEmpty(columnName))
+                return false;
+
+            return GetBookmarksForCurrentDataset().Contains(columnName);
+        }
+
+        /// <summary>
         /// Randomizes X/Y/Z/Color/Time column selection for data exploration.
         ///
         /// Not a uniform random pick across all columns - with high-dimensional
@@ -668,13 +810,13 @@ namespace DataViz
                 }
             }
 
-            int xIdx = WeightedRandomIndex(weights, usedIndices);
+            int xIdx = XAxisLocked ? XColumnIndex : WeightedRandomIndex(weights, usedIndices);
             usedIndices.Add(xIdx);
 
-            int yIdx = WeightedRandomIndex(weights, usedIndices);
+            int yIdx = YAxisLocked ? YColumnIndex : WeightedRandomIndex(weights, usedIndices);
             usedIndices.Add(yIdx);
 
-            int zIdx = WeightedRandomIndex(weights, usedIndices);
+            int zIdx = ZAxisLocked ? ZColumnIndex : WeightedRandomIndex(weights, usedIndices);
             usedIndices.Add(zIdx);
 
             XColumnIndex = xIdx;
