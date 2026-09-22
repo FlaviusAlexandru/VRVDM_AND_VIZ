@@ -184,13 +184,15 @@ namespace DataViz
             // pipeline's renderer.Build() call) cost, since
             // MultiplayerScatterplotManager's events fire synchronously within
             // RequestLoadDatasetRpc. NOTE: this conflates binary-parse time
-            // with GPU buffer upload time, and RequestLoadDatasetRpc currently
-            // triggers RegeneratePlot twice per call (once via OnDatasetLoaded/
-            // OnPlotSettingsChanged inside LoadLocalDataset, again via the
-            // explicit OnPlotSettingsChanged at the end of RequestLoadDatasetRpc
-            // itself) - so this number is "2x rebuild cost", not "1x". Disclose
-            // this in Methods, or wrap ColumnarBinaryImporter.Load and Build()
-            // with separate Stopwatches later if you need the split/single-pass number.
+            // with GPU buffer upload time. RequestLoadDatasetRpc used to
+            // trigger RegeneratePlot twice per call (once via the
+            // OnPlotSettingsChanged fired inside LoadLocalDataset, again via
+            // the explicit OnPlotSettingsChanged at the end of
+            // RequestLoadDatasetRpc itself) - LoadLocalDataset's internal fire
+            // is now suppressed on this path (notifyPlotSettingsChanged: false),
+            // so this is "1x rebuild cost" again. Wrap ColumnarBinaryImporter.Load
+            // and Build() with separate Stopwatches later if you need the
+            // split parse-vs-upload number.
             var buildStopwatch = System.Diagnostics.Stopwatch.StartNew();
             m_Manager.RequestLoadDatasetRpc(condition.DatasetFileName);
             buildStopwatch.Stop();
@@ -198,6 +200,24 @@ namespace DataViz
             long pointCount = m_Manager.LoadedDataset != null ? m_Manager.LoadedDataset.RowCount : 0;
 
             WriteBuildRow(pipeline.PipelineName, condition.DatasetFileName, pointCount, buildStopwatch.Elapsed.TotalMilliseconds);
+
+            // If the dataset never actually loaded - missing/misnamed .cdataset
+            // file, or ColumnarBinaryImporter/CSVImporter both failed to parse
+            // it (see MultiplayerScatterplotManager.LoadLocalDataset's own
+            // error logging for which) - LoadedDataset is null and RowCount
+            // reads back as 0. Don't run a full warmup+window cycle measuring
+            // whatever the PREVIOUS condition happened to leave on screen and
+            // logging it under this condition's Pipeline/Dataset/PointCount -
+            // log it plainly and move on to the next condition instead.
+            if (m_Manager.LoadedDataset == null || pointCount == 0)
+            {
+                Debug.LogError($"[Benchmark] Dataset load failed for '{condition.DatasetFileName}' " +
+                                $"(missing file, misformatted/misnamed .cdataset, or unparseable data) - " +
+                                $"pipeline={pipeline.PipelineName}. Skipping this condition.");
+                WriteErrorRow(pipeline.PipelineName, condition.DatasetFileName, "dataset_load_failed");
+                m_Writer?.Flush();
+                yield break;
+            }
 
             var conditionStopwatch = System.Diagnostics.Stopwatch.StartNew();
 
@@ -258,12 +278,36 @@ namespace DataViz
                 // but verify via IntelliSense on first run rather than trusting
                 // this blind - if these don't compile, check the FrameTiming
                 // struct's actual member names in your Unity version.
+                //
+                // GPU timestamps resolve asynchronously and lag the CPU by a
+                // variable number of frames - at long frame times (large point
+                // counts) the GPU can be perpetually behind a 1-frame lookback,
+                // so a single-slot GetLatestTimings(1, ...) call mostly returns
+                // a struct whose gpuFrameTime query hasn't resolved yet (reads
+                // back near 0, NOT a real "GPU did nothing" measurement).
+                // Fix: pull a short history and walk back from most-recent to
+                // find the first entry Unity has actually finished resolving
+                // (gpuFrameTime > 0 is Unity's own signal for that). This still
+                // won't line up exactly frame-for-frame with frameMs below -
+                // that slop is inherent to async GPU timing - but it stops
+                // logging phantom near-zero GPU times as if they were real.
+                const int kTimingHistoryDepth = 8;
                 FrameTimingManager.CaptureFrameTimings();
-                FrameTiming[] timings = new FrameTiming[1];
-                uint got = FrameTimingManager.GetLatestTimings(1, timings);
+                FrameTiming[] timings = new FrameTiming[kTimingHistoryDepth];
+                uint got = FrameTimingManager.GetLatestTimings(kTimingHistoryDepth, timings);
 
-                double cpuMs = got > 0 ? timings[0].cpuFrameTime : -1.0;
-                double gpuMs = got > 0 ? timings[0].gpuFrameTime : -1.0;
+                double cpuMs = -1.0;
+                double gpuMs = -1.0;
+                for (int i = 0; i < got; i++)
+                {
+                    if (timings[i].gpuFrameTime > 0)
+                    {
+                        cpuMs = timings[i].cpuFrameTime;
+                        gpuMs = timings[i].gpuFrameTime;
+                        break;
+                    }
+                }
+
                 double frameMs = Time.unscaledDeltaTime * 1000.0;
 
                 WriteFrameRow(pipelineName, datasetFileName, pointCount, windowIndex, f, frameMs, cpuMs, gpuMs);
@@ -277,7 +321,17 @@ namespace DataViz
 
         private void WriteTimeoutRow(string pipeline, string dataset, long pointCount, string stage, double elapsedSeconds)
         {
-            m_Writer.WriteLine($"timeout,{pipeline},{dataset},{pointCount},,,,,,,,,{DateTime.UtcNow:o},{stage}_after_{elapsedSeconds.ToString("F1", CultureInfo.InvariantCulture)}s");
+            m_Writer?.WriteLine($"timeout,{pipeline},{dataset},{pointCount},,,,,,,,,{DateTime.UtcNow:o},{stage}_after_{elapsedSeconds.ToString("F1", CultureInfo.InvariantCulture)}s");
+        }
+
+        private void WriteErrorRow(string pipeline, string dataset, string reason)
+        {
+            // Separate RowType from "timeout" on purpose - this isn't a wall-clock
+            // abort, it's "we never got valid data to measure in the first place".
+            // Same 14-column shape as every other row so read_csv()/read_benchmark_csv()
+            // in ChartMaker.R keeps working unchanged; it just won't fall into
+            // frame_df/build_df/timeout_df's filters, same as memory_df already doesn't.
+            m_Writer?.WriteLine($"error,{pipeline},{dataset},0,,,,,,,,,{DateTime.UtcNow:o},{reason}");
         }
 
         private void OpenCsv()
@@ -302,7 +356,7 @@ namespace DataViz
 
         private void WriteFrameRow(string pipeline, string dataset, long pointCount, int window, int frame, double frameMs, double cpuMs, double gpuMs)
         {
-            m_Writer.WriteLine($"frame,{pipeline},{dataset},{pointCount},{window},{frame}," +
+            m_Writer?.WriteLine($"frame,{pipeline},{dataset},{pointCount},{window},{frame}," +
                                 $"{frameMs.ToString("F4", CultureInfo.InvariantCulture)}," +
                                 $"{cpuMs.ToString("F4", CultureInfo.InvariantCulture)}," +
                                 $"{gpuMs.ToString("F4", CultureInfo.InvariantCulture)},,,,{DateTime.UtcNow:o},");
@@ -310,12 +364,12 @@ namespace DataViz
 
         private void WriteBuildRow(string pipeline, string dataset, long pointCount, double buildMs)
         {
-            m_Writer.WriteLine($"build,{pipeline},{dataset},{pointCount},,,,,,{buildMs.ToString("F4", CultureInfo.InvariantCulture)},,,{DateTime.UtcNow:o},");
+            m_Writer?.WriteLine($"build,{pipeline},{dataset},{pointCount},,,,,,{buildMs.ToString("F4", CultureInfo.InvariantCulture)},,,{DateTime.UtcNow:o},");
         }
 
         private void WriteMemoryRow(string pipeline, string dataset, long pointCount, int window, long memBefore, long memAfter)
         {
-            m_Writer.WriteLine($"memory,{pipeline},{dataset},{pointCount},{window},,,,,,{memBefore},{memAfter},{DateTime.UtcNow:o},");
+            m_Writer?.WriteLine($"memory,{pipeline},{dataset},{pointCount},{window},,,,,,{memBefore},{memAfter},{DateTime.UtcNow:o},");
         }
 
         private void CloseCsv()
