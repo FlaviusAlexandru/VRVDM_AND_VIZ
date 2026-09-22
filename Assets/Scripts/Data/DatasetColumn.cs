@@ -20,6 +20,7 @@ public class DatasetColumn
 
     public bool IsNumeric =>
         Type == DataValueType.Numeric ||
+        Type == DataValueType.DateTime ||
         Type == DataValueType.CoordinateX ||
         Type == DataValueType.CoordinateY ||
         Type == DataValueType.CoordinateZ ||

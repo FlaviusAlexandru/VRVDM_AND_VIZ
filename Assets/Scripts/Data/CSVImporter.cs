@@ -165,8 +165,8 @@ public static class CSVImporter
         foreach (var column in dataset.Columns)
         {
             int numericCount = 0;
+            int dateCount = 0;
             int validRows = 0;
-
             int columnIndex = dataset.GetColumnIndex(column.Name);
 
             foreach (var row in dataset.Rows)
@@ -175,21 +175,19 @@ public static class CSVImporter
                 if (string.IsNullOrWhiteSpace(raw)) continue;
 
                 validRows++;
-                if (TryParseFlexibleFloat(raw, out _))
-                {
-                    numericCount++;
-                }
+                if (TryParseFlexibleFloat(raw, out _)) numericCount++;
+                else if (DateTime.TryParse(raw, CultureInfo.InvariantCulture,
+                             DateTimeStyles.None, out _)) dateCount++;
             }
 
-            // If at least 90% of valid entries are numbers, treat as Numeric
-            if (validRows > 0 && (float)numericCount / validRows >= 0.9f)
-            {
+            if (validRows == 0) { column.Type = DataValueType.Categorical; continue; }
+
+            if ((float)numericCount / validRows >= 0.9f)
                 column.Type = DataValueType.Numeric;
-            }
+            else if ((float)dateCount / validRows >= 0.9f)
+                column.Type = DataValueType.DateTime;
             else
-            {
                 column.Type = DataValueType.Categorical;
-            }
         }
     }
 
@@ -204,9 +202,22 @@ public static class CSVImporter
                 DatasetColumn column = dataset.Columns[col];
                 string raw = row.GetRawValue(col);
 
-                if (TryParseFlexibleFloat(raw, out float value))
+                if (column.Type == DataValueType.DateTime &&
+                    DateTime.TryParse(raw, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime dt))
+                {
+                    DateTime utc = dt.Kind == DateTimeKind.Utc ? dt : dt.ToUniversalTime();
+                    float epoch = (float)(utc - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalSeconds;
+                    row.SetNumericValue(col, epoch);
+                    column.MinValue = Mathf.Min(column.MinValue, epoch);
+                    column.MaxValue = Mathf.Max(column.MaxValue, epoch);
+                }
+                else if (TryParseFlexibleFloat(raw, out float value))
                 {
                     row.SetNumericValue(col, value);
+                    // Min/Max for numeric values were tracked during the first pass,
+                    // but updating here ensures correctness if any date->numeric changes occur.
+                    column.MinValue = Mathf.Min(column.MinValue, value);
+                    column.MaxValue = Mathf.Max(column.MaxValue, value);
                 }
 
                 row.SetNormalizedValue(col, column.GetNormalizedValue(raw));

@@ -17,11 +17,12 @@ class ColumnarDatasetProcessor:
     
     # File format constants
     MAGIC_BYTES = b'DVCB'  # DataViz Columnar Binary
-    VERSION = 1
+    VERSION = 2  # v2: adds TYPE_DATETIME
     
     # Column type codes
     TYPE_NUMERIC = 1
     TYPE_CATEGORICAL = 2
+    TYPE_DATETIME = 3
     
     def __init__(self, project_root: str = None):
         if project_root is None:
@@ -53,18 +54,25 @@ class ColumnarDatasetProcessor:
         return max(delimiter_counts, key=delimiter_counts.get)
     
     def infer_column_type(self, series: pd.Series) -> Tuple[str, float]:
-        """Infer if a column is numeric or categorical, return type and confidence"""
+        """Infer if a column is numeric, datetime, or categorical, return type and confidence"""
         # Try to convert to numeric
         numeric_series = pd.to_numeric(series, errors='coerce')
-        
-        # Calculate percentage of non-null numeric values
         numeric_ratio = numeric_series.notna().sum() / len(series)
         
         # If 90% or more are numeric, treat as numeric
         if numeric_ratio >= 0.9:
             return "Numeric", numeric_ratio
-        else:
-            return "Categorical", 1.0 - numeric_ratio
+        
+        # Otherwise, try datetime before giving up to categorical.
+        # Checked second (not first) so a purely numeric column is never
+        # misread as a date by pandas' looser datetime coercion.
+        date_series = pd.to_datetime(series, errors='coerce')
+        date_ratio = date_series.notna().sum() / len(series)
+        
+        if date_ratio >= 0.9:
+            return "DateTime", date_ratio
+        
+        return "Categorical", 1.0 - max(numeric_ratio, date_ratio)
     
     def process_csv(self, csv_file: Path) -> Dict[str, Any]:
         """Process a single CSV file and return columnar data structure"""
@@ -117,6 +125,39 @@ class ColumnarDatasetProcessor:
                 column_data["data"] = numeric_series.values.astype(np.float32)
                 
                 print(f"  Column {idx}: {col_name_clean} (Numeric) range: [{min_val:.4f}, {max_val:.4f}]")
+            elif col_type == "DateTime":
+                # Store elapsed seconds relative to the column's own earliest
+                # timestamp, NOT absolute Unix epoch. Absolute epoch seconds for
+                # a present-day date are ~1.79e9, and float32 only carries ~7
+                # significant digits - at that magnitude it can only resolve to
+                # roughly +/-100 seconds, so close timestamps would collapse to
+                # the identical float32 value. Making the column relative to its
+                # own minimum keeps the stored numbers small, so sub-second
+                # precision survives the float32 round-trip.
+                date_series = pd.to_datetime(series, errors='coerce')
+                valid_dates = date_series.dropna()
+                
+                # Using Timestamp subtraction + Timedelta.total_seconds() here
+                # (rather than manual int64/1e9 math) because pandas' internal
+                # datetime64 storage unit varies by version - pandas 2.x default
+                # is [ns], pandas 3.x defaults to [us]. total_seconds() handles
+                # that unit correctly either way; a hardcoded ns divisor doesn't.
+                base = valid_dates.min() if len(valid_dates) > 0 else pd.Timestamp(0)
+                relative_seconds = (date_series - base).dt.total_seconds()
+                # Unparseable entries (NaT) produce NaN here; park at 0 rather
+                # than let them blow out the min/max range.
+                relative_seconds = relative_seconds.fillna(0.0)
+                epoch_f32 = relative_seconds.values.astype(np.float32)
+                
+                min_val = float(epoch_f32.min())
+                max_val = float(epoch_f32.max())
+                
+                column_data["minValue"] = min_val
+                column_data["maxValue"] = max_val
+                column_data["data"] = epoch_f32
+                
+                print(f"  Column {idx}: {col_name_clean} (DateTime) range: [{min_val:.4f}, {max_val:.4f}] seconds "
+                      f"relative to {base}")
             else:
                 # Categorical
                 # Get unique values
@@ -176,6 +217,16 @@ class ColumnarDatasetProcessor:
                         f.write(struct.pack('<f', col_data["maxValue"]))
                         
                         # Write float32 data
+                        data = col_data["data"]
+                        data.tofile(f)
+                        
+                    elif col_data["type"] == "DateTime":
+                        f.write(struct.pack('<B', self.TYPE_DATETIME))
+                        
+                        # Same layout as Numeric: min/max then float32[] epoch seconds
+                        f.write(struct.pack('<f', col_data["minValue"]))
+                        f.write(struct.pack('<f', col_data["maxValue"]))
+                        
                         data = col_data["data"]
                         data.tofile(f)
                         
