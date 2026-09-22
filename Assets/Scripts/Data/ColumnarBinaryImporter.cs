@@ -14,11 +14,15 @@ using UnityEngine;
 ///   per column:
 ///     1 byte   name length (byte)
 ///     N bytes  name (UTF8)
-///     1 byte   type (1 = Numeric, 2 = Categorical)
+///     1 byte   type (1 = Numeric, 2 = Categorical, 3 = DateTime)
 ///     Numeric:
 ///       4 bytes            minValue (float32)
 ///       4 bytes            maxValue (float32)
 ///       rowCount * 4 bytes float32[] data (raw, little-endian)
+///     DateTime:
+///       Same layout as Numeric - minValue/maxValue/data are elapsed
+///       seconds relative to the column's own earliest timestamp (NOT
+///       absolute Unix epoch - see preprocess_csv_columnar.py for why).
 ///     Categorical:
 ///       4 bytes  categoryCount (uint32)
 ///       per category:
@@ -36,6 +40,7 @@ public static class ColumnarBinaryImporter
     private const string ExpectedMagic = "DVCB";
     private const byte TypeNumeric = 1;
     private const byte TypeCategorical = 2;
+    private const byte TypeDateTime = 3;
 
     public static DatasetColumnar Load(string fileName)
     {
@@ -101,9 +106,9 @@ public static class ColumnarBinaryImporter
 
             DatasetColumn column = new DatasetColumn(name);
 
-            if (typeByte == TypeNumeric)
+            if (typeByte == TypeNumeric || typeByte == TypeDateTime)
             {
-                column.Type = DataValueType.Numeric;
+                column.Type = typeByte == TypeDateTime ? DataValueType.DateTime : DataValueType.Numeric;
 
                 float minValue = BitConverter.ToSingle(bytes, offset); offset += 4;
                 float maxValue = BitConverter.ToSingle(bytes, offset); offset += 4;
