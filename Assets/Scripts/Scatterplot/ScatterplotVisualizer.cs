@@ -303,23 +303,25 @@ namespace DataViz
             switch (m_Manager.ActivePipeline)
             {
                 case MultiplayerScatterplotManager.RenderPipelineKind.Instanced:
+                    m_InstancedRenderer.SetActive(true);
                     m_InstancedRenderer.Build(positions, colors, pointSize);
-                    m_ParticleRenderer.Clear();
-                    m_VFXRenderer.Clear();
+                    m_ParticleRenderer.SetActive(false);
+                    m_VFXRenderer.SetActive(false);
                     break;
 
                 case MultiplayerScatterplotManager.RenderPipelineKind.Particle:
+                    m_ParticleRenderer.SetActive(true);
                     m_ParticleRenderer.Build(positions, colors, pointSize);
-                    m_InstancedRenderer.Clear();
-                    m_VFXRenderer.Clear();
+                    m_InstancedRenderer.SetActive(false);
+                    m_VFXRenderer.SetActive(false);
                     break;
 
                 case MultiplayerScatterplotManager.RenderPipelineKind.VFX:
+                    m_VFXRenderer.SetActive(true);
                     m_VFXRenderer.BuildAdvanced(positions, colors, pointSize, null, null, glyphIndices);
-                    m_InstancedRenderer.Clear();
-                    m_ParticleRenderer.Clear();
+                    m_InstancedRenderer.SetActive(false);
+                    m_ParticleRenderer.SetActive(false);
                     break;
-
                     // GameObject case intentionally omitted - that renderer doesn't exist yet.
             }
 

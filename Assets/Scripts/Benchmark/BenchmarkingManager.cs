@@ -70,6 +70,11 @@ namespace DataViz
         [Tooltip("Randomize condition order to avoid confounding thermal/driver-warmup effects with pipeline identity.")]
         public bool m_RandomizeOrder = true;
 
+        [Tooltip("Independent repeated build/rebuild measurements per condition - previously this was " +
+                 "always 1 (a single Stopwatch call, no way to compute variance or test significance " +
+                 "on build cost at all). Each repeat reloads + rebuilds the same dataset fresh.")]
+        public int m_BuildRepeats = 5;
+
         [Header("Safety")]
         [Tooltip("Hard wall-clock ceiling (seconds) for warmup + all windows of a single condition. " +
                  "If a pipeline is so slow at a given point count that it can't finish within this " +
@@ -184,6 +189,7 @@ namespace DataViz
             // pipeline's renderer.Build() call) cost, since
             // MultiplayerScatterplotManager's events fire synchronously within
             // RequestLoadDatasetRpc. NOTE: this conflates binary-parse time
+<<<<<<< Updated upstream
             // with GPU buffer upload time. RequestLoadDatasetRpc used to
             // trigger RegeneratePlot twice per call (once via the
             // OnPlotSettingsChanged fired inside LoadLocalDataset, again via
@@ -196,10 +202,33 @@ namespace DataViz
             var buildStopwatch = System.Diagnostics.Stopwatch.StartNew();
             m_Manager.RequestLoadDatasetRpc(condition.DatasetFileName);
             buildStopwatch.Stop();
+=======
+            // with GPU buffer upload time, and RequestLoadDatasetRpc currently
+            // triggers RegeneratePlot twice per call (once via OnDatasetLoaded/
+            // OnPlotSettingsChanged inside LoadLocalDataset, again via the
+            // explicit OnPlotSettingsChanged at the end of RequestLoadDatasetRpc
+            // itself) - so this number is "2x rebuild cost", not "1x". Disclose
+            // this in Methods, or wrap ColumnarBinaryImporter.Load and Build()
+            // with separate Stopwatches later if you need the split/single-pass number.
+            //
+            // Repeated m_BuildRepeats times (was a single measurement before -
+            // with n=1 per condition there was no way to compute variance or
+            // test whether build-time differences between pipelines were real).
+            long pointCount = 0;
+>>>>>>> Stashed changes
 
-            long pointCount = m_Manager.LoadedDataset != null ? m_Manager.LoadedDataset.RowCount : 0;
+            for (int r = 0; r < m_BuildRepeats; r++)
+            {
+                var buildStopwatch = System.Diagnostics.Stopwatch.StartNew();
+                m_Manager.RequestLoadDatasetRpc(condition.DatasetFileName);
+                buildStopwatch.Stop();
 
-            WriteBuildRow(pipeline.PipelineName, condition.DatasetFileName, pointCount, buildStopwatch.Elapsed.TotalMilliseconds);
+                pointCount = m_Manager.LoadedDataset != null ? m_Manager.LoadedDataset.RowCount : 0;
+
+                WriteBuildRow(pipeline.PipelineName, condition.DatasetFileName, pointCount, r, buildStopwatch.Elapsed.TotalMilliseconds);
+
+                yield return null;
+            }
 
             // If the dataset never actually loaded - missing/misnamed .cdataset
             // file, or ColumnarBinaryImporter/CSVImporter both failed to parse
@@ -263,6 +292,13 @@ namespace DataViz
         {
             long memBefore = UnityEngine.Profiling.Profiler.GetTotalAllocatedMemoryLong();
 
+            // Diagnostic for the near-zero GpuTimeMs readings seen at the
+            // largest point-count tiers - tracks how often GetLatestTimings
+            // actually returns valid data (got > 0) vs silently failing.
+            // If this is low, GpuTimeMs/CpuTimeMs readings for this window
+            // should not be trusted as real CPU/GPU bottleneck evidence.
+            int gpuTimingHits = 0;
+
             for (int f = 0; f < m_FramesPerWindow; f++)
             {
                 if (conditionStopwatch.Elapsed.TotalSeconds > m_MaxSecondsPerCondition)
@@ -308,9 +344,26 @@ namespace DataViz
                     }
                 }
 
+<<<<<<< Updated upstream
+=======
+                if (got > 0) gpuTimingHits++;
+
+                double cpuMs = got > 0 ? timings[0].cpuFrameTime : -1.0;
+                double gpuMs = got > 0 ? timings[0].gpuFrameTime : -1.0;
+>>>>>>> Stashed changes
                 double frameMs = Time.unscaledDeltaTime * 1000.0;
 
                 WriteFrameRow(pipelineName, datasetFileName, pointCount, windowIndex, f, frameMs, cpuMs, gpuMs);
+            }
+
+            float hitRate = m_FramesPerWindow > 0 ? (float)gpuTimingHits / m_FramesPerWindow : 0f;
+            if (hitRate < 0.9f)
+            {
+                Debug.LogWarning($"[Benchmark] GPU timing reliability low for {pipelineName}/{datasetFileName} " +
+                                  $"window {windowIndex}: only {hitRate:P0} of frames returned valid FrameTiming data " +
+                                  $"({gpuTimingHits}/{m_FramesPerWindow}). CpuTimeMs/GpuTimeMs for this window may not " +
+                                  $"be trustworthy - treat -1.0 values and any suspiciously near-zero GpuTimeMs readings " +
+                                  $"with caution rather than as real bottleneck evidence.");
             }
 
             long memAfter = UnityEngine.Profiling.Profiler.GetTotalAllocatedMemoryLong();
@@ -342,10 +395,18 @@ namespace DataViz
             // this run" mistake. Whatever you type in m_OutputFileName, the
             // file on disk always tells you truthfully whether it came from
             // Editor Play or a real standalone build.
+            //
+            // Also append a timestamp: StreamWriter opens with overwrite=false
+            // meaning FALSE for append, i.e. it OVERWRITES - without a unique
+            // per-run component in the filename, a second run in the same
+            // environment silently destroys the previous run's results with
+            // no warning. This closes that off too - every run gets its own
+            // permanent file.
             string environmentTag = Application.isEditor ? "editor" : "standalone";
+            string timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
             string baseName = Path.GetFileNameWithoutExtension(m_OutputFileName);
             string extension = Path.GetExtension(m_OutputFileName);
-            string taggedFileName = $"{baseName}_{environmentTag}{extension}";
+            string taggedFileName = $"{baseName}_{environmentTag}_{timestamp}{extension}";
 
             m_OutputPath = Path.Combine(Application.persistentDataPath, taggedFileName);
             m_Writer = new StreamWriter(m_OutputPath, false);
@@ -362,9 +423,16 @@ namespace DataViz
                                 $"{gpuMs.ToString("F4", CultureInfo.InvariantCulture)},,,,{DateTime.UtcNow:o},");
         }
 
-        private void WriteBuildRow(string pipeline, string dataset, long pointCount, double buildMs)
+        private void WriteBuildRow(string pipeline, string dataset, long pointCount, int repeat, double buildMs)
         {
+<<<<<<< Updated upstream
             m_Writer?.WriteLine($"build,{pipeline},{dataset},{pointCount},,,,,,{buildMs.ToString("F4", CultureInfo.InvariantCulture)},,,{DateTime.UtcNow:o},");
+=======
+            // Reuses the Window column (always blank for build rows before)
+            // to carry the repeat index instead of adding a new CSV column -
+            // no schema/header change needed, existing parsers still work.
+            m_Writer.WriteLine($"build,{pipeline},{dataset},{pointCount},{repeat},,,,,{buildMs.ToString("F4", CultureInfo.InvariantCulture)},,,{DateTime.UtcNow:o},");
+>>>>>>> Stashed changes
         }
 
         private void WriteMemoryRow(string pipeline, string dataset, long pointCount, int window, long memBefore, long memAfter)

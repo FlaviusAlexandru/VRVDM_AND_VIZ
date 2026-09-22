@@ -167,10 +167,10 @@ MonoBehaviour:
   m_Pipelines:
   - PipelineName: Instanced
     PipelineKind: 1
-  - PipelineName: Particle
-    PipelineKind: 2
   - PipelineName: VFX
     PipelineKind: 3
+  - PipelineName: Particle
+    PipelineKind: 2
   m_DatasetFileNames:
   - benchmark_1e4.cdataset
   - benchmark_1e5.cdataset
@@ -179,7 +179,8 @@ MonoBehaviour:
   m_WarmupFrames: 60
   m_WindowsPerCondition: 5
   m_FramesPerWindow: 300
-  m_RandomizeOrder: 1
+  m_RandomizeOrder: 0
+  m_BuildRepeats: 5
   m_MaxSecondsPerCondition: 300
   m_OutputFileName: benchmark_results.csv
   m_AutoRunOnStart: 1
