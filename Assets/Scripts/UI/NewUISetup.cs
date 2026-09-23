@@ -73,6 +73,8 @@ public static class NewUISetup
         new ControlSpec { Key = "XAxisLockToggle",          Type = RowType.Toggle,   Label = "Lock X",           ScatterplotUIFieldName = "m_XAxisLockToggle",         OnSummoned = true, OnWrist = false, WristDefaultEnabled = false },
         new ControlSpec { Key = "YAxisLockToggle",          Type = RowType.Toggle,   Label = "Lock Y",           ScatterplotUIFieldName = "m_YAxisLockToggle",         OnSummoned = true, OnWrist = false, WristDefaultEnabled = false },
         new ControlSpec { Key = "ZAxisLockToggle",          Type = RowType.Toggle,   Label = "Lock Z",           ScatterplotUIFieldName = "m_ZAxisLockToggle",         OnSummoned = true, OnWrist = false, WristDefaultEnabled = false },
+        new ControlSpec { Key = "ShuffleBackwardButton", Type = RowType.Button, Label = "<<", ScatterplotUIFieldName = "m_ShuffleBackwardButton", OnSummoned = true, OnWrist = true, WristDefaultEnabled = true },
+        new ControlSpec { Key = "ShuffleForwardButton",  Type = RowType.Button, Label = ">>", ScatterplotUIFieldName = "m_ShuffleForwardButton",  OnSummoned = true, OnWrist = true, WristDefaultEnabled = true },
     };
 
     [MenuItem("Tools/DataViz/New UI Setup")]
