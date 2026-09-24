@@ -94,7 +94,12 @@ namespace DataViz
                 m_ColorColumnDropdown.onValueChanged.AddListener(OnColorColumnUIChanged);
 
             if (m_PointSizeSlider != null)
+            {
+                // Slider shows 0-100 (% of MultiplayerScatterplotManager.MaxPointSize).
+                m_PointSizeSlider.minValue = 0f;
+                m_PointSizeSlider.maxValue = 100f;
                 m_PointSizeSlider.onValueChanged.AddListener(OnPointSizeUIChanged);
+            }
 
             if (m_TimeColumnDropdown != null)
                 m_TimeColumnDropdown.onValueChanged.AddListener(OnTimeColumnUIChanged);
@@ -318,11 +323,11 @@ namespace DataViz
             // Sync Point Size
             if (m_PointSizeSlider != null)
             {
-                m_PointSizeSlider.value = m_Manager.PointSize;
+                m_PointSizeSlider.value = PointSizeToPercent(m_Manager.PointSize);
             }
             if (m_PointSizeValueText != null)
             {
-                m_PointSizeValueText.text = m_Manager.PointSize.ToString("F3");
+                m_PointSizeValueText.text = PointSizeToPercent(m_Manager.PointSize).ToString("F0") + "%";
             }
 
             // Sync Time controls
@@ -433,8 +438,11 @@ namespace DataViz
         private void OnPointSizeUIChanged(float val)
         {
             if (m_IsUpdatingUI || m_Manager == null) return;
-            m_Manager.RequestPointSizeRpc(val);
+            m_Manager.RequestPointSizeRpc(val / 100f * MultiplayerScatterplotManager.MaxPointSize);
         }
+
+        private static float PointSizeToPercent(float size) =>
+            size / MultiplayerScatterplotManager.MaxPointSize * 100f;
 
         private void OnTimeColumnUIChanged(int idx)
         {

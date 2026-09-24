@@ -41,6 +41,7 @@ public static class NewUISetup
         public string Label;
         public string ScatterplotUIFieldName;  // exact public field name on ScatterplotUI
         public bool WristDefaultEnabled;
+        public bool LabelOnButton;             // Button rows only: show Label as the button's own text and hide the separate label
     }
 
     // PanelKey must match a PanelKey entry on the config asset's Panels list (for
@@ -60,9 +61,9 @@ public static class NewUISetup
 
         new ControlSpec { Key = "DatasetDropdown",         PanelKey = "DatasetControlPanelBackground",      Type = RowType.Dropdown, Label = "Dataset",         ScatterplotUIFieldName = "m_DatasetDropdown",         WristDefaultEnabled = true },
         new ControlSpec { Key = "TooltipsToggle",          PanelKey = "DatasetControlPanelBackground",      Type = RowType.Toggle,   Label = "Tooltips",        ScatterplotUIFieldName = "m_TooltipsToggle",          WristDefaultEnabled = true },
-        new ControlSpec { Key = "ShuffleButton",           PanelKey = "DatasetControlPanelBackground",      Type = RowType.Button,   Label = "Shuffle",         ScatterplotUIFieldName = "m_ShuffleButton",           WristDefaultEnabled = true },
-        new ControlSpec { Key = "ShuffleBackwardButton",   PanelKey = "DatasetControlPanelBackground",      Type = RowType.Button,   Label = "<<",              ScatterplotUIFieldName = "m_ShuffleBackwardButton",   WristDefaultEnabled = true },
-        new ControlSpec { Key = "ShuffleForwardButton",    PanelKey = "DatasetControlPanelBackground",      Type = RowType.Button,   Label = ">>",              ScatterplotUIFieldName = "m_ShuffleForwardButton",    WristDefaultEnabled = true },
+        new ControlSpec { Key = "ShuffleButton",           PanelKey = "DatasetControlPanelBackground",      Type = RowType.Button,   Label = "Shuffle",         ScatterplotUIFieldName = "m_ShuffleButton",           WristDefaultEnabled = true, LabelOnButton = true },
+        new ControlSpec { Key = "ShuffleBackwardButton",   PanelKey = "DatasetControlPanelBackground",      Type = RowType.Button,   Label = "<<",              ScatterplotUIFieldName = "m_ShuffleBackwardButton",   WristDefaultEnabled = true, LabelOnButton = true },
+        new ControlSpec { Key = "ShuffleForwardButton",    PanelKey = "DatasetControlPanelBackground",      Type = RowType.Button,   Label = ">>",              ScatterplotUIFieldName = "m_ShuffleForwardButton",    WristDefaultEnabled = true, LabelOnButton = true },
 
         new ControlSpec { Key = "ColorColumnDropdown",     PanelKey = "PointControlPanelBackground",        Type = RowType.Dropdown, Label = "Color",           ScatterplotUIFieldName = "m_ColorColumnDropdown",     WristDefaultEnabled = true },
         new ControlSpec { Key = "PointSizeSlider",         PanelKey = "PointControlPanelBackground",        Type = RowType.Slider,   Label = "Point Size",      ScatterplotUIFieldName = "m_PointSizeSlider",         WristDefaultEnabled = true },
@@ -317,6 +318,16 @@ public static class NewUISetup
             TMP_Text labelText = labelTransform.GetComponentInChildren<TMP_Text>(true);
             if (labelText != null)
                 labelText.text = spec.Label;
+        }
+
+        if (spec.LabelOnButton && spec.Type == RowType.Button)
+        {
+            Button button = instance.GetComponentInChildren<Button>(true);
+            TMP_Text buttonText = button != null ? button.GetComponentInChildren<TMP_Text>(true) : null;
+            if (buttonText != null)
+                buttonText.text = spec.Label;
+            if (labelTransform != null)
+                labelTransform.gameObject.SetActive(false);
         }
 
         return instance;
