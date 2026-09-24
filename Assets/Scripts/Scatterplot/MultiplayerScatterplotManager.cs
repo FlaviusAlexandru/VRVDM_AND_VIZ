@@ -18,6 +18,7 @@ namespace DataViz
         public int ZColumnIndex = 2;
         public int ColorColumnIndex = -1;
         public float PointSize = 0.1f;
+        public const float MaxPointSize = 0.1f; // the point size slider's 100% maps to this
 
         [Header("Temporal Settings")]
         public int TimeColumnIndex = -1;
@@ -586,7 +587,7 @@ namespace DataViz
 
         public void RequestPointSizeRpc(float size)
         {
-            PointSize = Mathf.Clamp(size, 0f, 0.1f);
+            PointSize = Mathf.Clamp(size, 0f, MaxPointSize);
             OnPlotSettingsChanged?.Invoke();
         }
 
