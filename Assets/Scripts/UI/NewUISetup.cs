@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Reflection;
 using DataViz;
 using TMPro;
@@ -6,21 +7,27 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// Builds both SummonedMenuCanvas's and WristUIHolderCanvas's UI from the
-/// sample's row prefabs (linked via a NewUIRowPrefabsConfig asset - see that
-/// file), wiring each new control into ScatterplotUI's matching field,
-/// adding MirroredUIControl on wrist copies, and updating WristShortcutMenu's
-/// shortcut list - all in one run, replacing the need to run
-/// WristShortcutMenuSetup/WristUIMirrorSetup separately afterward.
+/// Populates WristUIHolderCanvas from your hand-built panel prefabs
+/// (AxisControlPanelBackground, DatasetControlPanelBackground, etc. - linked
+/// via a NewUIRowPrefabsConfig asset), mirroring each wrist control against
+/// its already-hand-placed SummonedMenuCanvas counterpart and updating
+/// WristShortcutMenu's shortcut list.
 ///
-/// Run via Tools > DataViz > New UI Setup. Requires a NewUIRowPrefabsConfig
-/// asset to exist somewhere in the project with all four prefabs assigned.
+/// IMPORTANT: this tool NEVER creates, renames, or modifies anything on
+/// SummonedMenuCanvas - you've built and styled those panels by hand, so it
+/// only ever *looks up* existing summoned controls (by panel name, then by
+/// control name inside it) to (a) mirror the wrist copy against and (b)
+/// re-wire ScatterplotUI's field. If a summoned control can't be found, the
+/// wrist row is still created (unmirrored) with a warning logged - it won't
+/// drive real logic until the lookup is fixed (usually a naming mismatch
+/// between this table and your actual hierarchy).
 ///
-/// Idempotent-ish: re-running renames any existing GameObject with a target
-/// row's name to "<name>_Legacy" first (rather than erroring or creating a
-/// same-named duplicate silently), then creates a fresh row. Old rows are
-/// left in the scene, not deleted - verify the new ones work, then delete
-/// the _Legacy objects by hand.
+/// The wrist side IS destructively rebuilt each run, same as before, just at
+/// panel granularity now instead of per-control: any existing wrist panel
+/// with a matching name gets renamed "<name>_Legacy" first, then a fresh one
+/// is instantiated from its prefab and repopulated.
+///
+/// Run via Tools > DataViz > New UI Setup.
 /// </summary>
 public static class NewUISetup
 {
@@ -28,53 +35,52 @@ public static class NewUISetup
 
     private class ControlSpec
     {
-        public string Key;                     // GameObject name + WristShortcutMenu Key
+        public string Key;                     // GameObject name, both canvases + WristShortcutMenu Key
+        public string PanelKey;                // which panel this control lives under, both canvases
         public RowType Type;
         public string Label;
         public string ScatterplotUIFieldName;  // exact public field name on ScatterplotUI
-        public bool OnSummoned;
-        public bool OnWrist;
         public bool WristDefaultEnabled;
     }
 
-    // Edit this table to add/remove/retarget controls - same pattern as your
-    // existing kDesiredShortcuts/kMirroredControls tables. ScatterplotUIFieldName
-    // is looked up by reflection: if a field doesn't exist yet (e.g. you haven't
-    // added the Bookmark/Lock fields yet), that row is still created, just not
-    // wired into ScatterplotUI - you'll get a warning, not an error.
-    //
-    // ShuffleBackwardButton/ShuffleForwardButton field names are my best guess
-    // from your naming convention (m_ShuffleBackwardButton/m_ShuffleForwardButton) -
-    // fix the strings below if ScatterplotUI actually names them differently.
+    // PanelKey must match a PanelKey entry on the config asset's Panels list (for
+    // wrist creation) AND the actual GameObject name of that panel under
+    // SummonedMenuCanvas (for lookup). Whether a panel - and therefore every
+    // control tagged with its key - gets built on the wrist is controlled
+    // entirely by whether that PanelKey has an entry in config.Panels, not
+    // anything in this table.
     private static readonly ControlSpec[] kControlSpecs =
     {
-        new ControlSpec { Key = "DatasetDropdown",         Type = RowType.Dropdown, Label = "Dataset",          ScatterplotUIFieldName = "m_DatasetDropdown",         OnSummoned = true, OnWrist = true,  WristDefaultEnabled = true },
-        new ControlSpec { Key = "xDropDown",                Type = RowType.Dropdown, Label = "X Axis",           ScatterplotUIFieldName = "m_XColumnDropdown",         OnSummoned = true, OnWrist = true,  WristDefaultEnabled = true },
-        new ControlSpec { Key = "yDropDown",                Type = RowType.Dropdown, Label = "Y Axis",           ScatterplotUIFieldName = "m_YColumnDropdown",         OnSummoned = true, OnWrist = true,  WristDefaultEnabled = true },
-        new ControlSpec { Key = "zDropDown",                Type = RowType.Dropdown, Label = "Z Axis",           ScatterplotUIFieldName = "m_ZColumnDropdown",         OnSummoned = true, OnWrist = true,  WristDefaultEnabled = true },
-        new ControlSpec { Key = "ColorColumnDropdown",      Type = RowType.Dropdown, Label = "Color",            ScatterplotUIFieldName = "m_ColorColumnDropdown",     OnSummoned = true, OnWrist = true,  WristDefaultEnabled = true },
-        new ControlSpec { Key = "PointSizeSlider",          Type = RowType.Slider,   Label = "Point Size",       ScatterplotUIFieldName = "m_PointSizeSlider",         OnSummoned = true, OnWrist = true,  WristDefaultEnabled = true },
-        new ControlSpec { Key = "TooltipsToggle",           Type = RowType.Toggle,   Label = "Tooltips",         ScatterplotUIFieldName = "m_TooltipsToggle",          OnSummoned = true, OnWrist = true,  WristDefaultEnabled = true },
-        new ControlSpec { Key = "ShuffleButton",            Type = RowType.Button,   Label = "Shuffle",          ScatterplotUIFieldName = "m_ShuffleButton",           OnSummoned = true, OnWrist = true,  WristDefaultEnabled = true },
-        new ControlSpec { Key = "ShuffleBackwardButton",    Type = RowType.Button,   Label = "Shuffle Back",     ScatterplotUIFieldName = "m_ShuffleBackwardButton",   OnSummoned = true, OnWrist = false, WristDefaultEnabled = false },
-        new ControlSpec { Key = "ShuffleForwardButton",     Type = RowType.Button,   Label = "Shuffle Forward",  ScatterplotUIFieldName = "m_ShuffleForwardButton",    OnSummoned = true, OnWrist = false, WristDefaultEnabled = false },
-        new ControlSpec { Key = "TimeColumnDropdown",       Type = RowType.Dropdown, Label = "Time Column",      ScatterplotUIFieldName = "m_TimeColumnDropdown",      OnSummoned = true, OnWrist = false, WristDefaultEnabled = false },
-        new ControlSpec { Key = "TimeScrubSlider",          Type = RowType.Slider,   Label = "Time Scrub",       ScatterplotUIFieldName = "m_TimeScrubSlider",         OnSummoned = true, OnWrist = false, WristDefaultEnabled = false },
-        new ControlSpec { Key = "PlayPauseButton",          Type = RowType.Button,   Label = "Play / Pause",     ScatterplotUIFieldName = "m_PlayPauseButton",         OnSummoned = true, OnWrist = false, WristDefaultEnabled = false },
-        new ControlSpec { Key = "BlacklistColumnDropdown",  Type = RowType.Dropdown, Label = "Blacklist Column", ScatterplotUIFieldName = "m_BlacklistColumnDropdown", OnSummoned = true, OnWrist = false, WristDefaultEnabled = false },
-        new ControlSpec { Key = "BlacklistToggle",          Type = RowType.Toggle,   Label = "Blacklisted",      ScatterplotUIFieldName = "m_BlacklistToggle",         OnSummoned = true, OnWrist = false, WristDefaultEnabled = false },
-        new ControlSpec { Key = "BookmarkColumnDropdown",   Type = RowType.Dropdown, Label = "Bookmark Column",  ScatterplotUIFieldName = "m_BookmarkColumnDropdown",  OnSummoned = true, OnWrist = false, WristDefaultEnabled = false },
-        new ControlSpec { Key = "BookmarkToggle",           Type = RowType.Toggle,   Label = "Bookmarked",       ScatterplotUIFieldName = "m_BookmarkToggle",          OnSummoned = true, OnWrist = false, WristDefaultEnabled = false },
-        new ControlSpec { Key = "FilterLabelDropdown",      Type = RowType.Dropdown, Label = "Filter Column",    ScatterplotUIFieldName = "m_FilterLabelDropdown",     OnSummoned = true, OnWrist = false, WristDefaultEnabled = false },
-        new ControlSpec { Key = "FilterIndexDropdown",      Type = RowType.Dropdown, Label = "Filter Value",     ScatterplotUIFieldName = "m_FilterIndexDropdown",     OnSummoned = true, OnWrist = false, WristDefaultEnabled = false },
-        new ControlSpec { Key = "GlyphColumnDropdown",      Type = RowType.Dropdown, Label = "Glyph Column",     ScatterplotUIFieldName = "m_GlyphColumnDropdown",     OnSummoned = true, OnWrist = false, WristDefaultEnabled = false },
-        new ControlSpec { Key = "GlyphLabelDropdown",       Type = RowType.Dropdown, Label = "Glyph Label",      ScatterplotUIFieldName = "m_GlyphLabelDropdown",      OnSummoned = true, OnWrist = false, WristDefaultEnabled = false },
-        new ControlSpec { Key = "GlyphShapeDropdown",       Type = RowType.Dropdown, Label = "Glyph Shape",      ScatterplotUIFieldName = "m_GlyphShapeDropdown",      OnSummoned = true, OnWrist = false, WristDefaultEnabled = false },
-        new ControlSpec { Key = "XAxisLockToggle",          Type = RowType.Toggle,   Label = "Lock X",           ScatterplotUIFieldName = "m_XAxisLockToggle",         OnSummoned = true, OnWrist = false, WristDefaultEnabled = false },
-        new ControlSpec { Key = "YAxisLockToggle",          Type = RowType.Toggle,   Label = "Lock Y",           ScatterplotUIFieldName = "m_YAxisLockToggle",         OnSummoned = true, OnWrist = false, WristDefaultEnabled = false },
-        new ControlSpec { Key = "ZAxisLockToggle",          Type = RowType.Toggle,   Label = "Lock Z",           ScatterplotUIFieldName = "m_ZAxisLockToggle",         OnSummoned = true, OnWrist = false, WristDefaultEnabled = false },
-        new ControlSpec { Key = "ShuffleBackwardButton", Type = RowType.Button, Label = "<<", ScatterplotUIFieldName = "m_ShuffleBackwardButton", OnSummoned = true, OnWrist = true, WristDefaultEnabled = true },
-        new ControlSpec { Key = "ShuffleForwardButton",  Type = RowType.Button, Label = ">>", ScatterplotUIFieldName = "m_ShuffleForwardButton",  OnSummoned = true, OnWrist = true, WristDefaultEnabled = true },
+        new ControlSpec { Key = "xDropDown",               PanelKey = "AxisControlPanelBackground",         Type = RowType.Dropdown, Label = "X Axis",          ScatterplotUIFieldName = "m_XColumnDropdown",         WristDefaultEnabled = true },
+        new ControlSpec { Key = "yDropDown",               PanelKey = "AxisControlPanelBackground",         Type = RowType.Dropdown, Label = "Y Axis",          ScatterplotUIFieldName = "m_YColumnDropdown",         WristDefaultEnabled = true },
+        new ControlSpec { Key = "zDropDown",               PanelKey = "AxisControlPanelBackground",         Type = RowType.Dropdown, Label = "Z Axis",          ScatterplotUIFieldName = "m_ZColumnDropdown",         WristDefaultEnabled = true },
+        new ControlSpec { Key = "XAxisLockToggle",         PanelKey = "AxisControlPanelBackground",         Type = RowType.Toggle,   Label = "Lock X",          ScatterplotUIFieldName = "m_XAxisLockToggle",         WristDefaultEnabled = false },
+        new ControlSpec { Key = "YAxisLockToggle",         PanelKey = "AxisControlPanelBackground",         Type = RowType.Toggle,   Label = "Lock Y",          ScatterplotUIFieldName = "m_YAxisLockToggle",         WristDefaultEnabled = false },
+        new ControlSpec { Key = "ZAxisLockToggle",         PanelKey = "AxisControlPanelBackground",         Type = RowType.Toggle,   Label = "Lock Z",          ScatterplotUIFieldName = "m_ZAxisLockToggle",         WristDefaultEnabled = false },
+
+        new ControlSpec { Key = "DatasetDropdown",         PanelKey = "DatasetControlPanelBackground",      Type = RowType.Dropdown, Label = "Dataset",         ScatterplotUIFieldName = "m_DatasetDropdown",         WristDefaultEnabled = true },
+        new ControlSpec { Key = "TooltipsToggle",          PanelKey = "DatasetControlPanelBackground",      Type = RowType.Toggle,   Label = "Tooltips",        ScatterplotUIFieldName = "m_TooltipsToggle",          WristDefaultEnabled = true },
+        new ControlSpec { Key = "ShuffleButton",           PanelKey = "DatasetControlPanelBackground",      Type = RowType.Button,   Label = "Shuffle",         ScatterplotUIFieldName = "m_ShuffleButton",           WristDefaultEnabled = true },
+        new ControlSpec { Key = "ShuffleBackwardButton",   PanelKey = "DatasetControlPanelBackground",      Type = RowType.Button,   Label = "<<",              ScatterplotUIFieldName = "m_ShuffleBackwardButton",   WristDefaultEnabled = true },
+        new ControlSpec { Key = "ShuffleForwardButton",    PanelKey = "DatasetControlPanelBackground",      Type = RowType.Button,   Label = ">>",              ScatterplotUIFieldName = "m_ShuffleForwardButton",    WristDefaultEnabled = true },
+
+        new ControlSpec { Key = "ColorColumnDropdown",     PanelKey = "PointControlPanelBackground",        Type = RowType.Dropdown, Label = "Color",           ScatterplotUIFieldName = "m_ColorColumnDropdown",     WristDefaultEnabled = true },
+        new ControlSpec { Key = "PointSizeSlider",         PanelKey = "PointControlPanelBackground",        Type = RowType.Slider,   Label = "Point Size",      ScatterplotUIFieldName = "m_PointSizeSlider",         WristDefaultEnabled = true },
+
+        new ControlSpec { Key = "TimeColumnDropdown",      PanelKey = "TimeControlsPanelBackground",        Type = RowType.Dropdown, Label = "Time Column",     ScatterplotUIFieldName = "m_TimeColumnDropdown",      WristDefaultEnabled = true },
+        new ControlSpec { Key = "TimeScrubSlider",         PanelKey = "TimeControlsPanelBackground",        Type = RowType.Slider,   Label = "Time Scrub",      ScatterplotUIFieldName = "m_TimeScrubSlider",         WristDefaultEnabled = true },
+        new ControlSpec { Key = "PlayPauseButton",         PanelKey = "TimeControlsPanelBackground",        Type = RowType.Button,   Label = "Play / Pause",    ScatterplotUIFieldName = "m_PlayPauseButton",         WristDefaultEnabled = true },
+
+        new ControlSpec { Key = "BlacklistColumnDropdown", PanelKey = "PreferencesControlsPanelBackground", Type = RowType.Dropdown, Label = "Blacklist Column",ScatterplotUIFieldName = "m_BlacklistColumnDropdown", WristDefaultEnabled = false },
+        new ControlSpec { Key = "BlacklistToggle",         PanelKey = "PreferencesControlsPanelBackground", Type = RowType.Toggle,   Label = "Blacklisted",     ScatterplotUIFieldName = "m_BlacklistToggle",         WristDefaultEnabled = false },
+        new ControlSpec { Key = "BookmarkColumnDropdown",  PanelKey = "PreferencesControlsPanelBackground", Type = RowType.Dropdown, Label = "Bookmark Column", ScatterplotUIFieldName = "m_BookmarkColumnDropdown",  WristDefaultEnabled = false },
+        new ControlSpec { Key = "BookmarkToggle",          PanelKey = "PreferencesControlsPanelBackground", Type = RowType.Toggle,   Label = "Bookmarked",      ScatterplotUIFieldName = "m_BookmarkToggle",          WristDefaultEnabled = false },
+        new ControlSpec { Key = "FilterLabelDropdown",     PanelKey = "PreferencesControlsPanelBackground", Type = RowType.Dropdown, Label = "Filter Column",   ScatterplotUIFieldName = "m_FilterLabelDropdown",     WristDefaultEnabled = false },
+        new ControlSpec { Key = "FilterIndexDropdown",     PanelKey = "PreferencesControlsPanelBackground", Type = RowType.Dropdown, Label = "Filter Value",    ScatterplotUIFieldName = "m_FilterIndexDropdown",     WristDefaultEnabled = false },
+
+        new ControlSpec { Key = "GlyphColumnDropdown",     PanelKey = "GlyphControlsPanelBackground",       Type = RowType.Dropdown, Label = "Glyph Column",    ScatterplotUIFieldName = "m_GlyphColumnDropdown",     WristDefaultEnabled = false },
+        new ControlSpec { Key = "GlyphLabelDropdown",      PanelKey = "GlyphControlsPanelBackground",       Type = RowType.Dropdown, Label = "Glyph Label",     ScatterplotUIFieldName = "m_GlyphLabelDropdown",      WristDefaultEnabled = false },
+        new ControlSpec { Key = "GlyphShapeDropdown",      PanelKey = "GlyphControlsPanelBackground",       Type = RowType.Dropdown, Label = "Glyph Shape",     ScatterplotUIFieldName = "m_GlyphShapeDropdown",      WristDefaultEnabled = false },
     };
 
     [MenuItem("Tools/DataViz/New UI Setup")]
@@ -85,7 +91,7 @@ public static class NewUISetup
         {
             Debug.LogError("[NewUISetup] No NewUIRowPrefabsConfig asset found. Create one via " +
                             "Assets > Create > DataViz > New UI Row Prefabs Config, assign the four " +
-                            "row prefabs, then run this again.");
+                            "row prefabs and your panel prefabs, then run this again.");
             return;
         }
 
@@ -108,81 +114,179 @@ public static class NewUISetup
             return;
         }
 
-        if (shortcutMenu == null)
-        {
-            Debug.LogWarning("[NewUISetup] No WristShortcutMenu found - wrist rows will still be created and " +
-                              "mirrored, but won't get shortcut visibility entries.");
-        }
-
-        Transform summonedParent = ResolveContainer(summonedCanvas.transform, config.SummonedContainerPath);
-        Transform wristParent = ResolveContainer(wristCanvas.transform, config.WristContainerPath);
-
         Undo.RegisterCompleteObjectUndo(ui, "New UI Setup");
         if (shortcutMenu != null)
             Undo.RegisterCompleteObjectUndo(shortcutMenu, "New UI Setup");
 
-        int created = 0;
-        int skippedFields = 0;
+        int wired = 0, wristCreated = 0, notFoundOnSummoned = 0;
+        Dictionary<string, Transform> wristPanelCache = new();
 
         foreach (ControlSpec spec in kControlSpecs)
         {
+            // --- Summoned side: LOOK UP ONLY. Never created, renamed, or modified. ---
+            Transform summonedRow = FindSummonedRow(summonedCanvas.transform, spec);
+            Component summonedControl = summonedRow != null ? GetControlComponent(summonedRow.gameObject, spec.Type) : null;
+
+            if (summonedControl != null)
+            {
+                if (WireScatterplotUIField(ui, spec.ScatterplotUIFieldName, summonedControl))
+                    wired++;
+            }
+            else
+            {
+                notFoundOnSummoned++;
+                Debug.LogWarning($"[NewUISetup] Couldn't find '{spec.Key}' under panel '{spec.PanelKey}' on " +
+                                  $"{config.SummonedCanvasName} - check the panel/control are named exactly that.");
+            }
+
+            // --- Wrist side: rebuilt fresh, only for panels present in config.Panels. ---
+            PanelPrefabEntry panelEntry = config.Panels.Find(p => p.PanelKey == spec.PanelKey);
+            if (panelEntry == null || panelEntry.PanelPrefab == null)
+                continue;
+
+            if (!wristPanelCache.TryGetValue(spec.PanelKey, out Transform wristPanel))
+            {
+                wristPanel = GetOrCreateWristPanel(wristCanvas.transform, panelEntry);
+                wristPanelCache[spec.PanelKey] = wristPanel;
+            }
+
+            RenameExistingIfPresent(wristPanel, spec.Key);
+
             GameObject rowPrefab = RowPrefabFor(config, spec.Type);
-            Component summonedControl = null;
+            GameObject wristRow = CreateRow(spec, wristPanel, rowPrefab);
+            Component wristControl = GetControlComponent(wristRow, spec.Type);
 
-            if (spec.OnSummoned)
-            {
-                RenameExistingIfPresent(summonedParent, spec.Key);
-                GameObject row = CreateRow(spec, summonedParent, rowPrefab);
-                summonedControl = GetControlComponent(row, spec.Type);
+            if (summonedRow is RectTransform summonedRowRect && wristRow.transform is RectTransform wristRowRect)
+                CopyRectTransform(summonedRowRect, wristRowRect);
 
-                if (!WireScatterplotUIField(ui, spec.ScatterplotUIFieldName, summonedControl))
-                    skippedFields++;
+            if (summonedControl != null)
+                AddMirror(wristRow, summonedControl, wristControl);
 
-                created++;
-            }
+            if (shortcutMenu != null)
+                AddOrUpdateShortcutItem(shortcutMenu, spec.Key, wristRow, spec.WristDefaultEnabled);
 
-            if (spec.OnWrist)
-            {
-                RenameExistingIfPresent(wristParent, spec.Key);
-                GameObject row = CreateRow(spec, wristParent, rowPrefab);
-                Component wristControl = GetControlComponent(row, spec.Type);
-
-                if (summonedControl != null)
-                    AddMirror(row, summonedControl, wristControl);
-
-                if (shortcutMenu != null)
-                    AddOrUpdateShortcutItem(shortcutMenu, spec.Key, row, spec.WristDefaultEnabled);
-
-                created++;
-            }
+            wristCreated++;
         }
+
+        ArrangeWristPanels(wristCanvas.GetComponent<RectTransform>(), config, wristPanelCache);
 
         EditorUtility.SetDirty(ui);
         if (shortcutMenu != null)
             EditorUtility.SetDirty(shortcutMenu);
 
-        Debug.Log($"[NewUISetup] Created {created} row instance(s) across both canvases " +
-                  $"({skippedFields} ScatterplotUI field(s) skipped - field didn't exist, row still created). " +
-                  "Old controls with matching names were renamed to '<name>_Legacy', not deleted - verify the " +
-                  "new ones work, then remove the legacy objects by hand.");
+        Debug.Log($"[NewUISetup] Wired {wired} ScatterplotUI field(s) from existing summoned controls, " +
+                  $"created {wristCreated} wrist row(s), {notFoundOnSummoned} summoned lookup(s) failed " +
+                  "(see warnings above). SummonedMenuCanvas itself was never modified.");
+    }
+
+    /// <summary>
+    /// Positions every wrist panel built this run in a left-to-right, wrap-when-overflowing
+    /// layout - like CSS flex-wrap, computed here rather than via a Unity Layout Group
+    /// component, specifically to avoid Grid Layout Group's forced-uniform-cell-size problem.
+    /// Each panel keeps its own real size (times its configured WristLocalScale); only its
+    /// position changes. Order follows config.Panels' list order - reorder entries there to
+    /// change placement order. Assumes each panel's RectTransform uses a centered (0.5, 0.5)
+    /// anchor, matching every panel prefab seen so far in this project.
+    /// </summary>
+    private static void ArrangeWristPanels(RectTransform wristCanvasRect, NewUIRowPrefabsConfig config, Dictionary<string, Transform> wristPanelCache)
+    {
+        if (wristCanvasRect == null) return;
+
+        float canvasWidth = wristCanvasRect.rect.width;
+        float canvasHeight = wristCanvasRect.rect.height;
+
+        float cursorX = 0f;
+        float cursorY = 0f;
+        float rowHeight = 0f;
+
+        foreach (PanelPrefabEntry entry in config.Panels)
+        {
+            if (!wristPanelCache.TryGetValue(entry.PanelKey, out Transform panel))
+                continue; // not built this run (no control referenced it, or prefab missing)
+
+            if (!(panel is RectTransform panelRect))
+                continue;
+
+            float panelWidth = panelRect.rect.width * entry.WristLocalScale.x;
+            float panelHeight = panelRect.rect.height * entry.WristLocalScale.y;
+
+            if (cursorX > 0f && cursorX + panelWidth > canvasWidth)
+            {
+                cursorX = 0f;
+                cursorY -= rowHeight + config.WristPanelSpacing;
+                rowHeight = 0f;
+            }
+
+            // Convert a top-left-origin cursor into an anchoredPosition offset from
+            // the canvas's own center, matching a centered-pivot RectTransform.
+            float posX = -canvasWidth / 2f + cursorX + panelWidth / 2f;
+            float posY = canvasHeight / 2f + cursorY - panelHeight / 2f;
+            panelRect.anchoredPosition = new Vector2(posX, posY);
+
+            cursorX += panelWidth + config.WristPanelSpacing;
+            rowHeight = Mathf.Max(rowHeight, panelHeight);
+        }
     }
 
     private static NewUIRowPrefabsConfig FindConfig()
     {
         string[] guids = AssetDatabase.FindAssets("t:NewUIRowPrefabsConfig");
         if (guids.Length == 0) return null;
-
         string path = AssetDatabase.GUIDToAssetPath(guids[0]);
         return AssetDatabase.LoadAssetAtPath<NewUIRowPrefabsConfig>(path);
     }
 
-    private static Transform ResolveContainer(Transform canvasRoot, string path)
+    /// <summary>Finds spec.Key's row anywhere inside a same-named panel child of summonedCanvasRoot,
+    /// at any depth - not just as a direct child, since your panel reorganizing may have nested
+    /// some controls deeper than others. Returns the row's own Transform (not just its control
+    /// component) so its RectTransform can be copied onto the wrist version.</summary>
+    private static Transform FindSummonedRow(Transform summonedCanvasRoot, ControlSpec spec)
     {
-        if (string.IsNullOrEmpty(path))
-            return canvasRoot;
+        Transform panel = summonedCanvasRoot.Find(spec.PanelKey);
+        if (panel == null) return null;
 
-        Transform found = canvasRoot.Find(path);
-        return found != null ? found : canvasRoot;
+        return FindDeepChild(panel, spec.Key);
+    }
+
+    /// <summary>Copies anchors/pivot/position/size from one RectTransform onto another, so a
+    /// wrist row lands in the exact same relative spot its summoned counterpart occupies within
+    /// its panel - scaling to fit the wrist canvas is then just the panel's own localScale.</summary>
+    private static void CopyRectTransform(RectTransform source, RectTransform target)
+    {
+        target.anchorMin = source.anchorMin;
+        target.anchorMax = source.anchorMax;
+        target.pivot = source.pivot;
+        target.anchoredPosition = source.anchoredPosition;
+        target.sizeDelta = source.sizeDelta;
+    }
+
+    private static Transform FindDeepChild(Transform parent, string name)
+    {
+        foreach (Transform child in parent)
+        {
+            if (child.name == name)
+                return child;
+
+            Transform found = FindDeepChild(child, name);
+            if (found != null)
+                return found;
+        }
+        return null;
+    }
+
+    /// <summary>Renames any existing same-named wrist panel to "_Legacy", then instantiates a fresh one.</summary>
+    private static Transform GetOrCreateWristPanel(Transform wristCanvasRoot, PanelPrefabEntry panelEntry)
+    {
+        Transform existing = wristCanvasRoot.Find(panelEntry.PanelKey);
+        if (existing != null)
+            existing.name = panelEntry.PanelKey + "_Legacy";
+
+        GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(panelEntry.PanelPrefab, wristCanvasRoot);
+        instance.name = panelEntry.PanelKey;
+        instance.transform.localScale = panelEntry.WristLocalScale;
+        Undo.RegisterCreatedObjectUndo(instance, "New UI Setup");
+
+        return instance.transform;
     }
 
     private static GameObject RowPrefabFor(NewUIRowPrefabsConfig config, RowType type) => type switch
@@ -198,9 +302,7 @@ public static class NewUISetup
     {
         Transform existing = parent.Find(name);
         if (existing != null)
-        {
             existing.name = name + "_Legacy";
-        }
     }
 
     private static GameObject CreateRow(ControlSpec spec, Transform parent, GameObject rowPrefab)
@@ -229,17 +331,15 @@ public static class NewUISetup
         _ => null
     };
 
-    /// <summary>Returns false (and logs) if the named field doesn't exist on ScatterplotUI.</summary>
     private static bool WireScatterplotUIField(ScatterplotUI ui, string fieldName, Component value)
     {
         if (string.IsNullOrEmpty(fieldName) || value == null)
-            return true; // nothing to wire, not an error
+            return false;
 
         FieldInfo field = typeof(ScatterplotUI).GetField(fieldName);
         if (field == null)
         {
-            Debug.LogWarning($"[NewUISetup] ScatterplotUI has no field '{fieldName}' - row created but not " +
-                              "wired. (Bookmark/Lock fields need adding to ScatterplotUI.cs first if that's what this is.)");
+            Debug.LogWarning($"[NewUISetup] ScatterplotUI has no field '{fieldName}'.");
             return false;
         }
 

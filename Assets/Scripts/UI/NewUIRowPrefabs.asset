@@ -14,9 +14,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::NewUIRowPrefabsConfig
   SliderRowPrefab: {fileID: 2179057468902719980, guid: 41d89b59fe3e9964a83686ff24b7d0c5, type: 3}
   ButtonRowPrefab: {fileID: 2397425259038431699, guid: fa5ef3b56cfeb4f4ba855cdf2610a578, type: 3}
-  DropdownRowPrefab: {fileID: 2179057468902719980, guid: f47ad6ac315a3ea428b59e2cac6f2a2e, type: 3}
+  DropdownRowPrefab: {fileID: 6262935102578480881, guid: 3405290cc9a00c34bbd425b05c494f62, type: 3}
   ToggleRowPrefab: {fileID: 6345562874480820535, guid: e1f0d4bc2d67ddb4295e73f51f3ca4f7, type: 3}
   SummonedCanvasName: SummonedMenuCanvas
   WristCanvasName: WristUIHolderCanvas
-  SummonedContainerPath: 
-  WristContainerPath: 
+  WristPanelSpacing: 24
+  Panels:
+  - PanelKey: AxisControlPanelBackground
+    PanelPrefab: {fileID: 601740381724177465, guid: fef41707dd57ff24fa67322050f3ff60, type: 3}
+    WristLocalScale: {x: 0.6, y: 0.6, z: 0.6}
+  - PanelKey: DatasetControlPanelBackground
+    PanelPrefab: {fileID: 5403208185703582026, guid: 903918624df2d7d4d9a495bab8c359c7, type: 3}
+    WristLocalScale: {x: 0.6, y: 0.6, z: 0.6}
+  - PanelKey: TimeControlsPanelBackground
+    PanelPrefab: {fileID: 1649555670728928958, guid: 4bd3756b21ede1848a0793a941fe3987, type: 3}
+    WristLocalScale: {x: 0.6, y: 0.6, z: 0.6}
+  - PanelKey: PointControlPanelBackground
+    PanelPrefab: {fileID: 3607536932790035680, guid: f430a138a00280944b135864e22bf515, type: 3}
+    WristLocalScale: {x: 0.6, y: 0.6, z: 0.6}
