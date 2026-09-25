@@ -189,7 +189,6 @@ namespace DataViz
             // pipeline's renderer.Build() call) cost, since
             // MultiplayerScatterplotManager's events fire synchronously within
             // RequestLoadDatasetRpc. NOTE: this conflates binary-parse time
-<<<<<<< Updated upstream
             // with GPU buffer upload time. RequestLoadDatasetRpc used to
             // trigger RegeneratePlot twice per call (once via the
             // OnPlotSettingsChanged fired inside LoadLocalDataset, again via
@@ -199,23 +198,11 @@ namespace DataViz
             // so this is "1x rebuild cost" again. Wrap ColumnarBinaryImporter.Load
             // and Build() with separate Stopwatches later if you need the
             // split parse-vs-upload number.
-            var buildStopwatch = System.Diagnostics.Stopwatch.StartNew();
-            m_Manager.RequestLoadDatasetRpc(condition.DatasetFileName);
-            buildStopwatch.Stop();
-=======
-            // with GPU buffer upload time, and RequestLoadDatasetRpc currently
-            // triggers RegeneratePlot twice per call (once via OnDatasetLoaded/
-            // OnPlotSettingsChanged inside LoadLocalDataset, again via the
-            // explicit OnPlotSettingsChanged at the end of RequestLoadDatasetRpc
-            // itself) - so this number is "2x rebuild cost", not "1x". Disclose
-            // this in Methods, or wrap ColumnarBinaryImporter.Load and Build()
-            // with separate Stopwatches later if you need the split/single-pass number.
             //
             // Repeated m_BuildRepeats times (was a single measurement before -
             // with n=1 per condition there was no way to compute variance or
             // test whether build-time differences between pipelines were real).
             long pointCount = 0;
->>>>>>> Stashed changes
 
             for (int r = 0; r < m_BuildRepeats; r++)
             {
@@ -344,13 +331,11 @@ namespace DataViz
                     }
                 }
 
-<<<<<<< Updated upstream
-=======
-                if (got > 0) gpuTimingHits++;
+                // Counts frames where the walk-back above found a resolved GPU
+                // timing (gpuMs > 0). Counting got > 0 instead would read ~100%
+                // almost always now that 8 frames of history are requested.
+                if (gpuMs > 0) gpuTimingHits++;
 
-                double cpuMs = got > 0 ? timings[0].cpuFrameTime : -1.0;
-                double gpuMs = got > 0 ? timings[0].gpuFrameTime : -1.0;
->>>>>>> Stashed changes
                 double frameMs = Time.unscaledDeltaTime * 1000.0;
 
                 WriteFrameRow(pipelineName, datasetFileName, pointCount, windowIndex, f, frameMs, cpuMs, gpuMs);
@@ -425,14 +410,10 @@ namespace DataViz
 
         private void WriteBuildRow(string pipeline, string dataset, long pointCount, int repeat, double buildMs)
         {
-<<<<<<< Updated upstream
-            m_Writer?.WriteLine($"build,{pipeline},{dataset},{pointCount},,,,,,{buildMs.ToString("F4", CultureInfo.InvariantCulture)},,,{DateTime.UtcNow:o},");
-=======
             // Reuses the Window column (always blank for build rows before)
             // to carry the repeat index instead of adding a new CSV column -
             // no schema/header change needed, existing parsers still work.
-            m_Writer.WriteLine($"build,{pipeline},{dataset},{pointCount},{repeat},,,,,{buildMs.ToString("F4", CultureInfo.InvariantCulture)},,,{DateTime.UtcNow:o},");
->>>>>>> Stashed changes
+            m_Writer?.WriteLine($"build,{pipeline},{dataset},{pointCount},{repeat},,,,,{buildMs.ToString("F4", CultureInfo.InvariantCulture)},,,{DateTime.UtcNow:o},");
         }
 
         private void WriteMemoryRow(string pipeline, string dataset, long pointCount, int window, long memBefore, long memAfter)
