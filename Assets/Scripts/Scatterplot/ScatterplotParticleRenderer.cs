@@ -35,6 +35,11 @@ namespace DataViz
                  "If left empty, the ParticleSystemRenderer's current material is used as-is.")]
         public Material PointMaterial;
 
+        [Tooltip("Transform the incoming positions are expressed in (the ScatterplotVisualizer - " +
+                 "positions are plot-local). Set by ScatterplotVisualizer before Build(). Used as the " +
+                 "particle system's custom simulation space so particles sit in the plot, like the VFX renderer.")]
+        public Transform CoordinateSpace;
+
         private ParticleSystem m_ParticleSystem;
         private ParticleSystemRenderer m_ParticleRenderer;
 
@@ -127,6 +132,19 @@ namespace DataViz
             Debug.Log($"[ScatterplotParticleRenderer] Build called with {positions.Count} points");
 
             int count = positions.Count;
+
+            // Positions are plot-local: simulate in the plot's space so particles
+            // land inside the plot (and follow it if it is moved), matching VFX.
+            var main = m_ParticleSystem.main;
+            if (CoordinateSpace != null)
+            {
+                main.simulationSpace = ParticleSystemSimulationSpace.Custom;
+                main.customSimulationSpace = CoordinateSpace;
+            }
+            else
+            {
+                main.simulationSpace = ParticleSystemSimulationSpace.Local;
+            }
 
             if (m_Particles.Length < count)
             {

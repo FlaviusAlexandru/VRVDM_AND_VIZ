@@ -304,6 +304,7 @@ namespace DataViz
             {
                 case MultiplayerScatterplotManager.RenderPipelineKind.Instanced:
                     m_InstancedRenderer.SetActive(true);
+                    m_InstancedRenderer.CoordinateSpace = transform; // positions are plot-local
                     m_InstancedRenderer.Build(positions, colors, pointSize);
                     m_ParticleRenderer.SetActive(false);
                     m_VFXRenderer.SetActive(false);
@@ -311,6 +312,7 @@ namespace DataViz
 
                 case MultiplayerScatterplotManager.RenderPipelineKind.Particle:
                     m_ParticleRenderer.SetActive(true);
+                    m_ParticleRenderer.CoordinateSpace = transform; // positions are plot-local
                     m_ParticleRenderer.Build(positions, colors, pointSize);
                     m_InstancedRenderer.SetActive(false);
                     m_VFXRenderer.SetActive(false);

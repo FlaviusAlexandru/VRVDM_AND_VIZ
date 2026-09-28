@@ -8,6 +8,17 @@ namespace DataViz
         public Mesh PointMesh;
         public Material PointMaterial;
 
+        [Tooltip("Transform the incoming positions are expressed in (the ScatterplotVisualizer - " +
+                 "positions are plot-local, the same space the VFX renderer and GPUPointInteractable use). " +
+                 "Set by ScatterplotVisualizer before Build(). If null, positions are treated as world space.")]
+        public Transform CoordinateSpace;
+
+        // Plot-local instance matrices; world matrices are derived from these and
+        // only recomputed when CoordinateSpace actually moves, so a static plot
+        // pays no per-frame transform cost.
+        private readonly List<Matrix4x4[]> m_LocalBatches = new();
+        private Matrix4x4 m_LastSpaceMatrix = Matrix4x4.identity;
+
         private readonly List<Matrix4x4[]> m_Batches = new();
         private readonly List<Vector4[]> m_ColorBatches = new();
 
@@ -43,7 +54,22 @@ namespace DataViz
         public void Clear()
         {
             m_Batches.Clear();
+            m_LocalBatches.Clear();
             m_ColorBatches.Clear();
+        }
+
+        private Matrix4x4 SpaceMatrix => CoordinateSpace != null ? CoordinateSpace.localToWorldMatrix : Matrix4x4.identity;
+
+        private void RebakeWorldMatrices()
+        {
+            m_LastSpaceMatrix = SpaceMatrix;
+            for (int b = 0; b < m_LocalBatches.Count; b++)
+            {
+                Matrix4x4[] local = m_LocalBatches[b];
+                Matrix4x4[] world = m_Batches[b];
+                for (int j = 0; j < local.Length; j++)
+                    world[j] = m_LastSpaceMatrix * local[j];
+            }
         }
 
         public void Build(
@@ -62,6 +88,12 @@ namespace DataViz
             Clear();
 
             const int batchSize = 1023;
+
+            // Particle and VFX treat pointSize as the point's world diameter. Normalise the
+            // mesh so an instanced point has the same diameter (pSphere1 is only 0.01 across,
+            // which made instanced points 100x smaller than the other pipelines).
+            float meshExtent = PointMesh != null ? PointMesh.bounds.size.x : 1f;
+            float instanceScale = meshExtent > 1e-6f ? pointSize / meshExtent : pointSize;
 
             for (int i = 0; i < positions.Count; i += batchSize)
             {
@@ -82,16 +114,19 @@ namespace DataViz
                         Matrix4x4.TRS(
                             positions[i + j],
                             Quaternion.identity,
-                            Vector3.one * pointSize
+                            Vector3.one * instanceScale
                         );
 
                     batchColors[j] =
                         colors[i + j];
                 }
 
-                m_Batches.Add(matrices);
+                m_LocalBatches.Add(matrices);
+                m_Batches.Add(new Matrix4x4[count]);
                 m_ColorBatches.Add(batchColors);
             }
+
+            RebakeWorldMatrices();
 
             Debug.Log($"[ScatterplotInstancedRenderer] Created {m_Batches.Count} batches");
         }
@@ -100,6 +135,9 @@ namespace DataViz
         {
             if (PointMaterial == null)
                 return;
+
+            if (m_Batches.Count > 0 && SpaceMatrix != m_LastSpaceMatrix)
+                RebakeWorldMatrices();
 
             for (int i = 0; i < m_Batches.Count; i++)
             {
