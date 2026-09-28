@@ -178,12 +178,20 @@ MonoBehaviour:
   - benchmark_1e7.cdataset
   m_WarmupFrames: 60
   m_WindowsPerCondition: 5
-  m_FramesPerWindow: 300
-  m_RandomizeOrder: 0
-  m_BuildRepeats: 5
-  m_MaxSecondsPerCondition: 300
+  m_FramesPerWindow: 900
+  m_RandomizeOrder: 1
+  m_BuildRepeats: 20
+  m_MaxSecondsPerCondition: 600
   m_OutputFileName: benchmark_results.csv
+  m_SessionLabel: s1
+  m_FixViewDuringConditions: 1
+  m_ViewCameraOverride: {fileID: 1918274921}
+  m_FixedViewPose: {fileID: 0}
+  m_ViewDistance: 1.5
+  m_PinXRRenderScale: 1
   m_AutoRunOnStart: 1
+  m_CaptureViewPerCondition: 1
+  m_ChainCooldownSeconds: 60
 --- !u!1001 &836026204
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -580,6 +588,14 @@ PrefabInstance:
       propertyPath: m_PinButtonAction
       value: 
       objectReference: {fileID: 8245121677527848281, guid: 6fcd5a838d836f5489c2df59301069ff, type: 3}
+    - target: {fileID: 6619228414962175294, guid: 2dcbcf48fb8a01b4299e9a5eff97f671, type: 3}
+      propertyPath: m_UseGravity
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6619228414962175294, guid: 2dcbcf48fb8a01b4299e9a5eff97f671, type: 3}
+      propertyPath: m_IsKinematic
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6665569046209481029, guid: 2dcbcf48fb8a01b4299e9a5eff97f671, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -663,6 +679,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DataViz.ScatterplotInstancedRenderer
   PointMesh: {fileID: 0}
   PointMaterial: {fileID: 2100000, guid: 7bfac30bf8796c6439b1cf9d98550840, type: 2}
+  CoordinateSpace: {fileID: 0}
 --- !u!114 &1616127009
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -676,6 +693,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DataViz.ScatterplotParticleRenderer
   PointMaterial: {fileID: 2100000, guid: 2b11ac5868e2f6747b0d4543c3fe4a11, type: 2}
+  CoordinateSpace: {fileID: 1616127015}
 --- !u!199 &1616127010
 ParticleSystemRenderer:
   serializedVersion: 7
@@ -829,8 +847,8 @@ ParticleSystem:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-  moveWithTransform: 0
-  moveWithCustomTransform: {fileID: 0}
+  moveWithTransform: 1
+  moveWithCustomTransform: {fileID: 1616127015}
   scalingMode: 1
   randomSeed: 0
   InitialModule:
@@ -5500,6 +5518,11 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!4 &1616127015 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5324473052356203901, guid: 2dcbcf48fb8a01b4299e9a5eff97f671, type: 3}
+  m_PrefabInstance: {fileID: 1616127003}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1680725695
 GameObject:
   m_ObjectHideFlags: 0
@@ -5631,7 +5654,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!81 &1775616272
 AudioListener:
   m_ObjectHideFlags: 0
@@ -5750,6 +5773,11 @@ MonoBehaviour:
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
   m_Version: 2
+--- !u!20 &1918274921 stripped
+Camera:
+  m_CorrespondingSourceObject: {fileID: 657184242118504724, guid: d6878e1999eb4b44a9f5a263af86c185, type: 3}
+  m_PrefabInstance: {fileID: 1436122813}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
