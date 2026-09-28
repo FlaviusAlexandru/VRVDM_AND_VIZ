@@ -73,3 +73,14 @@ crashlytics-build.properties
 # Temporary auto-generated Android Assets
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
+
+# Standalone player builds (large, regenerated on every build; benchmark results are written here too)
+/StandaloneBuild/
+
+# Benchmark datasets over GitHub's 100 MB file limit (regenerate locally)
+/Assets/StreamingAssets/DataCSV/benchmark_1e6.csv
+/Assets/StreamingAssets/DataCSV/benchmark_1e6.csv.meta
+/Assets/StreamingAssets/DataCSV/benchmark_1e7.csv
+/Assets/StreamingAssets/DataCSV/benchmark_1e7.csv.meta
+/Assets/StreamingAssets/DataCSV/ProcessedData/benchmark_1e7.cdataset
+/Assets/StreamingAssets/DataCSV/ProcessedData/benchmark_1e7.cdataset.meta
